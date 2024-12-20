@@ -25,6 +25,8 @@ void TestScene::Draw()
 	}
 	else
 		pre.x = pre.y = -1;
+
+	DrawBox(0, 0, 900, 500, GetColor(150, 150, 150), true);
 }
 
 void TestScene::Release()
