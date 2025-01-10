@@ -11,6 +11,9 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{90c595e7-439a-4b11-ae82-50da8015ab3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PlayScene">
+      <UniqueIdentifier>{cd953ef8-1687-45bf-9596-e1f06625350e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\CsvReader.cpp">
@@ -59,6 +62,13 @@
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="TestScene.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="BackGround.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayScene.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\CsvReader.h">
@@ -114,5 +124,12 @@
     </ClInclude>
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="TestObject.h" />
+    <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="PlayScene.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="BackGround.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

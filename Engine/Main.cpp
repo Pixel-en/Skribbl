@@ -24,7 +24,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	SetGraphMode(Screen::WIDTH, Screen::HEIGHT, 32);
 	SetOutApplicationLogValidFlag(FALSE); // ログを出さない
-
 	SetMainWindowText(Screen::WINDOW_NAME);
 	SetWindowSizeExtendRate(Screen::WINDOW_EXTEND);
 	ChangeWindowMode(Screen::WINDOW_MODE); // Windowモードの場合
