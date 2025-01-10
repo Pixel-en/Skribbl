@@ -1,6 +1,7 @@
 #include "PlayScene.h"
 
 #include "BackGround.h"
+#include "Player.h"
 
 PlayScene::PlayScene(GameObject* parent)
 	:GameObject(parent,"PlayScene")
@@ -10,6 +11,7 @@ PlayScene::PlayScene(GameObject* parent)
 void PlayScene::Initialize()
 {
 	Instantiate<BackGround>(this);
+	Instantiate<Player>(this);
 }
 
 void PlayScene::Update()

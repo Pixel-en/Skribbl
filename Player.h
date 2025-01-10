@@ -1,18 +1,28 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-class BackGround :public GameObject
+
+class Player :public GameObject
 {
-	int hImage_;
+	struct INT2
+	{
+		int x;
+		int y;
+	};
+
+	INT2 PreMousePos_;
+	INT2 NowMousePos_;
+
+	unsigned int Cr_;
 
 public:
 
 	//コンストラクタ
 	//引数：parent  親オブジェクト（ObjectManager）
-	BackGround(GameObject* parent);
+	Player(GameObject* parent);
 
 	//デストラクタ
-	~BackGround();
+	~Player();
 
 	//初期化
 	void Initialize() override;

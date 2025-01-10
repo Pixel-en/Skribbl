@@ -69,6 +69,7 @@
     <ClCompile Include="PlayScene.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\CsvReader.h">
@@ -131,5 +132,6 @@
     <ClInclude Include="BackGround.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h" />
   </ItemGroup>
 </Project>
