@@ -3,8 +3,13 @@
 
 class BackGround :public GameObject
 {
-	int hImage_;
+	int hPalletImage_;
+	int hFrameImage_;
+	int hEFrameImage_;
 
+	int linesize_;
+
+	bool Erase_;
 public:
 
 	//コンストラクタ
@@ -25,5 +30,8 @@ public:
 
 	//開放
 	void Release() override;
+
+	void SetLineSize(int size) { linesize_ = size; };
+	void SetErase(bool set) { Erase_ = set; }
 };
 

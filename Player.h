@@ -4,16 +4,16 @@
 
 class Player :public GameObject
 {
-	struct INT2
-	{
-		int x;
-		int y;
-	};
 
-	INT2 PreMousePos_;
-	INT2 NowMousePos_;
+	XMINT2 PreMousePos_;
+	XMINT2 NowMousePos_;
 
 	unsigned int Cr_;
+
+	bool drawOK_;
+
+	int linesize_;
+	bool Erase_;
 
 public:
 

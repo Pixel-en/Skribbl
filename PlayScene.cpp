@@ -1,6 +1,7 @@
 #include "PlayScene.h"
 
 #include "BackGround.h"
+#include "Chat.h"
 #include "Player.h"
 
 PlayScene::PlayScene(GameObject* parent)
@@ -11,6 +12,7 @@ PlayScene::PlayScene(GameObject* parent)
 void PlayScene::Initialize()
 {
 	Instantiate<BackGround>(this);
+	Instantiate<Chat>(this);
 	Instantiate<Player>(this);
 }
 
