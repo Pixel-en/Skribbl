@@ -1,32 +1,20 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include <string>
+#include <vector>
 
-
-class Player :public GameObject
+class Theme :public GameObject
 {
 
-	XMINT2 PreMousePos_;
-	XMINT2 NowMousePos_;
-
-	unsigned int Cr_;
-
-	bool drawOK_;
-
-	int linesize_;
-	bool Erase_;
-
-	bool RFlag_;
-	bool LFlag_;
-	bool Lcount_;
-
+	std::vector<std::string> ThemeList_;
 public:
 
 	//コンストラクタ
 	//引数：parent  親オブジェクト（ObjectManager）
-	Player(GameObject* parent);
+	Theme(GameObject* parent);
 
 	//デストラクタ
-	~Player();
+	~Theme();
 
 	//初期化
 	void Initialize() override;
@@ -39,5 +27,7 @@ public:
 
 	//開放
 	void Release() override;
+
+	std::string ThemeRoll();
 };
 

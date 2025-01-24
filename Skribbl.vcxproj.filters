@@ -69,8 +69,13 @@
     <ClCompile Include="PlayScene.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Chat.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Theme.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -135,8 +140,13 @@
     <ClInclude Include="BackGround.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Chat.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Theme.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
   </ItemGroup>

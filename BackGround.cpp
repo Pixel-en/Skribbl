@@ -18,7 +18,7 @@ BackGround::~BackGround()
 void BackGround::Initialize()
 {
 	DrawBox(0, 0, 900, 500, GetColor(255, 255, 255), true);	//スケッチエリア
-	hPalletImage_ = LoadGraph("Assets\\Image\\ColorPallet3.png");
+	hPalletImage_ = LoadGraph("Assets\\Image\\ColorPallet4.png");
 	assert(hPalletImage_ >= 0);
 
 	hFrameImage_ = LoadGraph("Assets\\Image\\PalletLineFrame.png");

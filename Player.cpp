@@ -1,16 +1,18 @@
 #include "Player.h"
 #include "BackGround.h"
+#include "ImGui/imgui.h"
 
 namespace {
 	const XMINT2 LINESIZEPOS{ 920,620 };
-} 
+}
 
 
 Player::Player(GameObject* parent)
-	:GameObject(parent,"Player")
+	:GameObject(parent, "Player")
 {
 	PreMousePos_ = { -1,-1 };
 	NowMousePos_ = { -1,-1 };
+	RFlag_ = false;
 }
 
 Player::~Player()
@@ -35,9 +37,10 @@ void Player::Update()
 			PreMousePos_ = NowMousePos_;
 
 		GetMousePoint(&NowMousePos_.x, &NowMousePos_.y);
-
-		if (PreMousePos_.x >= 0) {
-			drawOK_ = true;
+		if ((NowMousePos_.x >= 0 && NowMousePos_.x < 900) && (NowMousePos_.y >= 50 && NowMousePos_.y < 500)) {
+			if (PreMousePos_.x >= 0) {
+				drawOK_ = true;
+			}
 		}
 	}
 	else {
@@ -66,11 +69,18 @@ void Player::Update()
 			}
 		}
 		if ((PixelPos.x > 1050 && PixelPos.x < 1090) && (PixelPos.y > 620 && PixelPos.y < 700)) {
-			Erase_ = !Erase_;
+			if (!RFlag_) {
+				Erase_ = !Erase_;
+			}
 		}
+		RFlag_ = true;
 	}
+	else
+		RFlag_ = false;	
 
 	bg->SetErase(Erase_);
+
+
 }
 
 void Player::Draw()
@@ -83,8 +93,10 @@ void Player::Draw()
 			DrawCircle(NowMousePos_.x, NowMousePos_.y, LineSizes[linesize_], GetColor(255, 255, 255), true);
 		else
 			DrawLine(PreMousePos_.x, PreMousePos_.y, NowMousePos_.x, NowMousePos_.y, Cr_, LineSizes[linesize_]);
-
 	}
+
+	DrawBox(1125, 646, 1218, 674, Cr_, true);
+
 }
 
 void Player::Release()

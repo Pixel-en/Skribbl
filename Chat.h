@@ -4,6 +4,10 @@
 #include <string>
 
 class Chat final : public GameObject {
+    int hKeyinput_;
+
+    bool inputFlag_;
+
 public:
     Chat(GameObject* parent);
     ~Chat();
