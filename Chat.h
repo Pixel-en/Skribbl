@@ -1,13 +1,17 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include <vector>
 #include <string>
+#include <list>
 
 class Chat final : public GameObject {
-    int hKeyinput_;
 
-    bool inputFlag_;
+    int hKeyData_;
 
+    bool NowKeyinput_;
+
+    char str[256];
+
+    std::list<std::string> StrHistory_;
 public:
     Chat(GameObject* parent);
     ~Chat();
@@ -17,8 +21,10 @@ public:
     void Draw() override;
     void Release() override;
 
-private:
-    std::vector<std::string> chatMessages;
-    std::string inputBuffer;
-    std::string GetUserInput();
+    /// <summary>
+    /// •Ê‚Ìl‚Ì“š‚¦‚ğ“ü‚ê‚é
+    /// </summary>
+    /// <param name="str">–¼‘O+“š‚¦</param>
+    void AddAns(std::string str) { StrHistory_.push_front(str); }
+
 };

@@ -2,73 +2,76 @@
 #include <DxLib.h>
 #include <cstring>
 
+namespace {
+	const int MAXLENGTH{ 26 };  //日本語で２０文字
+	const int HISTORYMAX{ 15 };
+}
+
 Chat::Chat(GameObject* parent)
-    : GameObject(parent,"Chat"), inputBuffer("") {
+	: GameObject(parent, "Chat"), NowKeyinput_(false)
+{
 }
 
 Chat::~Chat() {
 }
 
 void Chat::Initialize() {
-
-    //日本語２０文字、ESCキャンセル、全角可、文字可
-    hKeyinput_ = MakeKeyInput(40, true, false, false);
-    SetActiveKeyInput(hKeyinput_);
+	//半角40文字、ESCキャンセルあり、半角、数字のみ不可
+	hKeyData_ = MakeKeyInput(MAXLENGTH, true, false, false);
+	SetActiveKeyInput(hKeyData_);
 }
 
 void Chat::Update() {
-    //char inputChar = GetInputChar(TRUE);
+	SetUseIMEFlag(false);
+	//入力されているかどうか
+	switch (CheckKeyInput(hKeyData_))
+	{
+	//入力中
+	case 0:
+		NowKeyinput_ = true;
+		break;
+	//入力完了
+	case 1:
+	{
+		GetKeyInputString(str, hKeyData_);
+		std::string ans = str;
+		//何も入ってなかったら履歴に入れない
+		if (ans != "") {
+			StrHistory_.push_front("あなた：" + ans);
+		}
+	}
+	//入力キャンセル
+	case 2:
+		NowKeyinput_ = false;
+		//一度消して作り直す
+		DeleteKeyInput(hKeyData_);
+		
+		hKeyData_ = MakeKeyInput(MAXLENGTH, true, false, false);
+		SetActiveKeyInput(hKeyData_);
 
-    //if (inputChar != 0) {
-    //    if (inputChar == CTRL_CODE_CR) { // Enter key
-    //        if (!inputBuffer.empty()) {
-    //            chatMessages.push_back("You: " + inputBuffer);
-    //            inputBuffer.clear();
-    //        }
-    //    }
-    //    else if (inputChar == CTRL_CODE_BS) { // Backspace key
-    //        if (!inputBuffer.empty()) {
-    //            inputBuffer.pop_back();
-    //        }
-    //    }
-    //    else if (inputChar >= CTRL_CODE_CMP) {
-    //        inputBuffer += inputChar;
-    //    }
-    //}
+		//履歴が一定量超えたら消す
+		if (StrHistory_.size() > HISTORYMAX)
+			StrHistory_.pop_back();
 
-    //日本語入力ちょっと考える
-    inputFlag_ = true;
-    char buffer[256];
-    if (CheckKeyInput(hKeyinput_) == 1) {
-        GetKeyInputString(buffer, hKeyinput_);
-        inputBuffer.push_back((*buffer));
-        //日本語２０文字、ESCキャンセル、全角可、文字可
-        hKeyinput_ = MakeKeyInput(40, true, false, false);
-        SetActiveKeyInput(hKeyinput_);
-    }
-
+		break;
+	default:
+		break;
+	}
 }
 
 void Chat::Draw() {
-    DrawBox(930, 420, 1200, 460, GetColor(100, 100, 100), true); // TypeBox
-    DrawBox(1210, 420, 1260, 460, GetColor(255, 255, 255), true); // SendBox
 
-    //int y = 400 - static_cast<int>(chatMessages.size()) * 20; // Adjust starting position for messages
-    //for (const auto& msg : chatMessages) {
-    //    DrawString(935, y, msg.c_str(), GetColor(0, 0, 0));
-    //    y += 20;
-    //}
-
-    DrawString(935, 430, inputBuffer.c_str(), GetColor(0, 0, 0)); // Input buffer inside the type box
-
-    if (inputFlag_) {
-        DrawKeyInputString(935, 430, hKeyinput_);
-    }
+	//入力中の文字
+	if (NowKeyinput_) {
+		DrawKeyInputString(970, 430, hKeyData_);
+	}
+	//ここで履歴表示
+	int count = 0;
+	for (auto itr = StrHistory_.begin(); itr != StrHistory_.end(); itr++) {
+		DrawString(940, 400 - 5 - 25 * count, (*itr).c_str(), GetColor(255, 255, 255));
+		count++;
+	}
 }
 
 void Chat::Release() {
-}
-
-std::string Chat::GetUserInput() {
-    return inputBuffer;
 }
