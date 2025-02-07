@@ -1,7 +1,9 @@
 #pragma once
 #include "Engine/GameObject.h"
-
-
+#include "Theme.h"
+#include "Chat.h"
+class Theme;
+class Chat;
 class Player :public GameObject
 {
 
@@ -18,6 +20,8 @@ class Player :public GameObject
 	bool RFlag_;
 	bool LFlag_;
 	bool Lcount_;
+	Theme* theme_;
+	Chat* chat_;
 
 public:
 
@@ -39,5 +43,7 @@ public:
 
 	//ŠJ•ú
 	void Release() override;
+
+	void DrawCurrentTheme();
 };
 

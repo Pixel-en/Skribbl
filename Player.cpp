@@ -13,6 +13,8 @@ Player::Player(GameObject* parent)
 	PreMousePos_ = { -1,-1 };
 	NowMousePos_ = { -1,-1 };
 	RFlag_ = false;
+	theme_ = nullptr;
+	chat_= nullptr;
 }
 
 Player::~Player()
@@ -23,6 +25,17 @@ void Player::Initialize()
 {
 	Cr_ = 0;
 	Erase_ = false;
+	// Instantiate Theme object
+ theme_= Instantiate<Theme>(this);
+ // Instantiate Chat object
+ chat_ = GetParent()->FindGameObject<Chat>();
+ if (chat_) {
+	 chat_->SetTheme(theme_);
+	 chat_->SetPlayer(this);
+ }
+	 // Roll the initial theme
+	std::string currentTheme = theme_->ThemeRoll();
+
 }
 
 void Player::Update()
@@ -97,8 +110,22 @@ void Player::Draw()
 
 	DrawBox(1125, 646, 1218, 674, Cr_, true);
 
+	DrawCurrentTheme();
 }
 
 void Player::Release()
 {
+}
+
+void Player::DrawCurrentTheme()
+{
+
+	if (theme_) {
+		const std::string& currentTheme = theme_->GetCurrentTheme();
+		if (!currentTheme.empty()) {
+			int stringWidth = GetDrawStringWidth(currentTheme.c_str(), currentTheme.length());
+			int centerX = 450 - (stringWidth / 2); // 450 is half the width of the ‚¨‘è˜g
+			DrawString(centerX, 15, currentTheme.c_str(), GetColor(255, 0, 0)); // Adjust Y position as needed
+		}
+	}
 }
