@@ -1,11 +1,9 @@
 #include "Theme.h"
 #include "Engine/CsvReader.h"
-#include <cstdlib>
-#include <ctime>
+#include "Player.h"
 
 Theme::Theme(GameObject* parent)
     : GameObject(parent, "Theme") {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
 Theme::~Theme() {}
@@ -17,14 +15,19 @@ void Theme::Initialize() {
     }
 }
 
-void Theme::Update() {}
+void Theme::Update() {
+}
 
-void Theme::Draw() {}
+void Theme::Draw() {
+}
 
-void Theme::Release() {}
+void Theme::Release() {
+}
 
 std::string Theme::ThemeRoll() {
-    if (ThemeList_.empty()) return "";
+    if (ThemeList_.empty())
+        return "";
+    
     int num = std::rand() % ThemeList_.size();
     currentTheme_ = ThemeList_[num];
     return currentTheme_;

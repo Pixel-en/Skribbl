@@ -1,9 +1,7 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include "Theme.h"
-#include "Chat.h"
-class Theme;
-class Chat;
+#include <string>
+
 class Player :public GameObject
 {
 
@@ -16,12 +14,11 @@ class Player :public GameObject
 
 	int linesize_;
 	bool Erase_;
-
+	
+	//è¡ÇµÉSÉÄÉÇÅ[ÉhÇ©Ç«Ç§Ç©
 	bool RFlag_;
-	bool LFlag_;
-	bool Lcount_;
-	Theme* theme_;
-	Chat* chat_;
+
+	std::string theme_;
 
 public:
 
@@ -44,6 +41,6 @@ public:
 	//äJï˙
 	void Release() override;
 
-	void DrawCurrentTheme();
+	void SetTheme(std::string _theme) { theme_ = _theme; };
 };
 

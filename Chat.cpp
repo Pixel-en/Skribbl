@@ -3,7 +3,7 @@
 #include <cstring>
 
 namespace {
-	const int MAXLENGTH{ 26 };  //日本語で２０文字
+	const int MAXLENGTH{ 26 };  //日本語で13文字
 	const int HISTORYMAX{ 15 };
 }
 
@@ -62,7 +62,7 @@ void Chat::Draw() {
 	//ここで履歴表示
 	int count = 0;
 	for (auto itr = StrHistory_.begin(); itr != StrHistory_.end(); itr++) {
-		DrawString(940, 400 - 5 - 25 * count, (*itr).c_str(), GetColor(255, 255, 255));
+		DrawString(940, 400 - 5 - 25 * count, (*itr).c_str(), GetColor(0, 0, 0));
 		count++;
 	}
 }
@@ -74,7 +74,7 @@ void Chat::CheckTheme(const std::string& answer) {
     if (theme_) {
         std::string currentTheme = theme_->GetCurrentTheme();
         if (answer == currentTheme) {
-            StrHistory_.push_front("system: 正解です！");
+            StrHistory_.push_front("ゲーム: 正解です！");
         }
     }
 }
