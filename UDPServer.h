@@ -8,11 +8,13 @@ public:
     UdpServer(GameObject* parent);
     ~UdpServer();
 
-    void Initialize(unsigned short serverPort);
+    void Initialize();
     void Update() override;
+    void Draw() override;
     void Close();
 
 private:
     SOCKET sock;
     const unsigned int MAX_MESSAGE_LENGTH = 1024;
+    CIRCLE circle;
 };

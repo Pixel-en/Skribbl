@@ -5,6 +5,8 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
+const unsigned short SERVER_PORT = 8888;
+
 struct CIRCLE {
     int centerX;
     int centerY;
@@ -19,7 +21,7 @@ UdpServer::~UdpServer() {
     Close();
 }
 
-void UdpServer::Initialize(unsigned short serverPort) {
+void UdpServer::Initialize() {
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa)) {
         std::cerr << "WSAStartup failed." << std::endl;
@@ -39,7 +41,7 @@ void UdpServer::Initialize(unsigned short serverPort) {
     SOCKADDR_IN bindAddr;
     memset(&bindAddr, 0, sizeof(bindAddr));
     bindAddr.sin_family = AF_INET;
-    bindAddr.sin_port = htons(serverPort);
+    bindAddr.sin_port = htons(SERVER_PORT);
     bindAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     if (bind(sock, (SOCKADDR*)&bindAddr, sizeof(bindAddr)) == SOCKET_ERROR) {
         std::cerr << "Failed to bind socket." << std::endl;
@@ -58,7 +60,8 @@ void UdpServer::Initialize(unsigned short serverPort) {
 
 void UdpServer::Update() {
     ClearDrawScreen();
-    CIRCLE circle = { -100, -100, 0, GetColor(255, 255, 255) };
+
+    circle = { -100, -100, 0, GetColor(255, 255, 255) };
     sockaddr_in clientAddr;
     int fromlen = sizeof(clientAddr);
 
@@ -75,13 +78,17 @@ void UdpServer::Update() {
         std::cerr << "recvfrom failed." << std::endl;
     }
 
-    DrawCircle(circle.centerX, circle.centerY, circle.size, circle.color, 1);
     ScreenFlip();
     WaitTimer(16);
 
     if (ProcessMessage() == -1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1) {
         Close();
     }
+}
+
+void UdpServer::Draw()
+{
+    DrawCircle(circle.centerX, circle.centerY, circle.size, circle.color, 1);
 }
 
 void UdpServer::Close() {

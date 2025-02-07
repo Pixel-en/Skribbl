@@ -12,7 +12,7 @@ void TitleScene::Initialize()
 
 void TitleScene::Update()
 {
-	SceneManager::Instance()->ChangeScene(SceneManager::SCENE_ID_PLAY);
+	//SceneManager::Instance()->ChangeScene(SceneManager::SCENE_ID_PLAY);
 }
 
 void TitleScene::Draw()

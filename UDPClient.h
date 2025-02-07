@@ -8,8 +8,9 @@ public:
     UdpClient(GameObject* parent);
     ~UdpClient();
 
-    void Initialize(const char* serverAddress, unsigned short serverPort);
+    void Initialize();
     void Update() override;
+    void Draw() override;
     void SendCircleData(int x, int y, int size, int color);
     void Close();
 
