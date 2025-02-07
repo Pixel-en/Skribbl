@@ -71,10 +71,10 @@ void Chat::Release() {
 }
 
 void Chat::CheckTheme(const std::string& answer) {
-    if (theme_) {
-        std::string currentTheme = theme_->GetCurrentTheme();
-        if (answer == currentTheme) {
-            StrHistory_.push_front("ゲーム: 正解です！");
-        }
-    }
+    //if (theme_) {
+    //    std::string currentTheme = theme_->GetCurrentTheme();
+    //    if (answer == currentTheme) {
+    //        StrHistory_.push_front("ゲーム: 正解です！");
+    //    }
+    //}
 }
