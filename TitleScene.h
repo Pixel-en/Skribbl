@@ -4,6 +4,17 @@
 //テストシーンを管理するクラス
 class TitleScene : public GameObject
 {
+	IPDATA ip;
+	int netUDPHandle;
+
+	struct Circle {
+		int x;
+		int y;
+		int size;
+		unsigned int color;
+	};
+	Circle circle;
+	Circle recvcircle;
 public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）
