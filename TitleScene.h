@@ -1,24 +1,20 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-// テストシーンを管理するクラス
-class TitleScene : public GameObject {
-    struct Net {
+//テストシーンを管理するクラス
+class TitleScene : public GameObject
+{
+	IPDATA ip;
+	int netUDPHandle;
 
-        IPDATA IPAddr;
-        int port;
-    };
-    Net net[2];
-    int NetUDPHandle;
-    struct circle {
-        int x;
-        int y;
-        int size;
-        unsigned int color;
-    } ;   // Structure to store the received circle data
-    circle receivedCircle[2];
-    bool isCircleReceived; // Flag to check if circle data is received
-
+	struct Circle {
+		int x;
+		int y;
+		int size;
+		unsigned int color;
+	};
+	Circle circle;
+	Circle recvcircle;
 public:
     // コンストラクタ
     // 引数：parent 親オブジェクト（SceneManager）

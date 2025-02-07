@@ -13,62 +13,47 @@ TitleScene::TitleScene(GameObject* parent)
    
 }
 
-void TitleScene::Initialize() {
-    // UDP通信用のソケットハンドルを作成
-    NetUDPHandle = MakeUDPSocket(8888);
+void TitleScene::Initialize()
+{
+	//送信専用
+	netUDPHandle = MakeUDPSocket(8888);
+	ip = { 192,168,43,64 };
+	circle = { -100,-100,5,GetColor(255,152,0) };
 
-    // 受信待ち表示
-    IPDATA ip,ip2;
-    int count = 0;
-    int port;
-    while (true) {
-        DrawString(0, 0, "受信待ち", GetColor(255, 255, 255));
-        if (NetWorkRecvUDP(NetUDPHandle, &ip2, &port, &ip, sizeof(ip), true) >= 0) {
-            net[count].IPAddr = ip2;
-            net[count].port = port;
-            count++;
-            if (count == 2)
-                break;
-        }
-    }
+	while (true)
+	{
+		if (NetWorkSendUDP(netUDPHandle, ip, 8888, &ip, sizeof(ip) >= 0))
+			break;
+	}
 }
 
-void TitleScene::Update() {
+void TitleScene::Update()
+{
+	
+	GetMousePoint(&circle.x, &circle.y);
+	//SceneManager::Instance()->ChangeScene(SceneManager::SCENE_ID_PLAY);
+	NetWorkSendUDP(netUDPHandle, ip, 8888, &circle, sizeof(circle));
 
-    if (CheckNetWorkRecvUDP(NetUDPHandle) == TRUE) {
-        IPDATA ip;
-        int port;
-        circle cir;
-        for (int i = 0; i < 2; i++) {
-            NetWorkRecvUDP(NetUDPHandle, &ip, &port, &cir, sizeof(cir), false);
-            if (ip == net[i].IPAddr) {
-                receivedCircle[i] = cir;
-            }
-        }
-    }
-    else {
-        //if (ProcessMessage() < 0) {
-        //    DeleteUDPSocket(NetUDPHandle);
-        //}
-    }
+	//if (CheckNetWorkRecvUDP(netUDPHandle) == TRUE) {
+	//	NetWorkRecvUDP(netUDPHandle, NULL, NULL, &recvcircle, sizeof(recvcircle), FALSE);
+	//}
+	//else {
+	//	recvcircle = { -100,-100,5,GetColor(255,255,0) };
+	//	if (ProcessMessage() < 0) {
+
+	//		DeleteUDPSocket(netUDPHandle);
+	//	}
+	//}
+
 }
 
-void TitleScene::Draw() {
-    // Clear the screen
-    ClearDrawScreen();
-
-    // Check if circle data is received
-
-    for (int i = 0; i < 1; i++) {
-
-        DrawCircle(receivedCircle[i].x, receivedCircle[i].y, receivedCircle[i].size, receivedCircle[i].color, true);
-
-    }
-    // Flip the screen
-   ScreenFlip();
+void TitleScene::Draw()
+{
+	DrawCircle(circle.x, circle.y, circle.size, circle.color);
+	DrawCircle(recvcircle.x, recvcircle.y, recvcircle.size, recvcircle.color);
 }
 
-void TitleScene::Release() {
-    // Clean up resources
-    DeleteUDPSocket(NetUDPHandle);
+void TitleScene::Release()
+{
+	DeleteUDPSocket(netUDPHandle);
 }
