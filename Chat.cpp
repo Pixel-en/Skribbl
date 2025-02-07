@@ -22,42 +22,36 @@ void Chat::Initialize() {
 }
 
 void Chat::Update() {
-	SetUseIMEFlag(false);
-	//入力されているかどうか
-	switch (CheckKeyInput(hKeyData_))
-	{
-	//入力中
-	case 0:
-		NowKeyinput_ = true;
-		break;
-	//入力完了
-	case 1:
-	{
-		GetKeyInputString(str, hKeyData_);
-		std::string ans = str;
-		//何も入ってなかったら履歴に入れない
-		if (ans != "") {
-			StrHistory_.push_front("あなた：" + ans);
-		}
-	}
-	//入力キャンセル
-	case 2:
-		NowKeyinput_ = false;
-		//一度消して作り直す
-		DeleteKeyInput(hKeyData_);
-		
-		hKeyData_ = MakeKeyInput(MAXLENGTH, true, false, false);
-		SetActiveKeyInput(hKeyData_);
+    SetUseIMEFlag(false);
 
-		//履歴が一定量超えたら消す
-		if (StrHistory_.size() > HISTORYMAX)
-			StrHistory_.pop_back();
+    switch (CheckKeyInput(hKeyData_)) {
+    case 0:
+        NowKeyinput_ = true;
+        break;
+    case 1:
+    {
+        GetKeyInputString(str, hKeyData_);
+        std::string ans = str;
+        if (ans != "") {
+            StrHistory_.push_front("あなた：" + ans);
 
-		break;
-	default:
-		break;
-	}
+            // Call CheckTheme to verify the theme
+            CheckTheme(ans);
+        }
+    }
+    case 2:
+        NowKeyinput_ = false;
+        DeleteKeyInput(hKeyData_);
+        hKeyData_ = MakeKeyInput(MAXLENGTH, true, false, false);
+        SetActiveKeyInput(hKeyData_);
+        if (StrHistory_.size() > HISTORYMAX)
+            StrHistory_.pop_back();
+        break;
+    default:
+        break;
+    }
 }
+
 
 void Chat::Draw() {
 
@@ -74,4 +68,13 @@ void Chat::Draw() {
 }
 
 void Chat::Release() {
+}
+
+void Chat::CheckTheme(const std::string& answer) {
+    if (theme_) {
+        std::string currentTheme = theme_->GetCurrentTheme();
+        if (answer == currentTheme) {
+            StrHistory_.push_front("system: 正解です！");
+        }
+    }
 }
