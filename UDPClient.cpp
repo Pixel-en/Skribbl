@@ -4,6 +4,11 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
+
+const char* SERVER_ADDRESS = "192.168.43.64";		// 接続先なんか適当にクラスメートとやって！
+// サーバのポート番号
+const unsigned short SERVER_PORT = 8888;
+
 UdpClient::UdpClient(GameObject* parent)
     : GameObject(parent, "UdpClient"), sock(INVALID_SOCKET) {}
 
@@ -11,7 +16,7 @@ UdpClient::~UdpClient() {
     Close();
 }
 
-void UdpClient::Initialize(const char* serverAddress, unsigned short serverPort) {
+void UdpClient::Initialize() {
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa)) {
         std::cerr << "WSAStartup failed." << std::endl;
@@ -30,12 +35,20 @@ void UdpClient::Initialize(const char* serverAddress, unsigned short serverPort)
 
     memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(serverPort);
-    inet_pton(AF_INET, serverAddress, &serverAddr.sin_addr.s_addr);
+    serverAddr.sin_port = htons(SERVER_PORT);
+    inet_pton(AF_INET, SERVER_ADDRESS, &serverAddr.sin_addr.s_addr);
 }
 
 void UdpClient::Update() {
     // Placeholder for any updates required during the game loop
+    XMINT2 cursor;
+    GetMousePoint(&cursor.x, &cursor.y);
+    SendCircleData(cursor.x, cursor.y, 3, GetColor(255, 152, 0));
+}
+
+void UdpClient::Draw()
+{
+
 }
 
 void UdpClient::SendCircleData(int x, int y, int size, int color) {
