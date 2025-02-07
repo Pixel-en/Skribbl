@@ -78,6 +78,8 @@
     <ClCompile Include="Player.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
+    <ClCompile Include="UDPServer.cpp" />
+    <ClCompile Include="UDPClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\CsvReader.h">
@@ -149,5 +151,7 @@
     <ClInclude Include="Player.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
+    <ClInclude Include="UDPServer.h" />
+    <ClInclude Include="UDPClient.h" />
   </ItemGroup>
 </Project>

@@ -161,6 +161,8 @@
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Theme.cpp" />
     <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="UDPClient.cpp" />
+    <ClCompile Include="UDPServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackGround.h" />
@@ -188,6 +190,8 @@
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="Theme.h" />
     <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="UDPClient.h" />
+    <ClInclude Include="UDPServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
