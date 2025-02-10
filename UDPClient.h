@@ -1,21 +1,39 @@
-//#pragma once
-//#include "Engine/GameObject.h"
-//#include <WinSock2.h>
-//#include <WS2tcpip.h>
-//
-//class UdpClient : public GameObject {
-//public:
-//    UdpClient(GameObject* parent);
-//    ~UdpClient();
-//
-//    void Initialize();
-//    void Update() override;
-//    void Draw() override;
-//    void SendCircleData(int x, int y, int size, int color);
-//    void Close();
-//
-//private:
-//    SOCKET sock;
-//    SOCKADDR_IN serverAddr;
-//    const unsigned int MAX_MESSAGE_LENGTH = 1024;
-//};
+#pragma once
+#include "Engine/GameObject.h"
+
+class UDPClient :public GameObject
+{
+	IPDATA ip;
+	int netUDPHandle;
+
+	struct Circle {
+		int x;
+		int y;
+		int size;
+		unsigned int color;
+	};
+	Circle circle;
+	Circle recvcircle;
+
+public:
+
+	//コンストラクタ
+	//引数：parent  親オブジェクト（ObjectManager）
+	UDPClient(GameObject* parent);
+
+	//デストラクタ
+	~UDPClient();
+
+	//初期化
+	void Initialize() override;
+
+	//更新
+	void Update() override;
+
+	//描画
+	void Draw() override;
+
+	//開放
+	void Release() override;
+};
+

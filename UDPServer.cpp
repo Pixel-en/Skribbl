@@ -1,100 +1,82 @@
-//#include "UdpServer.h"
-//#include <cstring>
-//#include "DxLib.h"
-//#include <iostream> // For error messages
-//
-//#pragma comment(lib, "ws2_32.lib")
-//
-//const unsigned short SERVER_PORT = 8888;
-//
-//struct CIRCLE {
-//    int centerX;
-//    int centerY;
-//    int size;
-//    int color;
-//};
-//
-//UdpServer::UdpServer(GameObject* parent)
-//    : GameObject(parent, "UdpServer"), sock(INVALID_SOCKET) {}
-//
-//UdpServer::~UdpServer() {
-//    Close();
-//}
-//
-//void UdpServer::Initialize() {
-//    WSADATA wsa;
-//    if (WSAStartup(MAKEWORD(2, 2), &wsa)) {
-//        std::cerr << "WSAStartup failed." << std::endl;
-//        return;
-//    }
-//
-//    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-//    if (sock == INVALID_SOCKET) {
-//        std::cerr << "Failed to create socket." << std::endl;
-//        WSACleanup();
-//        return;
-//    }
-//
-//    unsigned long cmdarg = 0x01;
-//    ioctlsocket(sock, FIONBIO, &cmdarg);
-//
-//    SOCKADDR_IN bindAddr;
-//    memset(&bindAddr, 0, sizeof(bindAddr));
-//    bindAddr.sin_family = AF_INET;
-//    bindAddr.sin_port = htons(SERVER_PORT);
-//    bindAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-//    if (bind(sock, (SOCKADDR*)&bindAddr, sizeof(bindAddr)) == SOCKET_ERROR) {
-//        std::cerr << "Failed to bind socket." << std::endl;
-//        Close();
-//        return;
-//    }
-//
-//    SetWindowText("サーバ");
-//    SetGraphMode(800, 600, 32);
-//    ChangeWindowMode(TRUE);
-//    if (DxLib_Init() == -1) return;
-//    SetBackgroundColor(0, 0, 0);
-//    SetDrawScreen(DX_SCREEN_BACK);
-//    SetAlwaysRunFlag(1);
-//}
-//
-//void UdpServer::Update() {
-//    ClearDrawScreen();
-//
-//    circle = { -100, -100, 0, GetColor(255, 255, 255) };
-//    sockaddr_in clientAddr;
-//    int fromlen = sizeof(clientAddr);
-//
-//    CIRCLE value;
-//    int ret = recvfrom(sock, reinterpret_cast<char*>(&value), sizeof(value), 0,
-//        reinterpret_cast<sockaddr*>(&clientAddr), &fromlen);
-//    if (ret > 0) {
-//        circle.centerX = ntohl(value.centerX);
-//        circle.centerY = ntohl(value.centerY);
-//        circle.size = ntohl(value.size);
-//        circle.color = ntohl(value.color);
-//    }
-//    else if (WSAGetLastError() != WSAEWOULDBLOCK) {
-//        std::cerr << "recvfrom failed." << std::endl;
-//    }
-//
-//    ScreenFlip();
-//    WaitTimer(16);
-//
-//    if (ProcessMessage() == -1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1) {
-//        Close();
-//    }
-//}
-//
-//void UdpServer::Draw()
-//{
-//    DrawCircle(circle.centerX, circle.centerY, circle.size, circle.color, 1);
-//}
-//
-//void UdpServer::Close() {
-//    if (sock != INVALID_SOCKET) {
-//        closesocket(sock);
-//        WSACleanup();
-//        sock = INVALID_SOCKET;
-//    }
-//}
+#include "UDPServer.h"
+
+inline bool operator == (const IPDATA& a, const IPDATA& b) {
+    if (a.d1 == b.d1 && a.d2 == b.d2 && a.d3 == b.d3 && a.d4 == b.d4)return  true;
+    return false;
+
+};
+
+UDPServer::UDPServer(GameObject* parent)
+    :GameObject(parent,"UDPServer")
+{
+}
+
+UDPServer::~UDPServer()
+{
+}
+
+void UDPServer::Initialize()
+{   
+    // UDP通信用のソケットハンドルを作成
+    NetUDPHandle = MakeUDPSocket(8888);
+
+    // 受信待ち表示
+    IPDATA ip, ip2;
+    int count = 0;
+    int port;
+    while (true) {
+        DrawString(0, 0, "受信待ち", GetColor(255, 255, 255));
+        if (NetWorkRecvUDP(NetUDPHandle, &ip2, &port, &ip, sizeof(ip), true) >= 0) {
+            net[count].IPAddr = ip2;
+            net[count].port = port;
+            count++;
+            if (count == 2)
+                break;
+        }
+    }
+    int num = 1;
+    for (int i = 0; i < 2; i++) {
+        NetWorkSendUDP(NetUDPHandle, net[i].IPAddr, net[i].port, &num, sizeof(num));
+    }
+
+}
+
+void UDPServer::Update()
+{
+    if (CheckNetWorkRecvUDP(NetUDPHandle) == TRUE) {
+        IPDATA ip;
+        int port;
+        circle cir;
+        for (int i = 0; i < 2; i++) {
+            NetWorkRecvUDP(NetUDPHandle, &ip, &port, &cir, sizeof(cir), false);
+            if (ip == net[i].IPAddr) {
+                receivedCircle[i] = cir;
+            }
+        }
+    }
+    else {
+        //if (ProcessMessage() < 0) {
+        //    DeleteUDPSocket(NetUDPHandle);
+        //}
+    }
+}
+
+void UDPServer::Draw()
+{    // Clear the screen
+    ClearDrawScreen();
+
+    // Check if circle data is received
+
+    for (int i = 0; i < 1; i++) {
+
+        DrawCircle(receivedCircle[i].x, receivedCircle[i].y, receivedCircle[i].size, receivedCircle[i].color, true);
+
+    }
+    // Flip the screen
+    ScreenFlip();
+}
+
+void UDPServer::Release()
+{    // Clean up resources
+    DeleteUDPSocket(NetUDPHandle);
+}
