@@ -12,8 +12,8 @@ class UDPServer :public GameObject
 	};   // Structure to store the received circle data
 	Circle circle_[2];
 	Circle circle0_;
-int UDPHandle_[2];
-IPDATA IP_[2];
+	int UDPHandle_;
+	IPDATA IP_[2];
 public:
 
 	//コンストラクタ
