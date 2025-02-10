@@ -21,7 +21,7 @@ void UDPClient::Initialize()
 void UDPClient::Update()
 {
 	GetMousePoint(&circle.x, &circle.y);
-	NetWorkSendUDP(netUDPHandle, ip, 8888, &circle, sizeof(circle));
+	NetWorkSendUDP(netUDPHandle, ip, 8889, &circle, sizeof(circle));
 	if (CheckNetWorkRecvUDP(netUDPHandle) == TRUE) {
 		NetWorkRecvUDP(netUDPHandle, NULL, NULL, &youcircle, sizeof(youcircle),FALSE);
 	}
