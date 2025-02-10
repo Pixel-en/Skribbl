@@ -13,8 +13,7 @@ class UDPClient :public GameObject
 		unsigned int color;
 	};
 	Circle circle;
-	Circle recvcircle;
-
+	Circle youcircle;
 public:
 
 	//コンストラクタ
