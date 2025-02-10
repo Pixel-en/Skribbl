@@ -12,22 +12,24 @@ UDPClient::~UDPClient()
 void UDPClient::Initialize()
 {	
 	//‘—Mê—p
-	netUDPHandle = MakeUDPSocket(8888);
+	netUDPHandle = MakeUDPSocket(8889);
 	ip = { 192,168,43,64 };
-	circle = { -100,-100,5,GetColor(255,152,0) };
+	circle = { -100,-100,5,GetColor(255,0,0) };
 
-	NetWorkSendUDP(netUDPHandle, ip, 8888, &ip, sizeof(ip) >= 0);
+	NetWorkSendUDP(netUDPHandle, ip, 8889, &ip, sizeof(ip));
 
 	while (true)
 	{
 		if (CheckNetWorkRecvUDP(netUDPHandle) == TRUE) {
 			IPDATA ipdata;
 			int num;
-			NetWorkRecvUDP(netUDPHandle, &ip, NULL, &num, sizeof(num), FALSE);
+			NetWorkRecvUDP(netUDPHandle, NULL, NULL, &num, sizeof(num), FALSE);
 			if (num != -1)
 				break;
 		}
 	}
+	int a;
+	a = 0;
 }
 
 void UDPClient::Update()

@@ -1,4 +1,5 @@
 #include "TitleScene.h"
+#include "UDPClient.h"
 
 TitleScene::TitleScene(GameObject* parent)
     : GameObject(parent, "TitleScene"){
@@ -7,6 +8,7 @@ TitleScene::TitleScene(GameObject* parent)
 
 void TitleScene::Initialize()
 {
+    Instantiate<UDPClient>(this);
 }
 
 void TitleScene::Update()
