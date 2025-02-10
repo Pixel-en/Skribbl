@@ -10,7 +10,7 @@ UDPServer::UDPServer(GameObject* parent)
 	:GameObject(parent, "UDPServer")
 {
 	circle0_ = { -10,-10,5,GetColor(255,0,0) };
-	UDPHandle_= MakeUDPSocket(8888);
+	UDPHandle_ = MakeUDPSocket(8888);
 
 	IP_[0] = { 192,168,43,61 };
 	IP_[1] = { 192,168,43,35 };
