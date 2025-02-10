@@ -70,8 +70,8 @@ void UDPServer::Draw()
 
 	}
 	DrawCircle(circle0_.x, circle0_.y, circle0_.size, circle0_.color);
-	ClearDrawScreen();
-	ScreenFlip();
+	//ClearDrawScreen();
+	//ScreenFlip();
 }
 
 void UDPServer::Release()
