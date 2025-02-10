@@ -10,7 +10,7 @@ UDPServer::UDPServer(GameObject* parent)
 	:GameObject(parent, "UDPServer")
 {
 	circle0_ = { -10,-10,5,GetColor(255,0,0) };
-	UDPHandle_[0] = MakeUDPSocket(8888);
+	UDPHandle_= MakeUDPSocket(8888);
 
 	IP_[0] = { 192,168,43,61 };
 	IP_[1] = { 192,168,43,35 };
@@ -35,7 +35,7 @@ void UDPServer::Update()
 	IPDATA ip;
 	Circle cir;
 	GetMousePoint(&circle0_.x, &circle0_.y);
-	for (int i; i < 2; i++) {
+	for (int i=0; i < 2; i++) {
 		if (CheckNetWorkRecvUDP(UDPHandle_) == TRUE)
 		{
 			NetWorkRecvUDP(UDPHandle_, &ip, &port, &cir, sizeof(cir), FALSE);
@@ -52,10 +52,10 @@ void UDPServer::Update()
 			//	circle0_[i] = cir;
 			//}
 			if (ip == IP_[i]) {
-				circle0_ = cir;
+				circle_[i] = cir;
 			}
 
-			NetWorkSendUDP(UDPHandle_, IP[i], port, &circle0_, sizeof(circle0_));
+			NetWorkSendUDP(UDPHandle_, IP_[i], port, &circle0_, sizeof(circle0_));
 		}
 	}
 }
@@ -63,7 +63,7 @@ void UDPServer::Update()
 void UDPServer::Draw()
 {
 	
-	for (int i; i < 2; i++)
+	for (int i=0; i < 2; i++)
 	{
 
 		DrawCircle(circle_[i].x, circle_[i].y, circle_[i].size, circle_[i].color);
