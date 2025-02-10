@@ -9,6 +9,13 @@ inline bool operator == (const IPDATA& a, const IPDATA& b) {
 UDPServer::UDPServer(GameObject* parent)
     :GameObject(parent,"UDPServer")
 {
+    circle0_ = { -10,-10,5,GetColor(255,0,0) };
+    UDPHandle_[0] = MakeUDPSocket(8888);
+    UDPHandle_[1] = MakeUDPSocket(8888);
+    IP_[0] = { 0,0,0,0 };
+    IP_[1] = { 0,0,0,0 };
+
+    assert(UDPHandle_ >= 0);
 }
 
 UDPServer::~UDPServer()
@@ -16,67 +23,45 @@ UDPServer::~UDPServer()
 }
 
 void UDPServer::Initialize()
-{   
-    // UDP通信用のソケットハンドルを作成
-    NetUDPHandle = MakeUDPSocket(8888);
-
-    // 受信待ち表示
-    IPDATA ip, ip2;
-    int count = 0;
-    int port;
-    while (true) {
-        DrawString(0, 0, "受信待ち", GetColor(255, 255, 255));
-        if (NetWorkRecvUDP(NetUDPHandle, &ip2, &port, &ip, sizeof(ip), true) >= 0) {
-            net[count].IPAddr = ip2;
-            net[count].port = port;
-            count++;
-            if (count == 2)
-                break;
-        }
-    }
-    int num = 1;
-    for (int i = 0; i < 2; i++) {
-        NetWorkSendUDP(NetUDPHandle, net[i].IPAddr, net[i].port, &num, sizeof(num));
-    }
+{
+   
+ 
 
 }
 
 void UDPServer::Update()
 {
-    if (CheckNetWorkRecvUDP(NetUDPHandle) == TRUE) {
-        IPDATA ip;
-        int port;
-        circle cir;
-        for (int i = 0; i < 2; i++) {
-            NetWorkRecvUDP(NetUDPHandle, &ip, &port, &cir, sizeof(cir), false);
-            if (ip == net[i].IPAddr) {
-                receivedCircle[i] = cir;
+ int port;
+    IPDATA ip;
+    GetMousePoint(&circle0_.x,&circle0_.y);
+    for (int i; i < 2; i++) {
+        if (CheckNetWorkRecvUDP(UDPHandle_[i]) == TRUE)
+        {
+            if(IP_[i]==IPDATA{0,0,0,0})
+            {
+                for (int j; j < 2; j++) {
+                    if(IP_[j]==IPDATA{})
+           }
             }
+            NetWorkRecvUDP(UDPHandle_[i], &ip, &port, &circle_, sizeof(circle_), FALSE);
+
+            NetWorkSendUDP(UDPHandle_[i], ip, port, &circle0_, sizeof(circle0_));
         }
-    }
-    else {
-        //if (ProcessMessage() < 0) {
-        //    DeleteUDPSocket(NetUDPHandle);
-        //}
     }
 }
 
 void UDPServer::Draw()
-{    // Clear the screen
+{
     ClearDrawScreen();
-
-    // Check if circle data is received
-
-    for (int i = 0; i < 1; i++) {
-
-        DrawCircle(receivedCircle[i].x, receivedCircle[i].y, receivedCircle[i].size, receivedCircle[i].color, true);
-
+    for (int i; i < 2; i++) {
+        DrawCircle(circle_[i].x, circle_[i].y, circle_[i].size, circle_[i].color);
     }
-    // Flip the screen
-    ScreenFlip();
+    DrawCircle(circle0_.x, circle0_.y, circle0_.size, circle0_.color);
+
 }
 
 void UDPServer::Release()
 {    // Clean up resources
-    DeleteUDPSocket(NetUDPHandle);
+    for(int i;i<2;i++)
+    DeleteUDPSocket(UDPHandle_[i]);
 }
