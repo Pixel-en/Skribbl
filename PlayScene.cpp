@@ -1,5 +1,4 @@
 #include "PlayScene.h"
-
 #include "BackGround.h"
 #include "Chat.h"
 #include "Player.h"
@@ -15,8 +14,8 @@ void PlayScene::Initialize()
 	Instantiate<BackGround>(this);
 	Instantiate<Chat>(this);
 	Instantiate<Player>(this);
-
 	Instantiate<Theme>(this);
+	
 }
 
 void PlayScene::Update()
