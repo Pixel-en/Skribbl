@@ -1,6 +1,10 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+namespace {
+	const int CONNECTMAX{ 1 };
+}
+
 class UDPServer :public GameObject
 {
 
@@ -10,10 +14,35 @@ class UDPServer :public GameObject
 		int size;
 		unsigned int color;
 	};   // Structure to store the received circle data
-	Circle circle_[2];
-	Circle circle0_;
-	int UDPHandle_;
-	IPDATA IP_[2];
+
+	Circle me;
+	Circle you;
+
+	//ソケット
+	int UDPHandle_[CONNECTMAX];
+	int UDPConnectHandle_;
+	//IP
+	IPDATA IpAddr_[CONNECTMAX];
+	//接続番号
+	int connectnum_;
+
+	enum State
+	{
+		INIT,
+		CONNECT,
+		PLAY,
+		CLOSE,
+		END,
+
+	};
+
+	State state_;
+
+	void UpdateInit();
+	void UpdateConnect();
+	void UpdatePlay();
+	void UpdateClose();
+
 public:
 
 	//コンストラクタ
