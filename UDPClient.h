@@ -3,8 +3,9 @@
 
 class UDPClient :public GameObject
 {
-	IPDATA ip;
-	int netUDPHandle;
+	IPDATA IpAddr;
+	int UDPHandle;
+	int ServerPort_;
 
 	struct Circle {
 		int x;
@@ -12,8 +13,23 @@ class UDPClient :public GameObject
 		int size;
 		unsigned int color;
 	};
-	Circle circle;
-	Circle youcircle;
+
+	enum State
+	{
+		INIT,
+		CONNECT,
+		PLAY,
+		CLOSE,
+		END,
+	};
+
+	State state_;
+
+	void UpdateInit();
+	void UpdateConnect();
+	void UpdatePlay();
+	void UpdateClose();
+
 public:
 
 	//コンストラクタ

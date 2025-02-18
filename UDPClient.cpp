@@ -1,40 +1,72 @@
 #include "UDPClient.h"
 
 UDPClient::UDPClient(GameObject* parent)
-	:GameObject(parent,"UDPClient"),netUDPHandle(-1)
+	:GameObject(parent,"UDPClient"),UDPHandle(-1)
 {
-	ip = { 192,168,43,64 };
-	netUDPHandle = MakeUDPSocket(8888);
-	circle = { -10,-10,5,GetColor(255,0,255) };
+	IpAddr = { 192,168,42,6 };
+	UDPHandle = MakeUDPSocket(8888);
 }
 
 UDPClient::~UDPClient()
 {
-	DeleteUDPSocket(netUDPHandle);
+	DeleteUDPSocket(UDPHandle);
 }
 
 void UDPClient::Initialize()
 {	
-	assert(netUDPHandle >= 0);
+	assert(UDPHandle >= 0);
 }
 
 void UDPClient::Update()
 {
-	GetMousePoint(&circle.x, &circle.y);
-	NetWorkSendUDP(netUDPHandle, ip, 8888, &circle, sizeof(circle));
-	if (CheckNetWorkRecvUDP(netUDPHandle) == TRUE) {
-		NetWorkRecvUDP(netUDPHandle, NULL, NULL, &youcircle, sizeof(youcircle),FALSE);
+	switch (state_)
+	{
+	case UDPClient::INIT:
+		UpdateInit();
+		break;
+	case UDPClient::CONNECT:
+		UpdateConnect();
+		break;
+	case UDPClient::PLAY:
+		UpdatePlay();
+		break;
+	case UDPClient::CLOSE:
+		UpdateClose();
+		break;
+	case UDPClient::END:
+		break;
+	default:
+		break;
 	}
 }
 
 void UDPClient::Draw()
 {
-	//ClearDrawScreen();
-	DrawCircle(circle.x, circle.y, circle.size, circle.color, true);
-	DrawCircle(youcircle.x, youcircle.y, youcircle.size, youcircle.color, true);
 }
 
 void UDPClient::Release()
 {
+}
 
+
+void UDPClient::UpdateInit()
+{
+	NetWorkSendUDP(UDPHandle, IpAddr, 8888, nullptr, 0);
+	state_ = CONNECT;
+}
+
+void UDPClient::UpdateConnect()
+{
+	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
+		NetWorkRecvUDP(UDPHandle, NULL, NULL, &ServerPort_, sizeof(ServerPort_), FALSE);
+		state_ = PLAY;
+	}
+}
+
+void UDPClient::UpdatePlay()
+{
+}
+
+void UDPClient::UpdateClose()
+{
 }
