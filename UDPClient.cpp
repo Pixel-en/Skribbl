@@ -5,7 +5,7 @@ UDPClient::UDPClient(GameObject* parent)
 {
 	ip = { 192,168,43,64 };
 	netUDPHandle = MakeUDPSocket(8888);
-	circle = { -10,-10,5,GetColor(255,0,255) };
+	circle = { -10,-10,5,GetColor(255,255,0) };
 }
 
 UDPClient::~UDPClient()
@@ -29,7 +29,7 @@ void UDPClient::Update()
 
 void UDPClient::Draw()
 {
-	ClearDrawScreen();
+	//ClearDrawScreen();
 	DrawCircle(circle.x, circle.y, circle.size, circle.color, true);
 	DrawCircle(youcircle.x, youcircle.y, youcircle.size, youcircle.color, true);
 }
