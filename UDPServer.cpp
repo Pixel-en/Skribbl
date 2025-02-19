@@ -1,4 +1,5 @@
 #include "UDPServer.h"
+#include "Engine/SceneManager.h"
 
 inline bool operator == (const IPDATA& a, const IPDATA& b) {
 	if (a.d1 == b.d1 && a.d2 == b.d2 && a.d3 == b.d3 && a.d4 == b.d4)return  true;
@@ -25,6 +26,10 @@ UDPServer::UDPServer(GameObject* parent)
 
 	UDPConnectHandle_ = MakeUDPSocket(8888);
 	assert(UDPConnectHandle_ >= 0);
+
+
+	me = { -1,-1,5,GetColor(155,155,0) };
+	you = { -1,-1,5,GetColor(0,0,0) };
 }
 
 UDPServer::~UDPServer()
@@ -39,22 +44,26 @@ void UDPServer::Initialize()
 
 void UDPServer::Update()
 {
+	//SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
+	//if (sc == nullptr) {
+	//	MessageBox(NULL, "scenemanagerがない", "server", MB_OK);
+	//	exit(0);
+	//}
+	//SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
+	SceneManager::SCENE_ID ID = SceneManager::Instance()->GetCurrentSceneID();
 
-	switch (state_)
+	switch (ID)
 	{
-	case UDPServer::INIT:
-		UpdateInit();
+	case SceneManager::SCENE_ID_TITLE:
 		break;
-	case UDPServer::CONNECT:
+	case SceneManager::SCENE_ID_CONNECT:
 		UpdateConnect();
 		break;
-	case UDPServer::PLAY:
+	case SceneManager::SCENE_ID_PLAY:
 		UpdatePlay();
 		break;
-	case UDPServer::CLOSE:
+	case SceneManager::SCENE_ID_GAMEOVER:
 		UpdateClose();
-		break;
-	case UDPServer::END:
 		break;
 	default:
 		break;
@@ -77,15 +86,15 @@ void UDPServer::Release()
 	}
 }
 
-
-void UDPServer::UpdateInit()
+void UDPServer::UpdateConnect()
 {
 	bool check = false;
 
+	//ポート8888（接続相手テスト）に通信が来た時
 	if (CheckNetWorkRecvUDP(UDPConnectHandle_) == TRUE) {
 		IPDATA ip;
 		int rPort;
-		
+		//過去に接続した人でなければ
 		NetWorkRecvUDP(UDPConnectHandle_, &ip, &rPort, nullptr, 0, FALSE);
 		for (int i = 0; i < CONNECTMAX; i++) {
 			if (ip == IpAddr_[i]) {
@@ -93,27 +102,21 @@ void UDPServer::UpdateInit()
 				break;
 			}
 		}
-
+		//IPを保存しておく
 		if (!check) {
 			IpAddr_[connectnum_] = ip;
 			connectnum_++;
 		}
 
 	}
-
+	//接続人数が確定した時ポート番号を送る
 	if (connectnum_ == CONNECTMAX) {
-		state_ = CONNECT;
+		for (int i = 0; i < CONNECTMAX; i++) {
+			int data = SERVERPORT + i;
+			NetWorkSendUDP(UDPConnectHandle_, IpAddr_[i], CLIENTPORT, &data, sizeof(data));
+		}
 	}
-}
 
-void UDPServer::UpdateConnect()
-{
-	for (int i = 0; i < CONNECTMAX; i++) {
-		int data = SERVERPORT + i;
-		NetWorkSendUDP(UDPConnectHandle_, IpAddr_[i], CLIENTPORT, &data, sizeof(data));
-	}
-	me = { -1,-1,5,GetColor(155,155,0) };
-	you = { -1,-1,5,GetColor(0,0,0) };
 }
 
 void UDPServer::UpdatePlay()

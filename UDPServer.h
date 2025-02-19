@@ -23,22 +23,10 @@ class UDPServer :public GameObject
 	int UDPConnectHandle_;
 	//IP
 	IPDATA IpAddr_[CONNECTMAX];
+
 	//ê⁄ë±î‘çÜ
 	int connectnum_;
 
-	enum State
-	{
-		INIT,
-		CONNECT,
-		PLAY,
-		CLOSE,
-		END,
-
-	};
-
-	State state_;
-
-	void UpdateInit();
 	void UpdateConnect();
 	void UpdatePlay();
 	void UpdateClose();

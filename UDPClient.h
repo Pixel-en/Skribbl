@@ -17,17 +17,6 @@ class UDPClient :public GameObject
 	Circle me;
 	Circle you;
 
-	enum State
-	{
-		INIT,
-		CONNECT,
-		PLAY,
-		CLOSE,
-		END,
-	};
-
-	State state_;
-
 	void UpdateInit();
 	void UpdateConnect();
 	void UpdatePlay();

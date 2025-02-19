@@ -30,9 +30,13 @@ public:
 	{
 		SCENE_ID_TEST = 0,
 		SCENE_ID_TITLE,
+		SCENE_ID_CONNECT,
 		SCENE_ID_PLAY,
+		SCENE_ID_GAMEOVER
 	};
 	void ChangeScene(SCENE_ID next);
+
+	SCENE_ID GetCurrentSceneID() { return currentSceneID_; };
 
 private:
 	SCENE_ID currentSceneID_;	//åªç›ÇÃÉVÅ[Éì

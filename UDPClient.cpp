@@ -1,4 +1,5 @@
 #include "UDPClient.h"
+#include "Engine/SceneManager.h"
 
 UDPClient::UDPClient(GameObject* parent)
 	:GameObject(parent,"UDPClient"),UDPHandle(-1)
@@ -19,21 +20,21 @@ void UDPClient::Initialize()
 
 void UDPClient::Update()
 {
-	switch (state_)
+	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
+	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
+
+	switch (ID)
 	{
-	case UDPClient::INIT:
-		UpdateInit();
+	case SceneManager::SCENE_ID_TITLE:
 		break;
-	case UDPClient::CONNECT:
+	case SceneManager::SCENE_ID_CONNECT:
 		UpdateConnect();
 		break;
-	case UDPClient::PLAY:
+	case SceneManager::SCENE_ID_PLAY:
 		UpdatePlay();
 		break;
-	case UDPClient::CLOSE:
+	case SceneManager::SCENE_ID_GAMEOVER:
 		UpdateClose();
-		break;
-	case UDPClient::END:
 		break;
 	default:
 		break;
@@ -54,14 +55,12 @@ void UDPClient::Release()
 void UDPClient::UpdateInit()
 {
 	NetWorkSendUDP(UDPHandle, IpAddr, 8888, nullptr, 0);
-	state_ = CONNECT;
 }
 
 void UDPClient::UpdateConnect()
 {
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
 		NetWorkRecvUDP(UDPHandle, NULL, NULL, &ServerPort_, sizeof(ServerPort_), FALSE);
-		state_ = PLAY;
 	}
 
 	me = { -1,-1,5,GetColor(0,255,153) };
