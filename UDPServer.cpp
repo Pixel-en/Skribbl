@@ -112,13 +112,23 @@ void UDPServer::UpdateConnect()
 		int data = SERVERPORT + i;
 		NetWorkSendUDP(UDPConnectHandle_, IpAddr_[i], CLIENTPORT, &data, sizeof(data));
 	}
+	me = { -1,-1,5,GetColor(155,155,0) };
+	you = { -1,-1,5,GetColor(0,0,0) };
 }
 
 void UDPServer::UpdatePlay()
 {
 
 	GetMousePoint(&me.x, &me.y);
-	
+	for (int i = 0; i < CONNECTMAX; i++) {
+		if (CheckNetWorkRecvUDP(UDPHandle_[i]) == TRUE) {
+			NetWorkRecvUDP(UDPHandle_[i], NULL, NULL, &you, sizeof(you), FALSE);
+		}
+	}
+
+	for (int i = 0; i < CONNECTMAX; i++) {
+		NetWorkSendUDP(UDPHandle_[i], IpAddr_[i], CLIENTPORT, &me, sizeof(me));
+	}
 
 }
 

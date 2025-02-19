@@ -42,6 +42,8 @@ void UDPClient::Update()
 
 void UDPClient::Draw()
 {
+	DrawCircle(me.x, me.y, me.size, me.color, true);
+	DrawCircle(you.x, you.y, you.size, you.color, true);
 }
 
 void UDPClient::Release()
@@ -61,10 +63,19 @@ void UDPClient::UpdateConnect()
 		NetWorkRecvUDP(UDPHandle, NULL, NULL, &ServerPort_, sizeof(ServerPort_), FALSE);
 		state_ = PLAY;
 	}
+
+	me = { -1,-1,5,GetColor(0,255,153) };
+	you = { -1,-1,5,GetColor(0,0,0) };
 }
 
 void UDPClient::UpdatePlay()
 {
+	GetMousePoint(&me.x, &me.y);
+	NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, &me, sizeof(me));
+
+	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
+		NetWorkRecvUDP(UDPHandle, NULL, NULL, &you, sizeof(you), FALSE);
+	}
 }
 
 void UDPClient::UpdateClose()

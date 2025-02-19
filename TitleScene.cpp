@@ -9,7 +9,7 @@ TitleScene::TitleScene(GameObject* parent)
 
 void TitleScene::Initialize()
 {
-    Instantiate<UDPClient>(this);
+    Instantiate<UDPServer>(this);
 }
 
 void TitleScene::Update()

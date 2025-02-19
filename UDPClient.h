@@ -13,6 +13,9 @@ class UDPClient :public GameObject
 		int size;
 		unsigned int color;
 	};
+	
+	Circle me;
+	Circle you;
 
 	enum State
 	{
