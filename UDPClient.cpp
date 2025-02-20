@@ -9,6 +9,7 @@ UDPClient::UDPClient(GameObject* parent)
 	HandleCheck(UDPHandle, "ソケットが作られてない");
 	NowKeyInput_ = false;
 	IPSet_ = false;
+	name_ = "";
 }
 
 UDPClient::~UDPClient()
@@ -92,7 +93,7 @@ void UDPClient::UpdateConnect()
 			SetActiveKeyInput(hKeyData_);
 		}
 	}
-
+	
 	switch (CheckKeyInput(hKeyData_))
 	{
 	case 0:
@@ -106,10 +107,11 @@ void UDPClient::UpdateConnect()
 			int d4 = ((ip[3] - '0') * 100) + ((ip[4] - '0') * 10) + ((ip[5] - '0') * 1);
 			IpAddr.d3 = d3;
 			IpAddr.d4 = d4;
-			NowKeyInput_ = false;
-			IPSet_ = true;
 
-			NetWorkSendUDP(UDPHandle, IpAddr, 8888, &name_, sizeof(name_));
+			IPSet_ = true;
+			char sendname[256];
+			strcpy_s(sendname, sizeof(sendname), name_.c_str());
+			NetWorkSendUDP(UDPHandle, IpAddr, 8888, &sendname, sizeof(sendname));
 		}
 
 		break;
