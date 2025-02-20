@@ -9,13 +9,6 @@ ConnectScene::ConnectScene(GameObject* parent)
 
 void ConnectScene::Initialize()
 {
-	UDPServer* server = GetRootJob()->FindGameObject<UDPServer>();
-	if (server == nullptr) {
-		color_ = GetColor(255, 0, 0);
-	}
-	else {
-		color_ = GetColor(0, 255, 0);
-	}
 }
 
 void ConnectScene::Update()
@@ -24,7 +17,9 @@ void ConnectScene::Update()
 
 void ConnectScene::Draw()
 {
-	DrawCircle(50, 50, 10, color_, true);
+	XMINT2 Screen;
+	GetScreenState(&Screen.x, &Screen.y, NULL);
+	DrawBox(0, 0, Screen.x, Screen.y, GetColor(153, 255, 255), true);	//îwåi
 }
 
 void ConnectScene::Release()

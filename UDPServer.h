@@ -15,14 +15,22 @@ class UDPServer :public GameObject
 		unsigned int color;
 	};   // Structure to store the received circle data
 
+	struct User
+	{
+		std::string name_;
+		IPDATA IpAddr_;
+		int RecvUDPHandle_;
+	};
+
 	Circle me;
 	Circle you;
+	IPDATA MyIpAddr_;
 
 	//ソケット
-	int UDPHandle_[CONNECTMAX];
 	int UDPConnectHandle_;
-	//IP
-	IPDATA IpAddr_[CONNECTMAX];
+
+	User user[CONNECTMAX];
+	std::string name_;
 
 	//接続番号
 	int connectnum_;
@@ -30,6 +38,10 @@ class UDPServer :public GameObject
 	void UpdateConnect();
 	void UpdatePlay();
 	void UpdateClose();
+
+	void DrawConnect();
+	void DrawPlay();
+	void DrawClose();
 
 public:
 
@@ -51,5 +63,7 @@ public:
 
 	//開放
 	void Release() override;
+
+	void SetName(std::string _name) { name_ = _name; };
 };
 

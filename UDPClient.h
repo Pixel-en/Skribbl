@@ -17,10 +17,21 @@ class UDPClient :public GameObject
 	Circle me;
 	Circle you;
 
+	std::string name_;
+
+	int hKeyData_;
+	bool NowKeyInput_;
+	bool IPSet_;
+
 	void UpdateInit();
 	void UpdateConnect();
 	void UpdatePlay();
 	void UpdateClose();
+
+	void DrawInit();
+	void DrawConnect();
+	void DrawPlay();
+	void DrawClose();
 
 public:
 
@@ -42,5 +53,7 @@ public:
 
 	//ŠJ•ú
 	void Release() override;
+
+	void SetName(std::string _name) { name_ = _name; }
 };
 

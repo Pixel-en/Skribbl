@@ -19,16 +19,16 @@ void BackGround::Initialize()
 {
 	DrawBox(0, 0, 900, 500, GetColor(255, 255, 255), true);	//スケッチエリア
 	hPalletImage_ = LoadGraph("Assets\\Image\\ColorPallet4.png");
-	assert(hPalletImage_ >= 0);
+	HandleCheck(hPalletImage_, "パレットがない");
 
 	hFrameImage_ = LoadGraph("Assets\\Image\\PalletLineFrame.png");
-	assert(hFrameImage_ >= 0);
+	HandleCheck(hFrameImage_, "パレットフレームがない");
 
 	hEFrameImage_ = LoadGraph("Assets\\Image\\PalletEraseFrame.png");
-	assert(hEFrameImage_ >= 0);
+	HandleCheck(hEFrameImage_, "消しゴムフレームがない");
 
 	hCFrameImage_ = LoadGraph("Assets\\Image\\ChatFrame.png");
-	assert(hCFrameImage_>=0);
+	HandleCheck(hCFrameImage_, "チャットフレームがない");
 
 	linesize_ = 0;
 	Erase_ = false;

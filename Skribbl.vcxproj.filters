@@ -14,6 +14,12 @@
     <Filter Include="PlayScene">
       <UniqueIdentifier>{cd953ef8-1687-45bf-9596-e1f06625350e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ConnectScene">
+      <UniqueIdentifier>{0db3b5e4-53ab-4385-97d8-81b4c535cf86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TitleScene">
+      <UniqueIdentifier>{f369c2a8-e582-4916-a10a-a9e4223668be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\CsvReader.cpp">
@@ -62,7 +68,6 @@
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="TestScene.cpp" />
-    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="BackGround.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
@@ -80,6 +85,12 @@
     </ClCompile>
     <ClCompile Include="UDPServer.cpp" />
     <ClCompile Include="UDPClient.cpp" />
+    <ClCompile Include="ConnectScene.cpp">
+      <Filter>ConnectScene</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>TitleScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\CsvReader.h">
@@ -135,7 +146,6 @@
     </ClInclude>
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="TestObject.h" />
-    <ClInclude Include="TitleScene.h" />
     <ClInclude Include="PlayScene.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
@@ -153,5 +163,11 @@
     </ClInclude>
     <ClInclude Include="UDPServer.h" />
     <ClInclude Include="UDPClient.h" />
+    <ClInclude Include="ConnectScene.h">
+      <Filter>ConnectScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>TitleScene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
