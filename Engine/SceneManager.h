@@ -8,11 +8,12 @@
 //-----------------------------------------------------------
 class SceneManager : public GameObject
 {
-private:
+public:
+
 	//コンストラクタ
 	//引数：parent	親オブジェクト（基本的にゲームマネージャー）
 	SceneManager(GameObject* parent);
-public:
+
 	static SceneManager* Instance() {
 		static SceneManager* inst = nullptr;
 		if (inst == nullptr)

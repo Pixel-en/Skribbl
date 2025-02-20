@@ -167,13 +167,13 @@ public:
 	XMFLOAT3 GetPosition() { return transform_.position_; }
 	XMFLOAT3 GetRotate() { return transform_.rotate_; }
 	XMFLOAT3 GetScale() { return transform_.scale_; }
-	XMFLOAT3 GetWorldPosition() { return Transform::Float3Add(GetParent()->transform_.position_ , transform_.position_); }
+	XMFLOAT3 GetWorldPosition() { return Transform::Float3Add(GetParent()->transform_.position_, transform_.position_); }
 	XMFLOAT3 GetWorldRotate() { return Transform::Float3Add(GetParent()->transform_.rotate_, transform_.rotate_); }
 	XMFLOAT3 GetWorldScale() { return Transform::Float3Add(GetParent()->transform_.scale_, transform_.scale_); }
 	void SetPosition(XMFLOAT3 position) { transform_.position_ = position; }
-	void SetPosition(float x, float y, float z) { SetPosition(XMFLOAT3( x, y, z )); }
+	void SetPosition(float x, float y, float z) { SetPosition(XMFLOAT3(x, y, z)); }
 	void SetRotate(XMFLOAT3 rotate) { transform_.rotate_ = rotate; }
-	void SetRotate(float x, float y, float z) { SetRotate(XMFLOAT3( x, y, z )); }
+	void SetRotate(float x, float y, float z) { SetRotate(XMFLOAT3(x, y, z)); }
 	void SetRotateX(float x) { SetRotate(x, transform_.rotate_.y, transform_.rotate_.z); }
 	void SetRotateY(float y) { SetRotate(transform_.rotate_.x, y, transform_.rotate_.z); }
 	void SetRotateZ(float z) { SetRotate(transform_.rotate_.x, transform_.rotate_.y, z); }
@@ -186,7 +186,6 @@ private:
 	//オブジェクト削除（再帰）
 	//引数：obj　削除するオブジェクト
 	void KillObjectSub(GameObject* obj);
-
 
 private:
 	//フラグ
@@ -205,9 +204,9 @@ private:
 	//子オブジェクトリスト
 	std::list<GameObject*> childList_;
 
-//便利関数系を作ったら入れておきたい
+	//便利関数系を作ったら入れておきたい
 public:
-	
+
 	/// <summary>
 	/// 値を丸めて返す
 	/// </summary>
@@ -217,7 +216,7 @@ public:
 	/// <param name="_max">最大値</param>
 	/// <returns>丸めた値</returns>
 	template <typename T>
-	T Clamp(T _val,T _min,T _max) {
+	T Clamp(T _val, T _min, T _max) {
 		if (_min > _max)
 			return 0;
 
@@ -227,6 +226,13 @@ public:
 			return _max;
 		return _val;
 	}
+
+protected:
+
+	//ハンドルがあるかチェック
+	//引数：handle　調べるハンドル
+	//引数：str ハンドルがない時のエラーメッセージ
+	void HandleCheck(int handle, std::string str);
 
 };
 

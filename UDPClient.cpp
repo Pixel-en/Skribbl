@@ -20,6 +20,7 @@ void UDPClient::Initialize()
 
 void UDPClient::Update()
 {
+
 	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
 	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
 

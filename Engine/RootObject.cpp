@@ -14,21 +14,21 @@ RootObject::~RootObject()
 
 void RootObject::Initialize()
 {
-	SceneManager::Instance()->Initialize();
-//	Instantiate<SceneManager>(this);
+	//SceneManager::Instance()->Initialize();
+	Instantiate<SceneManager>(this);
 }
 
 void RootObject::Update()
 {
-	SceneManager::Instance()->UpdateSub();
+	//SceneManager::Instance()->UpdateSub();
 }
 
 void RootObject::Draw()
 {
-	SceneManager::Instance()->DrawSub();
+	//SceneManager::Instance()->DrawSub();
 }
 
 void RootObject::Release()
 {
-	SceneManager::Instance()->ReleaseSub();
+	//SceneManager::Instance()->ReleaseSub();
 }

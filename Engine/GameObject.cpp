@@ -206,6 +206,15 @@ void GameObject::KillObjectSub(GameObject * obj)
 	obj->Release();
 }
 
+void GameObject::HandleCheck(int handle,std::string str)
+{
+	if (handle < 0) {
+		MessageBox(NULL, str.c_str(), objectName_.c_str(), MB_OK);
+		exit(0);
+	}
+
+}
+
 
 //RootJob‚ðŽæ“¾
 GameObject * GameObject::GetRootJob()

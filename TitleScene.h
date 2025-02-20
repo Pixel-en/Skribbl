@@ -5,6 +5,19 @@
 class TitleScene : public GameObject
 {
     int hImage_;
+    int hSButtonImage_;
+    int hCButtonImage_;
+    int hMoveImage_;
+
+    int movex;
+
+    enum State {
+        NONE,
+        SERVER,
+        CLIENT,
+        MAX
+    };
+    State state_;
 
 public:
     // コンストラクタ

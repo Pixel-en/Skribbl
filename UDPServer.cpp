@@ -19,13 +19,13 @@ UDPServer::UDPServer(GameObject* parent)
 
 	for (int i = 0; i < CONNECTMAX; i++) {
 		UDPHandle_[i] = MakeUDPSocket(SERVERPORT + i);
-		assert(UDPHandle_[i] >= 0);
+		HandleCheck(UDPHandle_[i], "ソケットが作れてない");
 
 		IpAddr_[i] = { 0,0,0,0 };
 	}
 
 	UDPConnectHandle_ = MakeUDPSocket(8888);
-	assert(UDPConnectHandle_ >= 0);
+	HandleCheck(UDPConnectHandle_, "ソケットが作れてない");
 
 
 	me = { -1,-1,5,GetColor(155,155,0) };
@@ -44,13 +44,9 @@ void UDPServer::Initialize()
 
 void UDPServer::Update()
 {
-	//SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
-	//if (sc == nullptr) {
-	//	MessageBox(NULL, "scenemanagerがない", "server", MB_OK);
-	//	exit(0);
-	//}
-	//SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
-	SceneManager::SCENE_ID ID = SceneManager::Instance()->GetCurrentSceneID();
+
+	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
+	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
 
 	switch (ID)
 	{
@@ -80,10 +76,6 @@ void UDPServer::Draw()
 
 void UDPServer::Release()
 {   
-	// Clean up resources
-	for (int i = 0; i < CONNECTMAX; i++) {
-		DeleteUDPSocket(UDPHandle_[i]);
-	}
 }
 
 void UDPServer::UpdateConnect()
@@ -137,4 +129,8 @@ void UDPServer::UpdatePlay()
 
 void UDPServer::UpdateClose()
 {
+	// Clean up resources
+	for (int i = 0; i < CONNECTMAX; i++) {
+		DeleteUDPSocket(UDPHandle_[i]);
+	}
 }
