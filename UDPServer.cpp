@@ -108,7 +108,7 @@ void UDPServer::UpdateConnect()
 	if (CheckNetWorkRecvUDP(UDPConnectHandle_) == TRUE) {
 		IPDATA ip;
 		int rPort;
-		std::string Recvname;
+		char Recvname[256];
 		//âﬂãéÇ…ê⁄ë±ÇµÇΩêlÇ≈Ç»ÇØÇÍÇŒ
 		NetWorkRecvUDP(UDPConnectHandle_, &ip, &rPort, &Recvname, sizeof(Recvname), FALSE);
 		for (int i = 0; i < CONNECTMAX; i++) {
@@ -120,7 +120,8 @@ void UDPServer::UpdateConnect()
 		//IPÇï€ë∂ÇµÇƒÇ®Ç≠
 		if (!check) {
 			user[connectnum_].IpAddr_ = ip;
-			user[connectnum_].name_ = Recvname;
+			std::string _name(Recvname);
+			user[connectnum_].name_ = _name;
 			connectnum_++;
 		}
 
