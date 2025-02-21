@@ -204,10 +204,10 @@ void UDPClient::DrawConnect()
 			}
 
 			if (isConnect_) {
-				DrawStringToHandle(IPFRAME.x, IPFRAME.y, ("ë“ã@íÜ" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
+				DrawStringToHandle(IPFRAME.x, 300, ("ë“ã@íÜ" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
 			}
 			else {
-				DrawStringToHandle(IPFRAME.x, IPFRAME.y, ("ê⁄ë±íÜ" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
+				DrawStringToHandle(IPFRAME.x, 300, ("ê⁄ë±íÜ" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
 			}
 			count++;
 		}
