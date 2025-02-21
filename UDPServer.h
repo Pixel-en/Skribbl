@@ -8,6 +8,7 @@ namespace {
 class UDPServer :public GameObject
 {
 	int h64Font_;
+	int h32Font_;
 	int hNameFrame_;
 
 	struct Circle {

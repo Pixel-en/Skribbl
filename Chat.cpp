@@ -70,3 +70,7 @@ void Chat::Draw() {
 void Chat::Release() {
 }
 
+void Chat::CheckTheme(const std::string& answer)
+{
+}
+

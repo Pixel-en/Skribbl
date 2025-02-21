@@ -39,6 +39,7 @@ UDPServer::UDPServer(GameObject* parent)
 	you = { -1,-1,5,GetColor(0,0,0) };
 
 	h64Font_ = CreateFontToHandle("64", 64, -1, -1);
+	h32Font_ = CreateFontToHandle("32", 32, -1, -1);
 }
 
 UDPServer::~UDPServer()
@@ -211,10 +212,10 @@ void UDPServer::DrawConnect()
 	for (int i = 0; i < connectnum_ + 1; i++) {
 		DrawGraph(300, 200+i*120, hNameFrame_, true);
 		if (i == 0) {
-			DrawStringToHandle(500, 200 + i * 120+10, name_.c_str(), GetColor(0, 0, 0),h64Font_);
+			DrawStringToHandle(500, 200 + i * 120+10, name_.c_str(), GetColor(0, 0, 0),h32Font_);
 		}
 		else {
-			DrawStringToHandle(500, 200 + i * 120+20, user[i - 1].name_.c_str(), GetColor(0, 0, 0),h64Font_);
+			DrawStringToHandle(500, 200 + i * 120+20, user[i - 1].name_.c_str(), GetColor(0, 0, 0),h32Font_);
 		}
 	}
 
