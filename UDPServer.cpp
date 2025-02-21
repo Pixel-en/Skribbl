@@ -197,7 +197,7 @@ void UDPServer::UpdatePlay()
 				c->AddAns(str);
 				for (int j = 0; j < connectnum_; j++) {
 					if (i != j) {
-						NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text, sizeof(text));
+						NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, text, sizeof(text));
 					}
 				}
 			}
@@ -209,7 +209,7 @@ void UDPServer::UpdatePlay()
 	std::string str = c->GetText();
 	if (str != "") {
 		char text_[64];
-		strcpy_s(text_, sizeof(text_), (name_ + str).c_str());
+		strcpy_s(text_, sizeof(text_), (name_ + "ÅF" + str).c_str());
 		for (int i = 0; i < connectnum_; i++) {
 			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
 		}
