@@ -205,33 +205,15 @@ void UDPServer::UpdatePlay()
 		}
 	}
 
-	////チャット受信
-	//for (int i = 0; i < connectnum_; i++) {
-	//	if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
-	//		char text[64] = "";
-	//		NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, text, sizeof(text), FALSE);
-	//		text[std::strlen(text)] = '\0';
-	//		std::string str(text);
-	//		if (str != "") {
-	//			c.AddAns(str);
-	//			for (int j = 0; j < connectnum_; j++) {
-	//				if (i != j) {
-	//					NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text, sizeof(text));
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
-
-	////送信
-	//std::string str = c.GetText();
-	//if (str != "") {
-	//	char text_[64];
-	//	strcpy_s(text_, sizeof(text_), str.c_str());
-	//	for (int i = 0; i < connectnum_; i++) {
-	//		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
-	//	}
-	//}
+	//送信
+	std::string str = c->GetText();
+	if (str != "") {
+		char text_[64];
+		strcpy_s(text_, sizeof(text_), str.c_str());
+		for (int i = 0; i < connectnum_; i++) {
+			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+		}
+	}
 
 }
 
