@@ -3,7 +3,7 @@
 
 class ConnectScene : public GameObject
 {
-    unsigned int color_;
+    int hImage_;
 public:
     // コンストラクタ
     // 引数：parent 親オブジェクト（SceneManager）

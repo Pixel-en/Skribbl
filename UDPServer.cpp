@@ -43,7 +43,10 @@ UDPServer::UDPServer(GameObject* parent)
 
 UDPServer::~UDPServer()
 {
-
+	for (int i = 0; i < CONNECTMAX; i++) {
+		DeleteUDPSocket(user[i].RecvUDPHandle_);
+	}
+	DeleteUDPSocket(UDPConnectHandle_);
 }
 
 void UDPServer::Initialize()
@@ -128,31 +131,33 @@ void UDPServer::UpdateConnect()
 {
 	bool check = false;
 
-	//ポート8888（接続相手テスト）に通信が来た時
-	if (CheckNetWorkRecvUDP(UDPConnectHandle_) == TRUE) {
-		IPDATA ip;
-		int rPort;
-		char Recvname[256];
-		//過去に接続した人でなければ
-		NetWorkRecvUDP(UDPConnectHandle_, &ip, &rPort, &Recvname, sizeof(Recvname), FALSE);
-		for (int i = 0; i < CONNECTMAX; i++) {
-			if (ip == user[i].IpAddr_) {
-				check = true;
-				break;
+	if (connectnum_ < CONNECTMAX) {
+		//ポート8888（接続相手テスト）に通信が来た時
+		if (CheckNetWorkRecvUDP(UDPConnectHandle_) == TRUE) {
+			IPDATA ip = { 0,0,0,0 };
+			int rPort;
+			char Recvname[256];
+			//過去に接続した人でなければ
+			NetWorkRecvUDP(UDPConnectHandle_, &ip, &rPort, &Recvname, sizeof(Recvname), FALSE);
+			for (int i = 0; i < CONNECTMAX; i++) {
+				if (ip == user[i].IpAddr_) {
+					check = true;
+					break;
+				}
 			}
-		}
-		//IPを保存しておく
-		if (!check) {
-			user[connectnum_].IpAddr_ = ip;
-			Recvname[std::strlen(Recvname)] = '\0';
-			std::string _name(Recvname);
-			user[connectnum_].name_ = _name;
-			connectnum_++;
+			//IPを保存しておく
+			if (!check) {
+				user[connectnum_].IpAddr_ = ip;
+				Recvname[std::strlen(Recvname)] = '\0';
+				std::string _name(Recvname);
+				user[connectnum_].name_ = _name;
+				connectnum_++;
 
-			//接続できたことを送信
-			NetWorkSendUDP(UDPConnectHandle_, ip, 9876, NULL, 0);
-		}
+				//接続できたことを送信
+				NetWorkSendUDP(UDPConnectHandle_, ip, 9876, NULL, 0);
+			}
 
+		}
 	}
 
 	if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
@@ -212,12 +217,12 @@ void UDPServer::DrawConnect()
 
 	//参加者の名前表示
 	for (int i = 0; i < connectnum_ + 1; i++) {
-		DrawGraph(300, 200+i*100, hNameFrame_, true);
+		DrawGraph(300, 200+i*120, hNameFrame_, true);
 		if (i == 0) {
-			DrawStringToHandle(500, 500 / (connectnum_ + 1) * i + 200, name_.c_str(), GetColor(255, 255, 255),h64Font_);
+			DrawStringToHandle(500, 200 + i * 120+10, name_.c_str(), GetColor(0, 0, 0),h64Font_);
 		}
 		else {
-			DrawStringToHandle(500, 500 / (connectnum_ + 1) * i + 200, user[i - 1].name_.c_str(), GetColor(255, 255, 255),h64Font_);
+			DrawStringToHandle(500, 200 + i * 120+20, user[i - 1].name_.c_str(), GetColor(0, 0, 0),h64Font_);
 		}
 	}
 
