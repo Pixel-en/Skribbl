@@ -22,7 +22,7 @@ void Chat::Initialize() {
 }
 
 void Chat::Update() {
-    SetUseIMEFlag(false);
+    //SetUseIMEFlag(false);
 
     switch (CheckKeyInput(hKeyData_)) {
     case 0:
@@ -68,5 +68,9 @@ void Chat::Draw() {
 }
 
 void Chat::Release() {
+}
+
+void Chat::CheckTheme(const std::string& answer)
+{
 }
 
