@@ -162,12 +162,12 @@ void UDPClient::UpdateConnect()
 
 void UDPClient::UpdatePlay()
 {
-	GetMousePoint(&me.x, &me.y);
-	NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, &me, sizeof(me));
+	//GetMousePoint(&me.x, &me.y);
+	//NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, &me, sizeof(me));
 
-	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
-		NetWorkRecvUDP(UDPHandle, NULL, NULL, &you, sizeof(you), FALSE);
-	}
+	//if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
+	//	NetWorkRecvUDP(UDPHandle, NULL, NULL, &you, sizeof(you), FALSE);
+	//}
 }
 
 void UDPClient::UpdateClose()
