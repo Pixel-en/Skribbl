@@ -25,6 +25,7 @@ UDPClient::UDPClient(GameObject* parent)
 UDPClient::~UDPClient()
 {
 	DeleteUDPSocket(UDPHandle);
+	DeleteUDPSocket(hConnectCheck_);
 }
 
 void UDPClient::Initialize()
@@ -149,6 +150,8 @@ void UDPClient::UpdateConnect()
 		else {
 			if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
 				NetWorkRecvUDP(UDPHandle, NULL, NULL, &ServerPort_, sizeof(ServerPort_), FALSE);
+				SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
+				sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 			}
 		}
 	}
