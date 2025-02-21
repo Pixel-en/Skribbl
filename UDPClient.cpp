@@ -163,6 +163,9 @@ void UDPClient::UpdatePlay()
 {
 
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
+	if (c == nullptr)
+		return;
+
 	std::string str = c->GetText();
 	if (str != "") {
 		char text_[64];

@@ -184,6 +184,8 @@ void UDPServer::UpdateConnect()
 void UDPServer::UpdatePlay()
 {
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
+	if (c == nullptr)
+		return;
 
 	for (int i = 0; i < connectnum_; i++) {
 		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
