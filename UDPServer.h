@@ -2,7 +2,7 @@
 #include "Engine/GameObject.h"
 
 namespace {
-	const int CONNECTMAX{ 1 };
+	const int CONNECTMAX{ 3 };
 }
 
 class UDPServer :public GameObject

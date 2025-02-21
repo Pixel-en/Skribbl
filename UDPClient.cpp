@@ -156,18 +156,11 @@ void UDPClient::UpdateConnect()
 		}
 	}
 
-	//me = { -1,-1,5,GetColor(0,255,153) };
-	//you = { -1,-1,5,GetColor(0,0,0) };
 }
 
 void UDPClient::UpdatePlay()
 {
-	//GetMousePoint(&me.x, &me.y);
-	//NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, &me, sizeof(me));
 
-	//if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
-	//	NetWorkRecvUDP(UDPHandle, NULL, NULL, &you, sizeof(you), FALSE);
-	//}
 }
 
 void UDPClient::UpdateClose()
@@ -186,6 +179,7 @@ void UDPClient::DrawConnect()
 	if (NowKeyInput_) {
 		SetKeyInputStringFont(h64Font_);
 		DrawKeyInputString(410, 110, hKeyData_);
+		SetKeyInputStringFont(-1);
 	}
 	else {
 		if (IPSet_) {

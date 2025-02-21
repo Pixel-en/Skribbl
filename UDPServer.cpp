@@ -171,11 +171,13 @@ void UDPServer::UpdateConnect()
 	}
 
 	//接続人数が確定した時ポート番号を送る
-	if (connectnum_ == CONNECTMAX || isConnect_ == true) {
+	if (isConnect_ == true) {
 		for (int i = 0; i < connectnum_; i++) {
 			int data = SERVERPORT + i;
 			NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &data, sizeof(data));
 		}
+		SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
+		sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 	}
 
 }
@@ -183,16 +185,6 @@ void UDPServer::UpdateConnect()
 void UDPServer::UpdatePlay()
 {
 
-	GetMousePoint(&me.x, &me.y);
-	for (int i = 0; i < CONNECTMAX; i++) {
-		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
-			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, &you, sizeof(you), FALSE);
-		}
-	}
-
-	for (int i = 0; i < CONNECTMAX; i++) {
-		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &me, sizeof(me));
-	}
 
 }
 
