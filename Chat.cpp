@@ -70,11 +70,3 @@ void Chat::Draw() {
 void Chat::Release() {
 }
 
-void Chat::CheckTheme(const std::string& answer) {
-    //if (theme_) {
-    //    std::string currentTheme = theme_->GetCurrentTheme();
-    //    if (answer == currentTheme) {
-    //        StrHistory_.push_front("ƒQ[ƒ€: ³‰ğ‚Å‚·I");
-    //    }
-    //}
-}
