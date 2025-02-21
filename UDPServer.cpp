@@ -183,7 +183,7 @@ void UDPServer::UpdateConnect()
 
 void UDPServer::UpdatePlay()
 {
-	Chat* c = GetRootJob()->FindGameObject<Chat>();
+	Chat* c = GetParent()->FindGameObject<Chat>();
 	if (c == nullptr)
 		return;
 

@@ -104,7 +104,7 @@ void TitleScene::Update()
 			UDPServer* us = Instantiate<UDPServer>(GetRootJob());
 			us->SetName(name_);
 			SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
-			sc->ChangeScene(SceneManager::SCENE_ID_CONNECT);
+			sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 			break;
 		}
 	case TitleScene::CLIENT:

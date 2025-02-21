@@ -3,7 +3,7 @@
 #include <string>
 #include <list>
 
-class Chat final : public GameObject {
+class Chat : public GameObject {
 
     int hKeyData_;
 
