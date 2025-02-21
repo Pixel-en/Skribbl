@@ -3,7 +3,7 @@
 #include "Engine/SceneManager.h"
 
 namespace {
-	const XMINT4 IPFRAME{ 400, 100, 750, 200 };
+	const XMINT4 IPFRAME{ 465, 100, 815, 200 };
 }
 
 UDPClient::UDPClient(GameObject* parent)
@@ -178,7 +178,7 @@ void UDPClient::DrawConnect()
 
 	if (NowKeyInput_) {
 		SetKeyInputStringFont(h64Font_);
-		DrawKeyInputString(410, 110, hKeyData_);
+		DrawKeyInputString(IPFRAME.x+10, IPFRAME.y+18, hKeyData_);
 		SetKeyInputStringFont(-1);
 	}
 	else {
@@ -189,11 +189,12 @@ void UDPClient::DrawConnect()
 			d3.insert(0, 3 - d3.length(), '0');
 			d4.insert(0, 3 - d4.length(), '0');
 			std::string ip = d3 + d4;
-			DrawStringToHandle(IPFRAME.x, IPFRAME.y, ip.c_str(), GetColor(200, 200, 200), h64Font_);
+			DrawStringToHandle(IPFRAME.x+10, IPFRAME.y+18, ip.c_str(), GetColor(200, 200, 200), h64Font_);
 
 			static int count = 0;
 			if (count >= 240)
 				count = 0;
+
 
 			std::string bDot = "";
 			for (int i = 0; i < count / 60; i++) {
@@ -201,15 +202,15 @@ void UDPClient::DrawConnect()
 			}
 
 			if (isConnect_) {
-				DrawStringToHandle(IPFRAME.x, 300, ("待機中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
+				DrawStringToHandle(IPFRAME.x+35, 300, ("待機中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
 			}
 			else {
-				DrawStringToHandle(IPFRAME.x, 300, ("接続中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
+				DrawStringToHandle(IPFRAME.x+35, 300, ("接続中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
 			}
 			count++;
 		}
 		else {
-			DrawStringToHandle(IPFRAME.x, IPFRAME.y, "ルーム番号", GetColor(180, 180, 180), h64Font_);
+			DrawStringToHandle(IPFRAME.x+10, IPFRAME.y+18, "ルーム番号", GetColor(180, 180, 180), h64Font_);
 		}
 	}
 

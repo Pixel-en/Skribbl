@@ -205,16 +205,16 @@ void UDPServer::DrawConnect()
 	d4.insert(0, 3 - d4.length(), '0');
 	pass += d3 + d4;
 	//じぶんのIP表示
-	DrawStringToHandle(200, 100, pass.c_str(), GetColor(0, 0, 0),h64Font_);
+	DrawStringToHandle(320, 60,pass.c_str(), GetColor(0, 0, 0),h64Font_);
 
 	//参加者の名前表示
 	for (int i = 0; i < connectnum_ + 1; i++) {
-		DrawGraph(300, 200+i*120, hNameFrame_, true);
+		DrawGraph(350, 200+i*90, hNameFrame_, true);
 		if (i == 0) {
-			DrawStringToHandle(500, 200 + i * 120+10, name_.c_str(), GetColor(0, 0, 0),h64Font_);
+			DrawStringToHandle(520, 200 + i * 90+10, name_.c_str(), GetColor(0, 0, 0),h64Font_);
 		}
 		else {
-			DrawStringToHandle(500, 200 + i * 120+20, user[i - 1].name_.c_str(), GetColor(0, 0, 0),h64Font_);
+			DrawStringToHandle(520, 200 + i * 90+10, user[i - 1].name_.c_str(), GetColor(0, 0, 0),h64Font_);
 		}
 	}
 
