@@ -7,6 +7,8 @@ namespace {
 
 class UDPServer :public GameObject
 {
+	int h64Font_;
+	int hNameFrame_;
 
 	struct Circle {
 		int x;
@@ -24,8 +26,8 @@ class UDPServer :public GameObject
 
 	Circle me;
 	Circle you;
-	IPDATA MyIpAddr_;
 
+	IPDATA MyIpAddr_;
 	//ソケット
 	int UDPConnectHandle_;
 
@@ -34,6 +36,7 @@ class UDPServer :public GameObject
 
 	//接続番号
 	int connectnum_;
+	bool isConnect_;
 
 	void UpdateConnect();
 	void UpdatePlay();

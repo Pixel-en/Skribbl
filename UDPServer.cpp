@@ -1,4 +1,5 @@
 #include "UDPServer.h"
+#include <cstring>
 #include "Engine/SceneManager.h"
 
 inline bool operator == (const IPDATA& a, const IPDATA& b) {
@@ -10,12 +11,14 @@ inline bool operator == (const IPDATA& a, const IPDATA& b) {
 namespace {
 	const int SERVERPORT{ 9850 };
 	const int CLIENTPORT{ 8888 };
+	const XMINT4 CONNECTFRAME{ 900,600,1200,700 };
 }
 
 UDPServer::UDPServer(GameObject* parent)
-	:GameObject(parent, "UDPServer")
+	:GameObject(parent, "UDPServer"),hNameFrame_(-1)
 {
 	connectnum_ = 0;
+	isConnect_ = false;
 
 	for (int i = 0; i < CONNECTMAX; i++) {
 		user[i].RecvUDPHandle_ = MakeUDPSocket(SERVERPORT + i);
@@ -27,12 +30,15 @@ UDPServer::UDPServer(GameObject* parent)
 	UDPConnectHandle_ = MakeUDPSocket(8888);
 	HandleCheck(UDPConnectHandle_, "ソケットが作れてない");
 
+	//自分のIPアドレスを取得
 	IPDATA ip[2];
 	GetMyIPAddress(ip, 2, NULL);
 	MyIpAddr_ = ip[1];
 
 	me = { -1,-1,5,GetColor(155,155,0) };
 	you = { -1,-1,5,GetColor(0,0,0) };
+
+	h64Font_ = CreateFontToHandle("64", 64, -1, -1);
 }
 
 UDPServer::~UDPServer()
@@ -42,7 +48,24 @@ UDPServer::~UDPServer()
 
 void UDPServer::Initialize()
 {
-	SetFontSize(64);
+	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
+	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
+
+	switch (ID)
+	{
+	case SceneManager::SCENE_ID_TITLE:
+		break;
+	case SceneManager::SCENE_ID_CONNECT:
+		hNameFrame_ = LoadGraph("Assets\\Image\\NameFrame.png");
+		HandleCheck(hNameFrame_, "ネームフレーム画像がない");
+		break;
+	case SceneManager::SCENE_ID_PLAY:
+		break;
+	case SceneManager::SCENE_ID_GAMEOVER:
+		break;
+	default:
+		break;
+	}
 }
 
 void UDPServer::Update()
@@ -77,6 +100,7 @@ void UDPServer::Draw()
 
 	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
 	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
+
 
 	switch (ID)
 	{
@@ -120,15 +144,30 @@ void UDPServer::UpdateConnect()
 		//IPを保存しておく
 		if (!check) {
 			user[connectnum_].IpAddr_ = ip;
+			Recvname[std::strlen(Recvname)] = '\0';
 			std::string _name(Recvname);
 			user[connectnum_].name_ = _name;
 			connectnum_++;
+
+			//接続できたことを送信
+			NetWorkSendUDP(UDPConnectHandle_, ip, 9876, NULL, 0);
 		}
 
 	}
+
+	if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
+		XMINT2 pos;
+		GetMousePoint(&pos.x, &pos.y);
+
+		if (pos.x >= CONNECTFRAME.x && pos.x <= CONNECTFRAME.z &&
+			pos.y >= CONNECTFRAME.y && pos.y <= CONNECTFRAME.w && connectnum_ > 0) {
+			isConnect_ = true;
+		}
+	}
+
 	//接続人数が確定した時ポート番号を送る
-	if (connectnum_ == CONNECTMAX) {
-		for (int i = 0; i < CONNECTMAX; i++) {
+	if (connectnum_ == CONNECTMAX || isConnect_ == true) {
+		for (int i = 0; i < connectnum_; i++) {
 			int data = SERVERPORT + i;
 			NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &data, sizeof(data));
 		}
@@ -168,16 +207,25 @@ void UDPServer::DrawConnect()
 	d3.insert(0, 3 - d3.length(), '0');
 	d4.insert(0, 3 - d4.length(), '0');
 	pass += d3 + d4;
-	DrawString(200, 100, pass.c_str(), GetColor(0, 0, 0));
+	//じぶんのIP表示
+	DrawStringToHandle(200, 100, pass.c_str(), GetColor(0, 0, 0),h64Font_);
 
+	//参加者の名前表示
 	for (int i = 0; i < connectnum_ + 1; i++) {
+		DrawGraph(300, 200+i*100, hNameFrame_, true);
 		if (i == 0) {
-			DrawString(500, 500 / (connectnum_ + 1) *i+200, name_.c_str(), GetColor(255, 255, 255));
+			DrawStringToHandle(500, 500 / (connectnum_ + 1) * i + 200, name_.c_str(), GetColor(255, 255, 255),h64Font_);
 		}
 		else {
-			DrawString(500, 500 / (connectnum_ + 1) * i + 200, user[i-1].name_.c_str(), GetColor(255, 255, 255));
+			DrawStringToHandle(500, 500 / (connectnum_ + 1) * i + 200, user[i - 1].name_.c_str(), GetColor(255, 255, 255),h64Font_);
 		}
 	}
+
+	//スタートボタン表示
+	DrawBox(CONNECTFRAME.x, CONNECTFRAME.y, CONNECTFRAME.z, CONNECTFRAME.w, GetColor(200, 200, 200), true);
+	DrawBox(CONNECTFRAME.x, CONNECTFRAME.w - 3, CONNECTFRAME.z, CONNECTFRAME.w, GetColor(150, 150, 150), true);
+	DrawBox(CONNECTFRAME.z - 3, CONNECTFRAME.y, CONNECTFRAME.z, CONNECTFRAME.w, GetColor(150, 150, 150), true);
+
 }
 
 void UDPServer::DrawPlay()

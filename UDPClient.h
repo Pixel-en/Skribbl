@@ -5,8 +5,9 @@ class UDPClient :public GameObject
 {
 	IPDATA IpAddr;
 	int UDPHandle;
+	int hConnectCheck_;
 	int ServerPort_;
-
+	bool isConnect_;
 	struct Circle {
 		int x;
 		int y;
@@ -20,6 +21,7 @@ class UDPClient :public GameObject
 	std::string name_;
 
 	int hKeyData_;
+	int h64Font_;
 	bool NowKeyInput_;
 	bool IPSet_;
 

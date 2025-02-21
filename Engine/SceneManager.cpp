@@ -6,6 +6,9 @@
 #include "../ConnectScene.h"
 #include "time.h"
 
+#include "../UDPClient.h"
+#include "../UDPServer.h"
+
 //コンストラクタ
 SceneManager::SceneManager(GameObject * parent)
 	: GameObject(parent, "SceneManager")
@@ -44,6 +47,15 @@ void SceneManager::Update()
 
 		}
 		currentSceneID_ = nextSceneID_;
+
+		UDPServer* server = GetParent()->FindGameObject<UDPServer>();
+		UDPClient* client = GetParent()->FindGameObject<UDPClient>();
+
+		if (server != nullptr)
+			server->Initialize();
+		if (client != nullptr)
+			client->Initialize();
+
 	}
 }
 
