@@ -162,21 +162,21 @@ void UDPClient::UpdateConnect()
 void UDPClient::UpdatePlay()
 {
 
-	Chat c = GetRootJob()->FindGameObject<Chat>();
-	std::string str = c.GetText();
+	Chat* c = GetRootJob()->FindGameObject<Chat>();
+	std::string str = c->GetText();
 	if (str != "") {
 		char text_[64];
 		strcpy_s(text_, sizeof(text_), str.c_str());
 		NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, text_, sizeof(text_));
 	}
 
-	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
-		char text[64] = "";
-		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
-		text[std::strlen(text)] = '\0';
-		std::string str(text);
-		c.AddAns(str);
-	}
+	//if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
+	//	char text[64] = "";
+	//	NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
+	//	text[std::strlen(text)] = '\0';
+	//	std::string str(text);
+	//	c->AddAns(str);
+	//}
 }
 
 void UDPClient::UpdateClose()

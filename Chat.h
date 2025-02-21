@@ -31,5 +31,5 @@ public:
 
     void CheckTheme(const std::string& answer);
 
-    std::string GetText() { return ans; }
+    std::string GetText() {return ans; }
 };

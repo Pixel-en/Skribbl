@@ -137,7 +137,7 @@ void UDPServer::UpdateConnect()
 			IPDATA ip = { 0,0,0,0 };
 			char Recvname[256];
 			//過去に接続した人でなければ
-			NetWorkRecvUDP(UDPConnectHandle_, &ip, NULL, &Recvname, sizeof(Recvname), FALSE);
+			NetWorkRecvUDP(UDPConnectHandle_, &ip, NULL, Recvname, sizeof(Recvname), FALSE);
 			for (int i = 0; i < CONNECTMAX; i++) {
 				if (ip == user[i].IpAddr_) {
 					check = true;
@@ -183,7 +183,53 @@ void UDPServer::UpdateConnect()
 
 void UDPServer::UpdatePlay()
 {
+	Chat* c = GetRootJob()->FindGameObject<Chat>();
 
+	for (int i = 0; i < connectnum_; i++) {
+		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
+			char text[64] = "";
+			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, text, sizeof(text), FALSE);
+			text[std::strlen(text)] = '\0';
+			std::string str(text);
+			if (str != "") {
+				c->AddAns(str);
+				for (int j = 0; j < connectnum_; j++) {
+					if (i != j) {
+						NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text, sizeof(text));
+					}
+				}
+			}
+			
+		}
+	}
+
+	////チャット受信
+	//for (int i = 0; i < connectnum_; i++) {
+	//	if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
+	//		char text[64] = "";
+	//		NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, text, sizeof(text), FALSE);
+	//		text[std::strlen(text)] = '\0';
+	//		std::string str(text);
+	//		if (str != "") {
+	//			c.AddAns(str);
+	//			for (int j = 0; j < connectnum_; j++) {
+	//				if (i != j) {
+	//					NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text, sizeof(text));
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+
+	////送信
+	//std::string str = c.GetText();
+	//if (str != "") {
+	//	char text_[64];
+	//	strcpy_s(text_, sizeof(text_), str.c_str());
+	//	for (int i = 0; i < connectnum_; i++) {
+	//		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+	//	}
+	//}
 
 }
 
@@ -227,34 +273,7 @@ void UDPServer::DrawConnect()
 void UDPServer::DrawPlay()
 {
 
-	Chat c = GetRootJob()->FindGameObject<Chat>();
 
-	//チャット受信
-	for (int i = 0; i < connectnum_; i++) {
-		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
-			char text[64] = "";
-			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, &text, sizeof(text), FALSE);
-			text[std::strlen(text)] = '\0';
-			std::string str(text);
-			if (str != "") {
-				c.AddAns(str);
-				for (int j = 0; j < connectnum_; j++) {
-					if (i != j) {
-						NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text, sizeof(text));
-					}
-				}
-			}
-		}
-	}
-	//送信
-	std::string str = c.GetText();
-	if (str != "") {
-		char text_[64];
-		strcpy_s(text_, sizeof(text_), str.c_str());
-		for (int i = 0; i < connectnum_; i++) {
-			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
-		}
-	}
 }
 
 void UDPServer::DrawClose()
