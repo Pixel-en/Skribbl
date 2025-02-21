@@ -77,14 +77,16 @@ void TitleScene::Update()
 		NowNameInput_ = true;
 		break;
 	case 1:
-		char name[256];
+	{
+		char name[256] = "";
 		GetKeyInputString(name, hKeyData_);
 		name_ = name;
 		//–¼‘O‚ª“ü‚Á‚Ä‚¢‚½‚ç
-		if (name != "") {
-			NowNameInput_ = false;
+		if (name_ != "") {
 			nameOK = true;
 		}
+		NowNameInput_ = false;
+	}
 		break;
 	case 2:
 		NowNameInput_ = false;

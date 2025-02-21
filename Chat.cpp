@@ -1,6 +1,7 @@
 #include "Chat.h"
 #include <DxLib.h>
 #include <cstring>
+#include "ImGui/imgui.h"
 
 namespace {
 	const int MAXLENGTH{ 26 };  //ì˙ñ{åÍÇ≈13ï∂éö
@@ -23,6 +24,7 @@ void Chat::Initialize() {
 
 void Chat::Update() {
     //SetUseIMEFlag(false);
+    ans = "";
 
     switch (CheckKeyInput(hKeyData_)) {
     case 0:
@@ -31,7 +33,7 @@ void Chat::Update() {
     case 1:
     {
         GetKeyInputString(str, hKeyData_);
-        std::string ans = str;
+        ans = str;
         if (ans != "") {
             StrHistory_.push_front("Ç†Ç»ÇΩÅF" + ans);
 
@@ -50,6 +52,7 @@ void Chat::Update() {
     default:
         break;
     }
+    
 }
 
 

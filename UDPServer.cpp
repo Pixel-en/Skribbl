@@ -1,6 +1,7 @@
 #include "UDPServer.h"
 #include <cstring>
 #include "Engine/SceneManager.h"
+#include "Chat.h"
 
 inline bool operator == (const IPDATA& a, const IPDATA& b) {
 	if (a.d1 == b.d1 && a.d2 == b.d2 && a.d3 == b.d3 && a.d4 == b.d4)return  true;
@@ -15,7 +16,7 @@ namespace {
 }
 
 UDPServer::UDPServer(GameObject* parent)
-	:GameObject(parent, "UDPServer"),hNameFrame_(-1)
+	:GameObject(parent, "UDPServer"), hNameFrame_(-1)
 {
 	connectnum_ = 0;
 	isConnect_ = false;
@@ -99,8 +100,6 @@ void UDPServer::Update()
 
 void UDPServer::Draw()
 {
-	//DrawCircle(me.x, me.y, me.size, me.color, true);
-	//DrawCircle(you.x, you.y, you.size, you.color, true);
 
 	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
 	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
@@ -136,10 +135,9 @@ void UDPServer::UpdateConnect()
 		//ポート8888（接続相手テスト）に通信が来た時
 		if (CheckNetWorkRecvUDP(UDPConnectHandle_) == TRUE) {
 			IPDATA ip = { 0,0,0,0 };
-			int rPort;
 			char Recvname[256];
 			//過去に接続した人でなければ
-			NetWorkRecvUDP(UDPConnectHandle_, &ip, &rPort, &Recvname, sizeof(Recvname), FALSE);
+			NetWorkRecvUDP(UDPConnectHandle_, &ip, NULL, &Recvname, sizeof(Recvname), FALSE);
 			for (int i = 0; i < CONNECTMAX; i++) {
 				if (ip == user[i].IpAddr_) {
 					check = true;
@@ -206,16 +204,16 @@ void UDPServer::DrawConnect()
 	d4.insert(0, 3 - d4.length(), '0');
 	pass += d3 + d4;
 	//じぶんのIP表示
-	DrawStringToHandle(200, 100, pass.c_str(), GetColor(0, 0, 0),h64Font_);
+	DrawStringToHandle(200, 100, pass.c_str(), GetColor(0, 0, 0), h64Font_);
 
 	//参加者の名前表示
 	for (int i = 0; i < connectnum_ + 1; i++) {
-		DrawGraph(300, 200+i*120, hNameFrame_, true);
+		DrawGraph(300, 180 + i * 90, hNameFrame_, true);
 		if (i == 0) {
-			DrawStringToHandle(500, 200 + i * 120+10, name_.c_str(), GetColor(0, 0, 0),h32Font_);
+			DrawStringToHandle(500, 180 + i * 90 + 10, name_.c_str(), GetColor(0, 0, 0), h64Font_);
 		}
 		else {
-			DrawStringToHandle(500, 200 + i * 120+20, user[i - 1].name_.c_str(), GetColor(0, 0, 0),h32Font_);
+			DrawStringToHandle(500, 180 + i * 90 + 10, user[i - 1].name_.c_str(), GetColor(0, 0, 0), h64Font_);
 		}
 	}
 
@@ -228,6 +226,35 @@ void UDPServer::DrawConnect()
 
 void UDPServer::DrawPlay()
 {
+
+	Chat c = GetRootJob()->FindGameObject<Chat>();
+
+	//チャット受信
+	for (int i = 0; i < connectnum_; i++) {
+		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
+			char text[64] = "";
+			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, &text, sizeof(text), FALSE);
+			text[std::strlen(text)] = '\0';
+			std::string str(text);
+			if (str != "") {
+				c.AddAns(str);
+				for (int j = 0; j < connectnum_; j++) {
+					if (i != j) {
+						NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text, sizeof(text));
+					}
+				}
+			}
+		}
+	}
+	//送信
+	std::string str = c.GetText();
+	if (str != "") {
+		char text_[64];
+		strcpy_s(text_, sizeof(text_), str.c_str());
+		for (int i = 0; i < connectnum_; i++) {
+			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+		}
+	}
 }
 
 void UDPServer::DrawClose()
