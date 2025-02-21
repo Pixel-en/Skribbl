@@ -22,7 +22,7 @@ void Chat::Initialize() {
 }
 
 void Chat::Update() {
-    SetUseIMEFlag(false);
+    //SetUseIMEFlag(false);
 
     switch (CheckKeyInput(hKeyData_)) {
     case 0:
