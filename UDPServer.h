@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
-
+#include<vector>
 namespace {
 	const int CONNECTMAX{ 3 };
 }
@@ -46,7 +46,7 @@ class UDPServer :public GameObject
 	void DrawConnect();
 	void DrawPlay();
 	void DrawClose();
-
+	std::vector<User> connectedUsers_; // Track connected users
 public:
 
 	//コンストラクタ
@@ -68,6 +68,8 @@ public:
 	//開放
 	void Release() override;
 
-	void SetName(std::string _name) { name_ = _name; };
+	void SetName(std::string _name) { name_ = _name; }
+	std::string GetName(){ return name_; }
+	std::vector<User> GetConnectedUsers()  {  return connectedUsers_; }
 };
 
