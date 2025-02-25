@@ -8,6 +8,7 @@ class Theme :public GameObject
 
 	std::vector<std::string> ThemeList_;
 	std::string currentTheme_;
+	std::string currentDrawer_;
 public:
 
 	//コンストラクタ
@@ -31,5 +32,7 @@ public:
 
 	std::string ThemeRoll();
 	std::string GetCurrentTheme() const; 
+	void SetCurrentDrawer(const std::string& playerName) { currentDrawer_ = playerName; }
+	std::string GetCurrentDrawer()const { return currentDrawer_; }
 };
 
