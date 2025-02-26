@@ -6,9 +6,7 @@
 #include <unordered_map>
 namespace {
 	const int CONNECTMAX{ 3 };
-	//const float DRAWING_TIME{ 90.0f };
 }
-
 class UDPServer :public GameObject
 {
 	int h64Font_;
@@ -43,8 +41,8 @@ class UDPServer :public GameObject
 	//ê⁄ë±î‘çÜ
 	int connectnum_;
 	bool isConnect_;
-	float elapsedTime_;
 
+	float timeElapsed_; // Timer for drawer turn
 	void UpdateConnect();
 	void UpdatePlay();
 	void UpdateClose();
