@@ -4,7 +4,7 @@
 #include "Chat.h"
 
 namespace {
-	const XMINT4 IPFRAME{ 400, 100, 750, 200 };
+	const XMINT4 IPFRAME{ 465, 100, 815, 200 };
 }
 
 UDPClient::UDPClient(GameObject* parent)
@@ -19,7 +19,7 @@ UDPClient::UDPClient(GameObject* parent)
 	NowKeyInput_ = false;
 	IPSet_ = false;
 	name_ = "";
-
+	currentDrawerIndex_ = 0;
 	h64Font_ = CreateFontToHandle("64size", 64, -1, -1);
 }
 
@@ -86,7 +86,6 @@ void UDPClient::Draw()
 void UDPClient::Release()
 {
 }
-
 
 void UDPClient::UpdateInit()
 {
@@ -177,8 +176,19 @@ void UDPClient::UpdatePlay()
 		char text[64] = "";
 		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
 		text[std::strlen(text)] = '\0';
-		std::string str(text);
-		c->AddAns(str);
+		std::string receivedText(text);
+		if (receivedText.find("Next drawer:") != std::string::npos) {
+			HandleDrawingOrder(receivedText);
+		}
+		else if (receivedText.find("Game Over!") != std::string::npos) {
+			c->AddAns(receivedText);
+		}
+		else if (receivedText.find("Your theme:") != std::string::npos) {
+			HandleThemeUpdate(receivedText);
+		}
+		else {
+			c->AddAns(receivedText);
+		}
 	}
 }
 
@@ -197,7 +207,7 @@ void UDPClient::DrawConnect()
 
 	if (NowKeyInput_) {
 		SetKeyInputStringFont(h64Font_);
-		DrawKeyInputString(410, 110, hKeyData_);
+		DrawKeyInputString(IPFRAME.x+10, IPFRAME.y+18, hKeyData_);
 		SetKeyInputStringFont(-1);
 	}
 	else {
@@ -208,11 +218,12 @@ void UDPClient::DrawConnect()
 			d3.insert(0, 3 - d3.length(), '0');
 			d4.insert(0, 3 - d4.length(), '0');
 			std::string ip = d3 + d4;
-			DrawStringToHandle(IPFRAME.x, IPFRAME.y, ip.c_str(), GetColor(200, 200, 200), h64Font_);
+			DrawStringToHandle(IPFRAME.x+10, IPFRAME.y+18, ip.c_str(), GetColor(200, 200, 200), h64Font_);
 
 			static int count = 0;
 			if (count >= 240)
 				count = 0;
+
 
 			std::string bDot = "";
 			for (int i = 0; i < count / 60; i++) {
@@ -220,15 +231,15 @@ void UDPClient::DrawConnect()
 			}
 
 			if (isConnect_) {
-				DrawStringToHandle(IPFRAME.x, 300, ("待機中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
+				DrawStringToHandle(IPFRAME.x+35, 300, ("待機中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
 			}
 			else {
-				DrawStringToHandle(IPFRAME.x, 300, ("接続中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
+				DrawStringToHandle(IPFRAME.x+35, 300, ("接続中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
 			}
 			count++;
 		}
 		else {
-			DrawStringToHandle(IPFRAME.x, IPFRAME.y, "ルーム番号", GetColor(180, 180, 180), h64Font_);
+			DrawStringToHandle(IPFRAME.x+10, IPFRAME.y+18, "ルーム番号", GetColor(180, 180, 180), h64Font_);
 		}
 	}
 
@@ -242,4 +253,54 @@ void UDPClient::DrawPlay()
 void UDPClient::DrawClose()
 {
 }
+
+
+
+void UDPClient::HandleDrawingOrder(const std::string& message) {
+	size_t pos = message.find(":");
+	if (pos != std::string::npos) {
+		std::string drawer = message.substr(pos + 1);
+		currentDrawerIndex_ = std::distance(drawingOrder_, std::find(std::begin(drawingOrder_), std::end(drawingOrder_), drawer));
+		Chat* c = GetRootJob()->FindGameObject<Chat>();
+		if (c != nullptr && name_ != drawer) {
+			c->AddAns("Next drawer: " + drawer);
+		}
+	}
+}
+void UDPClient::HandleScoreUpdate(const std::string& message) {
+	size_t pos = message.find(":");
+	if (pos != std::string::npos) {
+		std::string playerScoreInfo = message.substr(pos + 1);
+		pos = playerScoreInfo.find(",");
+		while (pos != std::string::npos) {
+			std::string playerInfo = playerScoreInfo.substr(0, pos);
+			size_t sep = playerInfo.find(" ");
+			std::string playerName = playerInfo.substr(0, sep);
+			int score = std::stoi(playerInfo.substr(sep + 1));
+			for (int i = 0; i < CONNECTMAX; i++) {
+				if (drawingOrder_[i] == playerName) {
+					playerScores_[i] = score;
+					break;
+				}
+			}
+			playerScoreInfo = playerScoreInfo.substr(pos + 1);
+			pos = playerScoreInfo.find(",");
+		}
+	}
+}
+
+void UDPClient::HandleThemeUpdate(const std::string& message) {
+	size_t pos = message.find(":");
+	if (pos != std::string::npos) {
+		std::string currentTheme = message.substr(pos + 1);
+		// Display the theme at the top center for the drawer
+		if (name_ == drawingOrder_[currentDrawerIndex_]) {
+			int screenWidth = 800; // Replace with your actual screen width
+			int textWidth = GetDrawStringWidth(currentTheme.c_str(), currentTheme.length());
+			int x = (screenWidth - textWidth) / 2;
+			DrawString(x, 50, currentTheme.c_str(), GetColor(255, 0, 0)); // Adjust y position as needed
+		}
+	}
+}
+
 

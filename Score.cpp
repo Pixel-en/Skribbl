@@ -1,4 +1,5 @@
 #include "Score.h"
+#include <vector>
 
 Score::Score(GameObject* parent)
     : GameObject(parent) {
@@ -30,14 +31,14 @@ void Score::AddPointsToPlayer(const std::string& playerName, int points) {
     }
 }
 
-int Score::GetPlayerScore(const std::string& playerName)  {
+int Score::GetPlayerScore(const std::string& playerName) {
     if (playerScores_.find(playerName) != playerScores_.end()) {
         return playerScores_.at(playerName);
     }
     return 0;
 }
 
-std::string Score::DetermineWinner()  {
+std::string Score::DetermineWinner() {
     int maxScore = 0;
     std::string winner;
     for (const auto& pair : playerScores_) {
@@ -60,7 +61,6 @@ void Score::AddPlayer(const std::string& playerName) {
     }
 }
 
-//std::vector<std::string> Score::GetPlayerNames() 
-//{
-//    return playerNames_;
-//}
+std::vector<std::string> Score::GetPlayerNames()const {
+    return playerNames_;
+}

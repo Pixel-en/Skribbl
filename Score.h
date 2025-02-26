@@ -20,9 +20,9 @@ public:
 
     // Functions to manage scores
     void AddPointsToPlayer(const std::string& playerName, int points);
-    int GetPlayerScore(const std::string& playerName) ;
-    std::string DetermineWinner() ;
+    int GetPlayerScore(const std::string& playerName);
+    std::string DetermineWinner();
     void SetCurrentPlayer(const std::string& playerName);
     void AddPlayer(const std::string& playerName);
-    //std::vector<std::string> GetPlayerNames() ;
+    std::vector<std::string> GetPlayerNames()const;
 };

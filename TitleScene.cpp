@@ -7,7 +7,7 @@
 namespace {
 	const XMINT2 SERVERBUTTON{ 250,500 };
 	const XMINT2 CLIENTBUTTON{ 700,500 };
-	const XMINT4 NAMEFRAME{ 580,430,720,470 };
+	const XMINT4 NAMEFRAME{ 555,430,695,470 };
 }
 
 TitleScene::TitleScene(GameObject* parent)

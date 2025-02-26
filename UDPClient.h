@@ -1,6 +1,9 @@
 #pragma once
 #include "Engine/GameObject.h"
-
+#include"Theme.h"
+#include"UDPServer.h"
+#include<vector>
+#include<unordered_map>
 class UDPClient :public GameObject
 {
 	IPDATA IpAddr;
@@ -17,7 +20,7 @@ class UDPClient :public GameObject
 	
 	Circle me;
 	Circle you;
-
+	Theme* theme_;
 	std::string name_;
 
 	int hKeyData_;
@@ -25,6 +28,9 @@ class UDPClient :public GameObject
 	bool NowKeyInput_;
 	bool IPSet_;
 
+	std::string drawingOrder_[CONNECTMAX];
+	int currentDrawerIndex_;
+	int playerScores_[CONNECTMAX];
 	void UpdateInit();
 	void UpdateConnect();
 	void UpdatePlay();
@@ -34,6 +40,7 @@ class UDPClient :public GameObject
 	void DrawConnect();
 	void DrawPlay();
 	void DrawClose();
+
 
 public:
 
@@ -58,5 +65,8 @@ public:
 
 	void SetName(std::string _name) { name_ = _name; }
 	std::string GetName() { return name_; }
+	void HandleDrawingOrder(const std::string& message);
+	void HandleScoreUpdate(const std::string& message);
+	void HandleThemeUpdate(const std::string& message);
 };
 
