@@ -39,6 +39,7 @@ UDPServer::UDPServer(GameObject* parent)
 	you = { -1,-1,5,GetColor(0,0,0) };
 
 	h64Font_ = CreateFontToHandle("64", 64, -1, -1);
+	h32Font_ = CreateFontToHandle("32", 32, -1, -1);
 }
 
 UDPServer::~UDPServer()
