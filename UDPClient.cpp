@@ -181,8 +181,10 @@ void UDPClient::UpdatePlay()
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
 		DataPacket packet;
 		int drawerIndex;
-		char text[64] = "";
-		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
+		/*char text[64] = "";
+		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);*/
+		NetWorkRecvUDP(UDPHandle, NULL, NULL, &packet, sizeof(packet), FALSE); 
+
 		// Handle the packet based on packetType
 		switch (packet.packetType) {
 		case 1: // Drawer index update
