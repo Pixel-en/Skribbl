@@ -21,6 +21,9 @@ UDPClient::UDPClient(GameObject* parent)
 	name_ = "";
 	currentDrawerIndex_ = 0;
 	h64Font_ = CreateFontToHandle("64size", 64, -1, -1);
+	for (int i = 0; i < CONNECTMAX; i++) {
+		playerScores_[i] = 0; // Initialize scores
+	}
 }
 
 UDPClient::~UDPClient()
@@ -298,7 +301,7 @@ void UDPClient::HandleThemeUpdate(const std::string& message) {
 			int screenWidth = 800; // Replace with your actual screen width
 			int textWidth = GetDrawStringWidth(currentTheme.c_str(), currentTheme.length());
 			int x = (screenWidth - textWidth) / 2;
-			DrawString(x, 50, currentTheme.c_str(), GetColor(255, 0, 0)); // Adjust y position as needed
+			DrawString(x, 50, currentTheme.c_str(), GetColor(255, 0, 255)); // Adjust y position as needed
 		}
 	}
 }
