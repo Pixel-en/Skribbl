@@ -68,5 +68,6 @@ public:
 	void HandleDrawingOrder(const std::string& message);
 	void HandleScoreUpdate(const std::string& message);
 	void HandleThemeUpdate(const std::string& message);
+	void DrawPlayerScores();
 };
 

@@ -6,6 +6,7 @@
 #include <unordered_map>
 namespace {
 	const int CONNECTMAX{ 3 };
+	//const float DRAWING_TIME{ 90.0f };
 }
 
 class UDPServer :public GameObject
@@ -42,6 +43,7 @@ class UDPServer :public GameObject
 	//ê⁄ë±î‘çÜ
 	int connectnum_;
 	bool isConnect_;
+	float elapsedTime_;
 
 	void UpdateConnect();
 	void UpdatePlay();
