@@ -19,7 +19,7 @@ UDPClient::UDPClient(GameObject* parent)
 	NowKeyInput_ = false;
 	IPSet_ = false;
 	name_ = "";
-
+	currentDrawerIndex_ = 0;
 	h64Font_ = CreateFontToHandle("64size", 64, -1, -1);
 }
 
@@ -183,7 +183,7 @@ void UDPClient::UpdatePlay()
 		else if (receivedText.find("Game Over!") != std::string::npos) {
 			c->AddAns(receivedText);
 		}
-		else if (receivedText.find("Current theme:") != std::string::npos) {
+		else if (receivedText.find("Your theme:") != std::string::npos) {
 			HandleThemeUpdate(receivedText);
 		}
 		else {
@@ -289,15 +289,18 @@ void UDPClient::HandleScoreUpdate(const std::string& message) {
 	}
 }
 
-void UDPClient::HandleThemeUpdate(const std::string& message)
-{
+void UDPClient::HandleThemeUpdate(const std::string& message) {
 	size_t pos = message.find(":");
 	if (pos != std::string::npos) {
 		std::string currentTheme = message.substr(pos + 1);
-		Chat* c = GetRootJob()->FindGameObject<Chat>();
-		if (c != nullptr) {
-			c->AddAns("Your theme: " + currentTheme);
+		// Display the theme at the top center for the drawer
+		if (name_ == drawingOrder_[currentDrawerIndex_]) {
+			int screenWidth = 800; // Replace with your actual screen width
+			int textWidth = GetDrawStringWidth(currentTheme.c_str(), currentTheme.length());
+			int x = (screenWidth - textWidth) / 2;
+			DrawString(x, 50, currentTheme.c_str(), GetColor(255, 0, 0)); // Adjust y position as needed
 		}
 	}
 }
+
 

@@ -1,5 +1,6 @@
 #include "UDPServer.h"
 #include <cstring>
+#include<ctime>
 #include "Engine/SceneManager.h"
 #include "Chat.h"
 
@@ -20,7 +21,7 @@ UDPServer::UDPServer(GameObject* parent)
 {
 	connectnum_ = 0;
 	isConnect_ = false;
-
+	currentDrawerIndex_ = 0;
 	for (int i = 0; i < CONNECTMAX; i++) {
 		user[i].RecvUDPHandle_ = MakeUDPSocket(SERVERPORT + i);
 		HandleCheck(user[i].RecvUDPHandle_, "ソケットが作れてない");
@@ -65,6 +66,8 @@ void UDPServer::Initialize()
 		HandleCheck(hNameFrame_, "ネームフレーム画像がない");
 		break;
 	case SceneManager::SCENE_ID_PLAY:
+		SetDrawingOrder();  // Set the initial drawing order when starting the game
+		StartNextTurn();    // Start the first turn
 		break;
 	case SceneManager::SCENE_ID_GAMEOVER:
 		break;
@@ -262,4 +265,52 @@ void UDPServer::DrawPlay()
 
 void UDPServer::DrawClose()
 {
+}
+
+void UDPServer::SetDrawingOrder() {
+	for (int i = 0; i < connectnum_; i++) {
+		drawingOrder_[i] = user[i].name_;
+	}
+
+	// Shuffle the drawing order
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+	for (int i = connectnum_ - 1; i > 0; --i) {
+		int j = std::rand() % (i + 1);
+		std::swap(drawingOrder_[i], drawingOrder_[j]);
+	}
+}
+
+void UDPServer::StartNextTurn() {
+	if (currentDrawerIndex_ >= connectnum_) {
+		std::string winner = score_->DetermineWinner();
+		for (int i = 0; i < connectnum_; i++) {
+			char text_[64];
+			strcpy_s(text_, sizeof(text_), ("Game Over! Winner: " + winner).c_str());
+			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+		}
+	}
+	else {
+		RollAndSendTheme();
+		for (int i = 0; i < connectnum_; i++) {
+			char text_[64];
+			strcpy_s(text_, sizeof(text_), ("Next drawer: " + drawingOrder_[currentDrawerIndex_]).c_str());
+			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+		}
+		currentDrawerIndex_++;
+	}
+}
+
+void UDPServer::RollAndSendTheme() {
+	if (theme_) {
+		std::string currentTheme = theme_->ThemeRoll();
+		std::string currentDrawer = drawingOrder_[currentDrawerIndex_];
+		for (int i = 0; i < connectnum_; i++) {
+			if (user[i].name_ == currentDrawer) {
+				char text_[64];
+				strcpy_s(text_, sizeof(text_), ("Your theme: " + currentTheme).c_str());
+				NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+				break;
+			}
+		}
+	}
 }
