@@ -91,6 +91,7 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>TitleScene</Filter>
     </ClCompile>
+    <ClCompile Include="Score.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\CsvReader.h">
@@ -169,5 +170,6 @@
     <ClInclude Include="TitleScene.h">
       <Filter>TitleScene</Filter>
     </ClInclude>
+    <ClInclude Include="Score.h" />
   </ItemGroup>
 </Project>

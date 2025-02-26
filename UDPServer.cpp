@@ -1,6 +1,7 @@
 #include "UDPServer.h"
 #include <cstring>
 #include "Engine/SceneManager.h"
+#include "Chat.h"
 
 inline bool operator == (const IPDATA& a, const IPDATA& b) {
 	if (a.d1 == b.d1 && a.d2 == b.d2 && a.d3 == b.d3 && a.d4 == b.d4)return  true;
@@ -15,7 +16,7 @@ namespace {
 }
 
 UDPServer::UDPServer(GameObject* parent)
-	:GameObject(parent, "UDPServer"),hNameFrame_(-1)
+	:GameObject(parent, "UDPServer"), hNameFrame_(-1)
 {
 	connectnum_ = 0;
 	isConnect_ = false;
@@ -99,8 +100,6 @@ void UDPServer::Update()
 
 void UDPServer::Draw()
 {
-	//DrawCircle(me.x, me.y, me.size, me.color, true);
-	//DrawCircle(you.x, you.y, you.size, you.color, true);
 
 	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
 	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
@@ -136,10 +135,9 @@ void UDPServer::UpdateConnect()
 		//ポート8888（接続相手テスト）に通信が来た時
 		if (CheckNetWorkRecvUDP(UDPConnectHandle_) == TRUE) {
 			IPDATA ip = { 0,0,0,0 };
-			int rPort;
 			char Recvname[256];
 			//過去に接続した人でなければ
-			NetWorkRecvUDP(UDPConnectHandle_, &ip, &rPort, &Recvname, sizeof(Recvname), FALSE);
+			NetWorkRecvUDP(UDPConnectHandle_, &ip, NULL, Recvname, sizeof(Recvname), FALSE);
 			for (int i = 0; i < CONNECTMAX; i++) {
 				if (ip == user[i].IpAddr_) {
 					check = true;
@@ -185,7 +183,37 @@ void UDPServer::UpdateConnect()
 
 void UDPServer::UpdatePlay()
 {
+	Chat* c = GetParent()->FindGameObject<Chat>();
+	if (c == nullptr)
+		return;
 
+	for (int i = 0; i < connectnum_; i++) {
+		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
+			char text[64] = "";
+			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, text, sizeof(text), FALSE);
+			text[std::strlen(text)] = '\0';
+			std::string str(text);
+			if (str != "") {
+				c->AddAns(str);
+				for (int j = 0; j < connectnum_; j++) {
+					if (i != j) {
+						NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, text, sizeof(text));
+					}
+				}
+			}
+			
+		}
+	}
+
+	//送信
+	std::string str = c->GetText();
+	if (str != "") {
+		char text_[64];
+		strcpy_s(text_, sizeof(text_), (name_ + "：" + str).c_str());
+		for (int i = 0; i < connectnum_; i++) {
+			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+		}
+	}
 
 }
 
@@ -228,6 +256,8 @@ void UDPServer::DrawConnect()
 
 void UDPServer::DrawPlay()
 {
+
+
 }
 
 void UDPServer::DrawClose()

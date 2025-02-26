@@ -1,6 +1,7 @@
 #include "Chat.h"
 #include <DxLib.h>
 #include <cstring>
+#include "ImGui/imgui.h"
 
 namespace {
 	const int MAXLENGTH{ 26 };  //“ú–{Œê‚Å13•¶Žš
@@ -22,34 +23,37 @@ void Chat::Initialize() {
 }
 
 void Chat::Update() {
-    //SetUseIMEFlag(false);
+	SetUseIMEFlag(false);
 
-    switch (CheckKeyInput(hKeyData_)) {
-    case 0:
-        NowKeyinput_ = true;
-        break;
-    case 1:
-    {
-        GetKeyInputString(str, hKeyData_);
-        std::string ans = str;
-        if (ans != "") {
-            StrHistory_.push_front("‚ ‚È‚½F" + ans);
+	ans = "";
 
-            // Call CheckTheme to verify the theme
-            CheckTheme(ans);
-        }
-    }
-    case 2:
-        NowKeyinput_ = false;
-        DeleteKeyInput(hKeyData_);
-        hKeyData_ = MakeKeyInput(MAXLENGTH, true, false, false);
-        SetActiveKeyInput(hKeyData_);
-        if (StrHistory_.size() > HISTORYMAX)
-            StrHistory_.pop_back();
-        break;
-    default:
-        break;
-    }
+	switch (CheckKeyInput(hKeyData_)) {
+	case 0:
+		NowKeyinput_ = true;
+		break;
+	case 1:
+	{
+		GetKeyInputString(str, hKeyData_);
+		std::string buffer(str);
+		if (buffer != "") {
+			ans = str;
+			StrHistory_.push_front("‚ ‚È‚½F" + ans);
+			// Call CheckTheme to verify the theme
+			CheckTheme(ans);
+		}
+	}
+	case 2:
+		NowKeyinput_ = false;
+		DeleteKeyInput(hKeyData_);
+		hKeyData_ = MakeKeyInput(MAXLENGTH, true, false, false);
+		SetActiveKeyInput(hKeyData_);
+		if (StrHistory_.size() > HISTORYMAX)
+			StrHistory_.pop_back();
+		break;
+	default:
+		break;
+	}
+
 }
 
 
@@ -73,4 +77,3 @@ void Chat::Release() {
 void Chat::CheckTheme(const std::string& answer)
 {
 }
-

@@ -1,6 +1,7 @@
 #include "UDPClient.h"
 #include <cstring>
 #include "Engine/SceneManager.h"
+#include "Chat.h"
 
 namespace {
 	const XMINT4 IPFRAME{ 465, 100, 815, 200 };
@@ -86,7 +87,6 @@ void UDPClient::Release()
 {
 }
 
-
 void UDPClient::UpdateInit()
 {
 }
@@ -161,6 +161,35 @@ void UDPClient::UpdateConnect()
 void UDPClient::UpdatePlay()
 {
 
+	Chat* c = GetRootJob()->FindGameObject<Chat>();
+	if (c == nullptr)
+		return;
+
+	std::string str = c->GetText();
+	if (str != "") {
+		char text_[64];
+		strcpy_s(text_, sizeof(text_), (name_+"F" + str).c_str());
+		NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, text_, sizeof(text_));
+	}
+
+	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
+		char text[64] = "";
+		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
+		text[std::strlen(text)] = '\0';
+		std::string receivedText(text);
+		if (receivedText.find("Next drawer:") != std::string::npos) {
+			HandleDrawingOrder(receivedText);
+		}
+		else if (receivedText.find("Game Over!") != std::string::npos) {
+			c->AddAns(receivedText);
+		}
+		else if (receivedText.find("Current theme:") != std::string::npos) {
+			HandleThemeUpdate(receivedText);
+		}
+		else {
+			c->AddAns(receivedText);
+		}
+	}
 }
 
 void UDPClient::UpdateClose()
@@ -224,3 +253,51 @@ void UDPClient::DrawPlay()
 void UDPClient::DrawClose()
 {
 }
+
+
+
+void UDPClient::HandleDrawingOrder(const std::string& message) {
+	size_t pos = message.find(":");
+	if (pos != std::string::npos) {
+		std::string drawer = message.substr(pos + 1);
+		currentDrawerIndex_ = std::distance(drawingOrder_, std::find(std::begin(drawingOrder_), std::end(drawingOrder_), drawer));
+		Chat* c = GetRootJob()->FindGameObject<Chat>();
+		if (c != nullptr && name_ != drawer) {
+			c->AddAns("Next drawer: " + drawer);
+		}
+	}
+}
+void UDPClient::HandleScoreUpdate(const std::string& message) {
+	size_t pos = message.find(":");
+	if (pos != std::string::npos) {
+		std::string playerScoreInfo = message.substr(pos + 1);
+		pos = playerScoreInfo.find(",");
+		while (pos != std::string::npos) {
+			std::string playerInfo = playerScoreInfo.substr(0, pos);
+			size_t sep = playerInfo.find(" ");
+			std::string playerName = playerInfo.substr(0, sep);
+			int score = std::stoi(playerInfo.substr(sep + 1));
+			for (int i = 0; i < CONNECTMAX; i++) {
+				if (drawingOrder_[i] == playerName) {
+					playerScores_[i] = score;
+					break;
+				}
+			}
+			playerScoreInfo = playerScoreInfo.substr(pos + 1);
+			pos = playerScoreInfo.find(",");
+		}
+	}
+}
+
+void UDPClient::HandleThemeUpdate(const std::string& message)
+{
+	size_t pos = message.find(":");
+	if (pos != std::string::npos) {
+		std::string currentTheme = message.substr(pos + 1);
+		Chat* c = GetRootJob()->FindGameObject<Chat>();
+		if (c != nullptr) {
+			c->AddAns("Your theme: " + currentTheme);
+		}
+	}
+}
+

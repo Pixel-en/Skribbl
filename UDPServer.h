@@ -1,6 +1,9 @@
 #pragma once
 #include "Engine/GameObject.h"
-
+#include<vector>
+#include"Theme.h"
+#include"Score.h"
+#include <unordered_map>
 namespace {
 	const int CONNECTMAX{ 3 };
 }
@@ -24,7 +27,8 @@ class UDPServer :public GameObject
 		IPDATA IpAddr_;
 		int RecvUDPHandle_;
 	};
-
+	Theme* theme_;
+	Score* score_;
 	Circle me;
 	Circle you;
 
@@ -47,6 +51,9 @@ class UDPServer :public GameObject
 	void DrawPlay();
 	void DrawClose();
 
+	std::string drawingOrder_[CONNECTMAX];
+	int currentDrawerIndex_;
+	int playerScores_[CONNECTMAX];
 public:
 
 	//コンストラクタ
@@ -68,6 +75,10 @@ public:
 	//開放
 	void Release() override;
 
-	void SetName(std::string _name) { name_ = _name; };
+	void SetName(std::string _name) { name_ = _name; }
+	std::string GetName(){ return name_; }
+	void SetDrawingOrder();
+	void StartNextTurn();
+	void RollAndSendTheme();
 };
 
