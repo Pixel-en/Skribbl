@@ -27,6 +27,7 @@ UDPClient::UDPClient(GameObject* parent)
 	h64Font_ = CreateFontToHandle("64size", 64, -1, -1);
 	for (int i = 0; i < CONNECTMAX; i++) {
 		playerScores_[i] = 0; // Initialize scores
+		drawingOrder_[i] = "";
 	}
 }
 
@@ -181,9 +182,10 @@ void UDPClient::UpdatePlay()
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
 		DataPacket packet;
 		int drawerIndex;
-		char text[64] = "";
-		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
+	/*	char text[64] = "";
+		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);*/
 		// Handle the packet based on packetType
+		NetWorkRecvUDP(UDPHandle, NULL, NULL, &packet, sizeof(packet), FALSE);
 		switch (packet.packetType) {
 		case 1: // Drawer index update
 			memcpy(&drawerIndex, packet.data, sizeof(drawerIndex));
@@ -320,9 +322,14 @@ void UDPClient::DrawPlayerScores() {
 
 void UDPClient::HandleDrawingOrder(int drawerIndex) {
 	currentDrawerIndex_ = drawerIndex;
-	// Update theme for the new drawer
-	if (name_ == drawingOrder_[currentDrawerIndex_]) {
-		HandleThemeUpdate(themeToDisplay_); // Use the stored theme or fetch a new one if needed
+
+	// Get the current drawer's name
+	std::string currentDrawer = drawingOrder_[currentDrawerIndex_];
+
+	// If this client is the drawer, set the theme to be displayed
+	if (name_ == currentDrawer) {
+		// Assuming theme update logic is managed separately
+		themeToDisplay_ = "Your theme";
 	}
 }
 
