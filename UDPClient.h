@@ -3,8 +3,7 @@
 #include"Theme.h"
 #include"Score.h"
 #include"UDPServer.h"
-#include<vector>
-#include<unordered_map>
+#include<array>
 class UDPClient :public GameObject
 {
 	IPDATA IpAddr;
@@ -35,9 +34,11 @@ class UDPClient :public GameObject
 	int h64Font_;
 	bool NowKeyInput_;
 	bool IPSet_;
+	int connectnum_;
 	std::array<User, CONNECTMAX> users_;
 	std::string drawingOrder_[CONNECTMAX];
-	std::array<int, MAX_PLAYERS> scores_;	bool isDrawer_;
+	std::array<int, MAX_PLAYERS> scores_;
+	bool isDrawer_;
 	int currentDrawerIndex_;
 	std::string themeToDisplay_;
 	void UpdateInit();
