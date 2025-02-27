@@ -288,6 +288,10 @@ void UDPServer::SetDrawingOrder() {
 		drawingOrder_[i] = user[i].name_;
 	}
 
+	// Add the server's own name to the drawing order
+	drawingOrder_[connectnum_] = name_;
+	connectnum_++;
+
 	// Shuffle the drawing order
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 	for (int i = connectnum_ - 1; i > 0; --i) {
@@ -295,7 +299,6 @@ void UDPServer::SetDrawingOrder() {
 		std::swap(drawingOrder_[i], drawingOrder_[j]);
 	}
 }
-
 void UDPServer::StartNextTurn() {
 	if (currentDrawerIndex_ >= connectnum_) {
 		// Send Game Over packet

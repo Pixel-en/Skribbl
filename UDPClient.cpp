@@ -166,9 +166,7 @@ void UDPClient::UpdateConnect()
 
 }
 
-void UDPClient::UpdatePlay()
-{
-
+void UDPClient::UpdatePlay() {
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
 	if (c == nullptr)
 		return;
@@ -176,18 +174,18 @@ void UDPClient::UpdatePlay()
 	std::string str = c->GetText();
 	if (str != "") {
 		char text_[64];
-		strcpy_s(text_, sizeof(text_), (name_+"ÅF" + str).c_str());
+		strcpy_s(text_, sizeof(text_), (name_ + "ÅF" + str).c_str());
 		NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, text_, sizeof(text_));
 	}
+
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
-		DataPacket packet;
-		int drawerIndex;
-	/*	char text[64] = "";
-		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);*/
-		// Handle the packet based on packetType
+		DataPacket packet = {}; // Initialize packet
 		NetWorkRecvUDP(UDPHandle, NULL, NULL, &packet, sizeof(packet), FALSE);
+
+		// Handle the packet based on packetType
 		switch (packet.packetType) {
 		case 1: // Drawer index update
+			// Pass the drawingOrder_ array along with the drawer index
 			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
 			break;
 		case 2: // Theme update
@@ -202,7 +200,6 @@ void UDPClient::UpdatePlay()
 		}
 	}
 }
-
 void UDPClient::UpdateClose()
 {
 }
@@ -276,8 +273,27 @@ void UDPClient::DrawPlay() {
 	DrawPlayerScores();
 }
 
+
+void UDPClient::HandleDrawingOrder(int drawerIndex, const std::string* order) {
+	currentDrawerIndex_ = drawerIndex;
+
+	// Update drawingOrder_ array
+	for (int i = 0; i < CONNECTMAX; i++) {
+		drawingOrder_[i] = order[i];
+	}
+
+	// Get the current drawer's name
+	std::string currentDrawer = drawingOrder_[currentDrawerIndex_];
+
+	// If this client is the drawer, set the theme to be displayed
+	if (name_ == currentDrawer) {
+		// Assuming theme update logic is managed separately
+		themeToDisplay_ = "Your theme";
+	}
+}
+
 void UDPClient::DrawPlayerScores() {
-	int screenWidth = 1280;
+	int screenWidth = 900;
 	int screenHeight = 720;
 	int boxHeight = 110; // Height for each player score box
 	int boxTop = 500; // Top position for the boxes
@@ -291,7 +307,7 @@ void UDPClient::DrawPlayerScores() {
 	}
 
 	// Calculate box width based on the number of players
-	int boxWidth = screenWidth / numPlayers;
+	int boxWidth = numPlayers > 0 ? screenWidth / numPlayers : screenWidth;
 
 	// Draw the background box
 	DrawBox(0, boxTop, screenWidth, screenHeight, GetColor(255, 0, 0), true); // Background box
@@ -316,26 +332,6 @@ void UDPClient::DrawPlayerScores() {
 		// Draw the player score
 		std::string scoreStr = std::to_string(playerScores_[i]);
 		DrawString(left + 100, top + 50, scoreStr.c_str(), GetColor(255, 255, 255));
-	}
-}
-
-
-
-void UDPClient::HandleDrawingOrder(int drawerIndex, const std::string* order) {
-	currentDrawerIndex_ = drawerIndex;
-
-	// Update drawingOrder_ array
-	for (int i = 0; i < CONNECTMAX; i++) {
-		drawingOrder_[i] = order[i];
-	}
-
-	// Get the current drawer's name
-	std::string currentDrawer = drawingOrder_[currentDrawerIndex_];
-
-	// If this client is the drawer, set the theme to be displayed
-	if (name_ == currentDrawer) {
-		// Assuming theme update logic is managed separately
-		themeToDisplay_ = "Your theme";
 	}
 }
 
