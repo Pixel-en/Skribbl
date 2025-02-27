@@ -1,13 +1,14 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include <unordered_map>
 #include <string>
-#include <vector>
+#include <array>
+
+const int MAX_PLAYERS = 4; // Define the maximum number of players
 
 class Score : public GameObject {
-    std::unordered_map<std::string, int> playerScores_; // Map to hold scores for each player by name
-    std::string currentPlayer_; // Current drawer's name
-    std::vector<std::string> playerNames_; // List of player names
+    std::array<std::string, MAX_PLAYERS> playerNames_;
+    std::array<int, MAX_PLAYERS> playerScores_;
+    int playerCount_;
 
 public:
     Score(GameObject* parent);
@@ -18,11 +19,9 @@ public:
     void Draw() override;
     void Release() override;
 
-    // Functions to manage scores
     void AddPointsToPlayer(const std::string& playerName, int points);
     int GetPlayerScore(const std::string& playerName);
     std::string DetermineWinner();
-    void SetCurrentPlayer(const std::string& playerName);
     void AddPlayer(const std::string& playerName);
-    std::vector<std::string> GetPlayerNames()const;
+    std::array<std::string, MAX_PLAYERS> GetPlayerNames() const;
 };

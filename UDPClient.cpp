@@ -189,7 +189,7 @@ void UDPClient::UpdatePlay() {
 			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
 			break;
 		case 2: // Theme update
-			HandleThemeUpdate(packet.data);
+		//	themeToDisplay_=packet.data;
 			break;
 		case 3: // Game over
 			c->AddAns("Game Over!");
@@ -261,16 +261,7 @@ void UDPClient::DrawClose()
 
 
 void UDPClient::DrawPlay() {
-	// Draw the theme at the top center for the drawer
-	if (!themeToDisplay_.empty() && name_ == drawingOrder_[currentDrawerIndex_]) {
-		int screenWidth = 1280; // Get actual screen width
-		int textWidth = GetDrawStringWidth(themeToDisplay_.c_str(), themeToDisplay_.length());
-		int x = (screenWidth - textWidth) / 2;
-		DrawString(x, 50, themeToDisplay_.c_str(), GetColor(255, 255, 255)); // Adjust y position as needed
-	}
-
-	// Draw the player scores at the bottom
-	DrawPlayerScores();
+	
 }
 
 
@@ -281,61 +272,4 @@ void UDPClient::HandleDrawingOrder(int drawerIndex, const std::string* order) {
 	for (int i = 0; i < CONNECTMAX; i++) {
 		drawingOrder_[i] = order[i];
 	}
-
-	// Get the current drawer's name
-	std::string currentDrawer = drawingOrder_[currentDrawerIndex_];
-
-	// If this client is the drawer, set the theme to be displayed
-	if (name_ == currentDrawer) {
-		// Assuming theme update logic is managed separately
-		themeToDisplay_ = "Your theme";
-	}
 }
-
-void UDPClient::DrawPlayerScores() {
-	int screenWidth = 900;
-	int screenHeight = 720;
-	int boxHeight = 110; // Height for each player score box
-	int boxTop = 500; // Top position for the boxes
-	int numPlayers = 0;
-
-	// Count the number of connected players
-	for (const auto& player : drawingOrder_) {
-		if (!player.empty()) {
-			numPlayers++;
-		}
-	}
-
-	// Calculate box width based on the number of players
-	int boxWidth = numPlayers > 0 ? screenWidth / numPlayers : screenWidth;
-
-	// Draw the background box
-	DrawBox(0, boxTop, screenWidth, screenHeight, GetColor(255, 0, 0), true); // Background box
-
-	// Draw individual player score boxes
-	for (int i = 0; i < numPlayers; i++) {
-		int left = i * boxWidth;
-		int right = left + boxWidth;
-		int top = boxTop;
-		int bottom = top + boxHeight;
-
-		// Draw the box for the player
-		DrawBox(left, top, right, bottom, GetColor(0, 0, 0), true);
-
-		// Draw the player name
-		std::string playerName = drawingOrder_[i];
-		DrawString(left + 10, top + 10, playerName.c_str(), GetColor(255, 255, 255));
-
-		// Draw the score label
-		DrawString(left + 10, top + 50, "SCORE:", GetColor(255, 255, 255));
-
-		// Draw the player score
-		std::string scoreStr = std::to_string(playerScores_[i]);
-		DrawString(left + 100, top + 50, scoreStr.c_str(), GetColor(255, 255, 255));
-	}
-}
-
-void UDPClient::HandleThemeUpdate(const std::string& theme) {
-	themeToDisplay_ = theme;
-}
-

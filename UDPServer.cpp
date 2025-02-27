@@ -65,7 +65,8 @@ void UDPServer::Initialize()
 {
 	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
 	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
-
+	theme_ = GetParent()->FindGameObject<Theme>();
+	score_ = GetParent()->FindGameObject<Score>();
 	switch (ID)
 	{
 	case SceneManager::SCENE_ID_TITLE:
@@ -197,6 +198,7 @@ void UDPServer::UpdateConnect()
 	}
 
 }
+
 void UDPServer::UpdatePlay() {
 	Chat* c = GetParent()->FindGameObject<Chat>();
 	if (c == nullptr)
@@ -275,14 +277,21 @@ void UDPServer::DrawConnect()
 
 void UDPServer::DrawPlay()
 {
+	// Draw the theme at the top center for the drawer
+	if (name_ == drawingOrder_[currentDrawerIndex_] && !themeToDisplay_.empty()) {
+		int screenWidth = 1280;
+		int textWidth = GetDrawStringWidth(themeToDisplay_.c_str(), themeToDisplay_.length());
+		int x = (screenWidth - textWidth) / 2;
+		DrawString(x, 50, themeToDisplay_.c_str(), GetColor(255, 255, 255));
+	}
 
+	
 
 }
 
 void UDPServer::DrawClose()
 {
 }
-
 void UDPServer::SetDrawingOrder() {
 	for (int i = 0; i < connectnum_; i++) {
 		drawingOrder_[i] = user[i].name_;
@@ -298,7 +307,16 @@ void UDPServer::SetDrawingOrder() {
 		int j = std::rand() % (i + 1);
 		std::swap(drawingOrder_[i], drawingOrder_[j]);
 	}
+
+	// Add players to the score object
+	Score* score = GetParent()->FindGameObject<Score>();
+	if (score) {
+		for (int i = 0; i < connectnum_; i++) {
+			score->AddPlayer(drawingOrder_[i]);
+		}
+	}
 }
+
 void UDPServer::StartNextTurn() {
 	if (currentDrawerIndex_ >= connectnum_) {
 		// Send Game Over packet
@@ -324,27 +342,28 @@ void UDPServer::StartNextTurn() {
 			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
 		}
 
-		// Roll and Send Theme packet
-		RollAndSendTheme();
+		// Roll the theme and send it to a random player
+		theme_->ThemeRoll();
+		SendThemeToRandomPlayer();
+		timeElapsed_ = 0.0f;
 		currentDrawerIndex_++;
 	}
 }
 
-void UDPServer::RollAndSendTheme() {
-	if (theme_) {
-		std::string currentTheme = theme_->ThemeRoll();
-		std::string currentDrawer = drawingOrder_[currentDrawerIndex_];
+void UDPServer::SendThemeToRandomPlayer() {
+	// Select a random player index
+	int randomIndex = std::rand() % connectnum_;
 
-		DataPacket packet;
-		packet.packetType = 2; // Theme update
-		strcpy_s(packet.data, currentTheme.c_str());
+	DataPacket packet;
+	packet.packetType = 2; // Theme update
+	strcpy_s(packet.data, theme_->GetCurrentTheme().c_str());
 
-		for (int i = 0; i < connectnum_; i++) {
-			if (user[i].name_ == currentDrawer) {
-				NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
-				break;
-
-			}
-		}
+	if (randomIndex == connectnum_ - 1) {
+		// The server is the drawer, store the theme directly
+		themeToDisplay_ = theme_->GetCurrentTheme();
+	}
+	else {
+		// Send to one of the connected clients
+		NetWorkSendUDP(user[randomIndex].RecvUDPHandle_, user[randomIndex].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
 	}
 }

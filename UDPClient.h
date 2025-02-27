@@ -31,7 +31,6 @@ class UDPClient :public GameObject
 	std::string drawingOrder_[CONNECTMAX];
 	int currentDrawerIndex_;
 	int playerScores_[CONNECTMAX];
-	std::string themeToDisplay_;    // Theme to display for the drawer
 	void UpdateInit();
 	void UpdateConnect();
 	void UpdatePlay();
@@ -67,7 +66,6 @@ public:
 	void SetName(std::string _name) { name_ = _name; }
 	std::string GetName() { return name_; }
 	void HandleDrawingOrder(int drawerIndex,const std::string* order);
-	void HandleThemeUpdate(const std::string& theme);
-	void DrawPlayerScores();
+
 };
 

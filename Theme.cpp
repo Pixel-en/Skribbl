@@ -1,6 +1,7 @@
 #include "Theme.h"
 #include "Engine/CsvReader.h"
-#include "Player.h"
+#include "UDPServer.h"
+#include "UDPClient.h"
 
 Theme::Theme(GameObject* parent)
     : GameObject(parent, "Theme") {
@@ -27,13 +28,17 @@ void Theme::Release() {
 std::string Theme::ThemeRoll() {
     if (ThemeList_.empty())
         return "";
-    
+
     int num = std::rand() % ThemeList_.size();
     currentTheme_ = ThemeList_[num];
+
+    // Notify server and client of the new theme
+   // NotifyThemeUpdate();
+
     return currentTheme_;
 }
 
-std::string Theme::GetCurrentTheme() const
-{
+std::string Theme::GetCurrentTheme() const {
     return currentTheme_;
 }
+
