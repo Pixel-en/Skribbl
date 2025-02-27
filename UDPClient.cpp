@@ -12,7 +12,7 @@ struct DataPacket {
 };
 
 UDPClient::UDPClient(GameObject* parent)
-	:GameObject(parent, "UDPClient"), UDPHandle(-1)
+	:GameObject(parent, "UDPClient"), UDPHandle(-1),isDrawer_(false)
 {
 	IpAddr = { 192,168,0,0 };
 	UDPHandle = MakeUDPSocket(8888);
@@ -26,8 +26,8 @@ UDPClient::UDPClient(GameObject* parent)
 	currentDrawerIndex_ = 0;
 	h64Font_ = CreateFontToHandle("64size", 64, -1, -1);
 	for (int i = 0; i < CONNECTMAX; i++) {
-		playerScores_[i] = 0; // Initialize scores
-		drawingOrder_[i] = "";
+		users_[i] = { "", {}, -1 }; // Initialize users
+		scores_[i] = 0; // Initialize scores
 	}
 }
 
@@ -39,6 +39,7 @@ UDPClient::~UDPClient()
 
 void UDPClient::Initialize()
 {
+	score_ = GetParent()->FindGameObject<Score>();
 }
 
 void UDPClient::Update()
@@ -185,15 +186,22 @@ void UDPClient::UpdatePlay() {
 		// Handle the packet based on packetType
 		switch (packet.packetType) {
 		case 1: // Drawer index update
-			// Pass the drawingOrder_ array along with the drawer index
 			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
 			break;
 		case 2: // Theme update
-		//	themeToDisplay_=packet.data;
+			std::memcpy(&isDrawer_, packet.data, sizeof(bool)); // Update the drawer status
+			themeToDisplay_ = packet.data + sizeof(bool); // Update the theme to display
 			break;
 		case 3: // Game over
 			c->AddAns("Game Over!");
 			break;
+		case 4: // User data update
+		{
+			User userData;
+			NetWorkRecvUDP(UDPHandle, NULL, NULL, &userData, sizeof(userData), FALSE);
+			UpdateUserData(userData);
+		}
+		break;
 		default: // Chat message
 			c->AddAns(packet.data);
 			break;
@@ -261,7 +269,11 @@ void UDPClient::DrawClose()
 
 
 void UDPClient::DrawPlay() {
-	
+	// Draw the player scores
+	Score* score = GetRootJob()->FindGameObject<Score>();
+	if (score) {
+		score->Draw();
+	}
 }
 
 
@@ -269,7 +281,17 @@ void UDPClient::HandleDrawingOrder(int drawerIndex, const std::string* order) {
 	currentDrawerIndex_ = drawerIndex;
 
 	// Update drawingOrder_ array
-	for (int i = 0; i < CONNECTMAX; i++) {
-		drawingOrder_[i] = order[i];
+	for (int i = 0; i < MAX_PLAYERS; i++) {
+		users_[i].name_ = order[i];
+	}
+	isDrawer_ = (users_[drawerIndex].name_ == name_);
+}
+
+void UDPClient::UpdateUserData(const User& userData) {
+	for (int i = 0; i < MAX_PLAYERS; i++) {
+		if (users_[i].name_ == userData.name_) {
+			users_[i] = userData;
+			return;
+		}
 	}
 }

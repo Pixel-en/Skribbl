@@ -1,9 +1,7 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include<vector>
 #include"Theme.h"
 #include"Score.h"
-#include <unordered_map>
 namespace {
 	const int CONNECTMAX{ 3 };
 }
@@ -43,6 +41,7 @@ class UDPServer :public GameObject
 	bool isConnect_;
 
 	float timeElapsed_; // Timer for drawer turn
+
 	void UpdateConnect();
 	void UpdatePlay();
 	void UpdateClose();
@@ -81,5 +80,6 @@ public:
 	void SetDrawingOrder();
 	void StartNextTurn();
 	void SendThemeToRandomPlayer();
+	void SendUserDataToClients();
 };
 

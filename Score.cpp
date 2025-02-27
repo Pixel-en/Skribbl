@@ -31,8 +31,7 @@ void Score::Draw() {
     // Calculate box width based on the number of players
     int boxWidth = numPlayers > 0 ? screenWidth / numPlayers : screenWidth;
 
-    // Draw the background box
-    DrawBox(0, boxTop, screenWidth, screenHeight, GetColor(255, 0, 0), true); // Background box
+   
 
     // Draw individual player score boxes
     for (int i = 0; i < numPlayers; i++) {
