@@ -331,6 +331,7 @@ void UDPServer::StartNextTurn() {
 		}
 	}
 	else {
+		SendConnectNumToClients();
 		// Send Drawer Index packet
 		DataPacket packet;
 		packet.packetType = 1; // Drawer index update
