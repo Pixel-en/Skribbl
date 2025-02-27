@@ -197,9 +197,7 @@ void UDPServer::UpdateConnect()
 	}
 
 }
-
-void UDPServer::UpdatePlay()
-{
+void UDPServer::UpdatePlay() {
 	Chat* c = GetParent()->FindGameObject<Chat>();
 	if (c == nullptr)
 		return;
@@ -211,28 +209,33 @@ void UDPServer::UpdatePlay()
 			text[std::strlen(text)] = '\0';
 			std::string str(text);
 			if (str != "") {
+				DataPacket packet;
+				packet.packetType = 0; // Chat message
+				strcpy_s(packet.data, str.c_str());
+
 				c->AddAns(str);
+
 				for (int j = 0; j < connectnum_; j++) {
 					if (i != j) {
-						NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, text, sizeof(text));
+						NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
 					}
 				}
 			}
-			
 		}
 	}
 
-	//ëóêM
 	std::string str = c->GetText();
 	if (str != "") {
-		char text_[64];
-		strcpy_s(text_, sizeof(text_), (name_ + "ÅF" + str).c_str());
+		DataPacket packet;
+		packet.packetType = 0; // Chat message
+		strcpy_s(packet.data, (name_ + "ÅF" + str).c_str());
+
 		for (int i = 0; i < connectnum_; i++) {
-			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
 		}
 	}
-
 }
+
 
 void UDPServer::UpdateClose()
 {
