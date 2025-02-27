@@ -3,6 +3,8 @@
 #include "Chat.h"
 #include "Player.h"
 #include "Theme.h"
+#include "Score.h"
+
 
 PlayScene::PlayScene(GameObject* parent)
 	:GameObject(parent,"PlayScene")
@@ -15,6 +17,8 @@ void PlayScene::Initialize()
 	Instantiate<Chat>(this);
 	Instantiate<Player>(this);
 	Instantiate<Theme>(this);
+	Instantiate<Score>(this);
+
 	
 }
 
