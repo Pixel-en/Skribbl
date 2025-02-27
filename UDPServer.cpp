@@ -23,6 +23,7 @@ struct DataPacket {
 	int packetType;
 	char data[256];
 };
+
 UDPServer::UDPServer(GameObject* parent)
 	:GameObject(parent, "UDPServer"), hNameFrame_(-1),currentDrawerIndex_(0), timeElapsed_(0.0f)
 {
@@ -61,6 +62,7 @@ UDPServer::~UDPServer()
 	DeleteUDPSocket(UDPConnectHandle_);
 }
 
+
 void UDPServer::Initialize()
 {
 	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
@@ -78,6 +80,7 @@ void UDPServer::Initialize()
 	case SceneManager::SCENE_ID_PLAY:
 		SetDrawingOrder();  // Set the initial drawing order when starting the game
 		StartNextTurn();    // Start the first turn
+		
 		break;
 	case SceneManager::SCENE_ID_GAMEOVER:
 		break;
@@ -316,7 +319,6 @@ void UDPServer::SetDrawingOrder() {
 		}
 	}
 }
-
 void UDPServer::StartNextTurn() {
 	if (currentDrawerIndex_ >= connectnum_) {
 		// Send Game Over packet
@@ -341,11 +343,14 @@ void UDPServer::StartNextTurn() {
 		for (int i = 0; i < connectnum_; i++) {
 			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
 		}
-
+		SendUserDataToClients(); // Send initial user data
 		// Roll the theme and send it to a random player
 		theme_->ThemeRoll();
 		SendThemeToRandomPlayer();
+
+		// Reset the timer for the next drawer
 		timeElapsed_ = 0.0f;
+
 		currentDrawerIndex_++;
 	}
 }
@@ -365,5 +370,18 @@ void UDPServer::SendThemeToRandomPlayer() {
 	else {
 		// Send to one of the connected clients
 		NetWorkSendUDP(user[randomIndex].RecvUDPHandle_, user[randomIndex].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
+	}
+}
+void  UDPServer::SendUserDataToClients() {
+	DataPacket packet;
+	packet.packetType = 4; // User data update
+
+	for (int i = 0; i <connectnum_; i++) {
+		std::memcpy(packet.data, &user[i], sizeof(User));
+		for (int j = 0; j < connectnum_; j++) {
+			if (i != j) {
+				NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
+			}
+		}
 	}
 }

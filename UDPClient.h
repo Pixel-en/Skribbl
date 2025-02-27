@@ -18,7 +18,13 @@ class UDPClient :public GameObject
 		int size;
 		unsigned int color;
 	};
-	
+
+	struct User
+	{
+		std::string name_;
+		IPDATA IpAddr_;
+		int RecvUDPHandle_;
+	};
 	Circle me;
 	Circle you;
 	Theme* theme_;
@@ -29,10 +35,11 @@ class UDPClient :public GameObject
 	int h64Font_;
 	bool NowKeyInput_;
 	bool IPSet_;
-
+	std::array<User, CONNECTMAX> users_;
 	std::string drawingOrder_[CONNECTMAX];
+	std::array<int, MAX_PLAYERS> scores_;	bool isDrawer_;
 	int currentDrawerIndex_;
-	int playerScores_[CONNECTMAX];
+	std::string themeToDisplay_;
 	void UpdateInit();
 	void UpdateConnect();
 	void UpdatePlay();
@@ -64,10 +71,9 @@ public:
 
 	//ŠJ•ú
 	void Release() override;
-
 	void SetName(std::string _name) { name_ = _name; }
-	std::string GetName() { return name_; }
 	void HandleDrawingOrder(int drawerIndex,const std::string* order);
+	void UpdateUserData(const User& userData);
 
 };
 
