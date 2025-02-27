@@ -236,7 +236,6 @@ void UDPServer::UpdatePlay() {
 	}
 }
 
-
 void UDPServer::UpdateClose()
 {
 	// Clean up resources
@@ -297,7 +296,6 @@ void UDPServer::SetDrawingOrder() {
 	}
 }
 
-
 void UDPServer::StartNextTurn() {
 	if (currentDrawerIndex_ >= connectnum_) {
 		// Send Game Over packet
@@ -316,6 +314,9 @@ void UDPServer::StartNextTurn() {
 		int drawerIndex = currentDrawerIndex_;
 		memcpy(packet.data, &drawerIndex, sizeof(drawerIndex));
 
+		// Copy drawingOrder_ into packet.data
+		memcpy(packet.data + sizeof(drawerIndex), drawingOrder_, sizeof(drawingOrder_));
+
 		for (int i = 0; i < connectnum_; i++) {
 			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
 		}
@@ -325,6 +326,7 @@ void UDPServer::StartNextTurn() {
 		currentDrawerIndex_++;
 	}
 }
+
 void UDPServer::RollAndSendTheme() {
 	if (theme_) {
 		std::string currentTheme = theme_->ThemeRoll();
@@ -338,6 +340,7 @@ void UDPServer::RollAndSendTheme() {
 			if (user[i].name_ == currentDrawer) {
 				NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
 				break;
+
 			}
 		}
 	}
