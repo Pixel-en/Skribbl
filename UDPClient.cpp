@@ -39,6 +39,7 @@ UDPClient::~UDPClient()
 
 void UDPClient::Initialize()
 {
+	score_ = GetParent()->FindGameObject<Score>();
 }
 
 void UDPClient::Update()
@@ -261,7 +262,11 @@ void UDPClient::DrawClose()
 
 
 void UDPClient::DrawPlay() {
-	
+	// Draw the player scores
+	Score* score = GetRootJob()->FindGameObject<Score>();
+	if (score) {
+		score->Draw();
+	}
 }
 
 

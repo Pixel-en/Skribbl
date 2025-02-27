@@ -282,7 +282,7 @@ void UDPServer::DrawPlay()
 		int screenWidth = 1280;
 		int textWidth = GetDrawStringWidth(themeToDisplay_.c_str(), themeToDisplay_.length());
 		int x = (screenWidth - textWidth) / 2;
-		DrawString(x, 50, themeToDisplay_.c_str(), GetColor(255, 255, 255));
+		DrawString(x, 50, themeToDisplay_.c_str(), GetColor(255, 0, 0));
 	}
 
 	

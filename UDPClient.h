@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/GameObject.h"
 #include"Theme.h"
+#include"Score.h"
 #include"UDPServer.h"
 #include<vector>
 #include<unordered_map>
@@ -21,6 +22,7 @@ class UDPClient :public GameObject
 	Circle me;
 	Circle you;
 	Theme* theme_;
+	Score* score_;
 	std::string name_;
 
 	int hKeyData_;
