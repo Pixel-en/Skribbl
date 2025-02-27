@@ -14,6 +14,8 @@ class UDPClient :public GameObject
 		int size;
 		unsigned int color;
 	};
+
+	int playernum_;
 	
 	Circle me;
 	Circle you;

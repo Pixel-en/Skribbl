@@ -20,6 +20,8 @@ class Player :public GameObject
 
 	std::string theme_;
 
+	bool isDrawer;
+
 public:
 
 	//コンストラクタ

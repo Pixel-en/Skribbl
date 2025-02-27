@@ -171,8 +171,15 @@ void UDPServer::UpdateConnect()
 
 	//接続人数が確定した時ポート番号を送る
 	if (isConnect_ == true) {
+		struct Data
+		{
+			int port;
+			int num;
+		};
+		Data data;
 		for (int i = 0; i < connectnum_; i++) {
-			int data = SERVERPORT + i;
+			data.port = SERVERPORT + i;
+			data.num = connectnum_;
 			NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &data, sizeof(data));
 		}
 		SceneManager* sc = GetParent()->FindGameObject<SceneManager>();

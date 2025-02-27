@@ -149,8 +149,17 @@ void UDPClient::UpdateConnect()
 			}
 		}
 		else {
+			//ポートを受信
 			if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
-				NetWorkRecvUDP(UDPHandle, NULL, NULL, &ServerPort_, sizeof(ServerPort_), FALSE);
+				struct Data
+				{
+					int port;
+					int num;
+				};
+				Data data;
+				NetWorkRecvUDP(UDPHandle, NULL, NULL, &data, sizeof(data), FALSE);
+				ServerPort_ = data.port;
+				playernum_ = data.num;
 				SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
 				sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 			}
