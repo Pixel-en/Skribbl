@@ -188,8 +188,7 @@ void UDPClient::UpdatePlay()
 		NetWorkRecvUDP(UDPHandle, NULL, NULL, &packet, sizeof(packet), FALSE);
 		switch (packet.packetType) {
 		case 1: // Drawer index update
-			memcpy(&drawerIndex, packet.data, sizeof(drawerIndex));
-			HandleDrawingOrder(drawerIndex);
+			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
 			break;
 		case 2: // Theme update
 			HandleThemeUpdate(packet.data);
@@ -320,8 +319,15 @@ void UDPClient::DrawPlayerScores() {
 	}
 }
 
-void UDPClient::HandleDrawingOrder(int drawerIndex) {
+
+
+void UDPClient::HandleDrawingOrder(int drawerIndex, const std::string* order) {
 	currentDrawerIndex_ = drawerIndex;
+
+	// Update drawingOrder_ array
+	for (int i = 0; i < CONNECTMAX; i++) {
+		drawingOrder_[i] = order[i];
+	}
 
 	// Get the current drawer's name
 	std::string currentDrawer = drawingOrder_[currentDrawerIndex_];
