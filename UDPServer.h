@@ -81,5 +81,6 @@ public:
 	void StartNextTurn();
 	void SendThemeToRandomPlayer();
 	void SendUserDataToClients();
+	void SendConnectNumToClients();
 };
 

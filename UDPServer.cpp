@@ -385,3 +385,13 @@ void  UDPServer::SendUserDataToClients() {
 		}
 	}
 }
+
+void UDPServer::SendConnectNumToClients() {
+	DataPacket packet;
+	packet.packetType = 5; // Connect number update
+	memcpy(packet.data, &connectnum_, sizeof(connectnum_));
+
+	for (int i = 0; i < connectnum_; i++) {
+		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
+	}
+}

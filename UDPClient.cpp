@@ -12,7 +12,7 @@ struct DataPacket {
 };
 
 UDPClient::UDPClient(GameObject* parent)
-	:GameObject(parent, "UDPClient"), UDPHandle(-1),isDrawer_(false)
+	:GameObject(parent, "UDPClient"), UDPHandle(-1),isDrawer_(false),connectnum_(0)
 {
 	IpAddr = { 192,168,0,0 };
 	UDPHandle = MakeUDPSocket(8888);
@@ -39,7 +39,7 @@ UDPClient::~UDPClient()
 
 void UDPClient::Initialize()
 {
-	score_ = GetParent()->FindGameObject<Score>();
+	score_ = GetRootJob()->FindGameObject<Score>();
 }
 
 void UDPClient::Update()
@@ -202,6 +202,9 @@ void UDPClient::UpdatePlay() {
 			UpdateUserData(userData);
 		}
 		break;
+		case 5: // Connect number update
+			std::memcpy(&connectnum_, packet.data, sizeof(connectnum_));
+			break;
 		default: // Chat message
 			c->AddAns(packet.data);
 			break;
@@ -270,9 +273,17 @@ void UDPClient::DrawClose()
 
 void UDPClient::DrawPlay() {
 	// Draw the player scores
-	Score* score = GetRootJob()->FindGameObject<Score>();
-	if (score) {
-		score->Draw();
+	for (int i = 0; i < CONNECTMAX; i++) {
+		int y = 50 + i * 20;  // Adjust positioning as needed
+		DrawString(50, y, (users_[i].name_ + " : " + std::to_string(scores_[i])).c_str(), GetColor(255, 255, 255));
+	}
+
+	// Draw the theme at the top center if the client is the drawer
+	if (isDrawer_ && !themeToDisplay_.empty()) {
+		int screenWidth = 1280;
+		int textWidth = GetDrawStringWidth(themeToDisplay_.c_str(), themeToDisplay_.length());
+		int x = (screenWidth - textWidth) / 2;
+		DrawString(x, 50, themeToDisplay_.c_str(), GetColor(255, 255, 255));
 	}
 }
 
@@ -281,14 +292,20 @@ void UDPClient::HandleDrawingOrder(int drawerIndex, const std::string* order) {
 	currentDrawerIndex_ = drawerIndex;
 
 	// Update drawingOrder_ array
-	for (int i = 0; i < MAX_PLAYERS; i++) {
+	for (int i = 0; i < connectnum_; i++) {
 		users_[i].name_ = order[i];
 	}
 	isDrawer_ = (users_[drawerIndex].name_ == name_);
+	if (score_) {
+		for (int i = 0; i < connectnum_; i++) {
+			score_->AddPlayer(users_[i].name_);
+		}
+	}
+
 }
 
 void UDPClient::UpdateUserData(const User& userData) {
-	for (int i = 0; i < MAX_PLAYERS; i++) {
+	for (int i = 0; i < connectnum_; i++) {
 		if (users_[i].name_ == userData.name_) {
 			users_[i] = userData;
 			return;
