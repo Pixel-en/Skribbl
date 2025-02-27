@@ -53,6 +53,7 @@ class UDPServer :public GameObject
 
 	std::string drawingOrder_[CONNECTMAX];
 	int currentDrawerIndex_;
+	std::string themeToDisplay_;
 	int playerScores_[CONNECTMAX];
 public:
 
@@ -79,6 +80,6 @@ public:
 	std::string GetName(){ return name_; }
 	void SetDrawingOrder();
 	void StartNextTurn();
-	void RollAndSendTheme();
+	void SendThemeToRandomPlayer();
 };
 
