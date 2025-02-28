@@ -204,7 +204,7 @@ void UDPClient::UpdatePlay()
 			if (data[i].name == name_)
 				continue;
 
-			if (data[i].text != "") {
+			if (data[i].text[0] != '\0') {
 				std::string Rname(data[i].name), Rtext(data[i].text);
 				c->AddAns(Rname + ":" + Rtext);
 			}
