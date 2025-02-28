@@ -41,6 +41,8 @@ UDPServer::UDPServer(GameObject* parent)
 	h64Font_ = CreateFontToHandle("64", 64, -1, -1);
 	h32Font_ = CreateFontToHandle("32", 32, -1, -1);
 	myPoint_ = 0;
+
+	part = NONE;
 }
 
 UDPServer::~UDPServer()
@@ -179,10 +181,11 @@ void UDPServer::UpdateConnect()
 		PortData portdata;
 
 		for (int i = 0; i < connectnum_; i++) {
-			 portdata.port = SERVERPORT + i;
-			 portdata.num = connectnum_;
-			 NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &portdata, sizeof(portdata));
+			portdata.port = SERVERPORT + i;
+			portdata.num = connectnum_;
+			NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &portdata, sizeof(portdata));
 		}
+		part = PLAY;
 		SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
 		sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 	}
@@ -191,10 +194,10 @@ void UDPServer::UpdateConnect()
 
 void UDPServer::UpdatePlay()
 {
-		//チャット
-		Chat* c = GetParent()->FindGameObject<Chat>();
-		if (c == nullptr)
-			return;
+	//チャット
+	Chat* c = GetParent()->FindGameObject<Chat>();
+	if (c == nullptr)
+		return;
 
 	for (int i = 0; i < connectnum_; i++) {
 		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {

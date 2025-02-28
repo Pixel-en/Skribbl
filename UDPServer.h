@@ -20,6 +20,14 @@ class UDPServer :public GameObject
 		int point_;
 	};
 
+	enum NETWORKPART
+	{
+		NONE,
+		INFO,
+		PLAY,
+	};
+	NETWORKPART part;
+
 	IPDATA MyIpAddr_;
 	//ソケット
 	int UDPConnectHandle_;
