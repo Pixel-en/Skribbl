@@ -171,9 +171,17 @@ void UDPServer::UpdateConnect()
 
 	//接続人数が確定した時ポート番号を送る
 	if (isConnect_ == true) {
+		struct PortData
+		{
+			int port;
+			int num;
+		};
+		PortData portdata;
+
 		for (int i = 0; i < connectnum_; i++) {
-			int data = SERVERPORT + i;
-			NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &data, sizeof(data));
+			 portdata.port = SERVERPORT + i;
+			 portdata.num = connectnum_;
+			 NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &portdata, sizeof(portdata));
 		}
 		SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
 		sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
@@ -201,7 +209,7 @@ void UDPServer::UpdatePlay()
 					}
 				}
 			}
-			
+
 		}
 	}
 
