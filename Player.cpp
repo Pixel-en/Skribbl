@@ -13,6 +13,7 @@ Player::Player(GameObject* parent)
 	pen.PreMousePos_ = { -1,-1 };
 	pen.NowMousePos_ = { -1,-1 };
 	isDrawer = false;
+	youPen.linesize_ = -1;
 }
 
 Player::~Player()
@@ -104,15 +105,17 @@ void Player::Draw()
 		else
 			DrawLine(pen.PreMousePos_.x, pen.PreMousePos_.y, pen.NowMousePos_.x, pen.NowMousePos_.y, pen.Cr_, LineSizes[pen.linesize_]);
 	}
+	else {
+		if (youPen.linesize_ == -1)
+			continue;
+		//è¡ÇµÉSÉÄ
+		if (youPen.Erase_)
+			DrawCircle(youPen.NowMousePos_.x, youPen.NowMousePos_.y, LineSizes[youPen.linesize_], GetColor(255, 255, 255), true);
+		else
+			DrawLine(youPen.PreMousePos_.x, youPen.PreMousePos_.y, youPen.NowMousePos_.x, youPen.NowMousePos_.y, youPen.Cr_, LineSizes[youPen.linesize_]);
+	}
 	//ÉyÉìÇÃêF
 	DrawBox(1125, 646, 1218, 674, pen.Cr_, true);
-
-	//è¡ÇµÉSÉÄ
-	if (youPen.Erase_)
-		DrawCircle(youPen.NowMousePos_.x, youPen.NowMousePos_.y, LineSizes[youPen.linesize_], GetColor(255, 255, 255), true);
-	else
-		DrawLine(youPen.PreMousePos_.x, youPen.PreMousePos_.y, youPen.NowMousePos_.x, youPen.NowMousePos_.y, youPen.Cr_, LineSizes[youPen.linesize_]);
-
 
 	DrawString(450 - (GetDrawStringWidth(theme_.c_str(), theme_.length()) / 2), 15, theme_.c_str(), GetColor(255, 255, 255));
 }

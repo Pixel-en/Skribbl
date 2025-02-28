@@ -182,6 +182,7 @@ void UDPServer::UpdateConnect()
 			data.num = connectnum_;
 			NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &data, sizeof(data));
 		}
+		nstate = PLAY;
 		SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
 		sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 	}
@@ -190,6 +191,9 @@ void UDPServer::UpdateConnect()
 
 void UDPServer::UpdatePlay()
 {
+
+	Player* player = GetRootJob()->FindGameObject<Player>();
+	player->SetDraw(true);
 
 	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, 9876, &nstate, sizeof(nstate));
