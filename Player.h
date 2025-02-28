@@ -56,5 +56,6 @@ public:
 
 	Pencil GetPencil() { return pen; }
 	void RecvPencil(Pencil _pen) { youPen = _pen; }
+	void SetDraw(bool _set) { isDrawer = _set; };
 };
 
