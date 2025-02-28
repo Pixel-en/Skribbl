@@ -200,7 +200,7 @@ void UDPClient::UpdatePlay()
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
 		NetWorkRecvUDP(UDPHandle, NULL, NULL, data, sizeof(data), FALSE);
 
-		for (int i = 0; i < playernum_; i++) {
+		for (int i = 0; i <= playernum_; i++) {
 			if (data[i].name == name_)
 				continue;
 
