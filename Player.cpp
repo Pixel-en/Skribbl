@@ -33,61 +33,54 @@ void Player::Update()
 
 	BackGround* bg = GetParent()->FindGameObject<BackGround>();
 
-	if (isDrawer) {
-		if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
+	if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0&&isDrawer) {
 
-			if (pen.NowMousePos_.x >= 0)
-				pen.PreMousePos_ = pen.NowMousePos_;
+		if (pen.NowMousePos_.x >= 0)
+			pen.PreMousePos_ = pen.NowMousePos_;
 
-			GetMousePoint(&pen.NowMousePos_.x, &pen.NowMousePos_.y);
-			if ((pen.NowMousePos_.x >= 0 && pen.NowMousePos_.x < 900) && (pen.NowMousePos_.y >= 50 && pen.NowMousePos_.y < 500)) {
-				if (pen.PreMousePos_.x >= 0) {
-					drawOK_ = true;
-				}
+		GetMousePoint(&pen.NowMousePos_.x, &pen.NowMousePos_.y);
+		if ((pen.NowMousePos_.x >= 0 && pen.NowMousePos_.x < 900) && (pen.NowMousePos_.y >= 50 && pen.NowMousePos_.y < 500)) {
+			if (pen.PreMousePos_.x >= 0) {
+				drawOK_ = true;
 			}
 		}
-		else {
-			pen.PreMousePos_ = { -10,-10 };
-			pen.NowMousePos_ = { -10,-10 };
-		}
-
-
-		if ((GetMouseInput() & MOUSE_INPUT_RIGHT) != 0)
-		{
-			XMINT2 PixelPos;
-			GetMousePoint(&PixelPos.x, &PixelPos.y);
-
-			//パレットから色を取得
-			if ((PixelPos.x > 916 && PixelPos.x < 1260) && (PixelPos.y > 516 && PixelPos.y < 610)) {
-				pen.Cr_ = GetPixel(PixelPos.x, PixelPos.y);
-				pen.Erase_ = false;
-			}
-			//太さ選択
-			for (int i = 0; i < 6; i++) {
-				if ((PixelPos.x > LINESIZEPOS.x + ((i % 3) * 44) && PixelPos.x < (LINESIZEPOS.x + 44) + ((i % 3) * 44) &&
-					(PixelPos.y > LINESIZEPOS.y + ((i / 3) * 45) && PixelPos.y < (LINESIZEPOS.y + 45) + ((i / 3) * 45)))) {
-					bg->SetLineSize(i);
-					pen.linesize_ = i;
-					break;
-				}
-			}
-
-			//消しゴム
-			if ((PixelPos.x > 1050 && PixelPos.x < 1090) && (PixelPos.y > 620 && PixelPos.y < 700)) {
-				if (!RFlag_) {
-					pen.Erase_ = !pen.Erase_;
-				}
-			}
-			RFlag_ = true;
-		}
-		else
-			RFlag_ = false;
 	}
 	else {
-
 		pen.PreMousePos_ = { -10,-10 };
 		pen.NowMousePos_ = { -10,-10 };
 	}
+
+
+	if ((GetMouseInput() & MOUSE_INPUT_RIGHT) != 0)
+	{
+		XMINT2 PixelPos;
+		GetMousePoint(&PixelPos.x, &PixelPos.y);
+
+		//パレットから色を取得
+		if ((PixelPos.x > 916 && PixelPos.x < 1260) && (PixelPos.y > 516 && PixelPos.y < 610)) {
+			pen.Cr_ = GetPixel(PixelPos.x, PixelPos.y);
+			pen.Erase_ = false;
+		}
+		//太さ選択
+		for (int i = 0; i < 6; i++) {
+			if ((PixelPos.x > LINESIZEPOS.x + ((i % 3) * 44) && PixelPos.x < (LINESIZEPOS.x + 44) + ((i % 3) * 44) &&
+				(PixelPos.y > LINESIZEPOS.y + ((i / 3) * 45) && PixelPos.y < (LINESIZEPOS.y + 45) + ((i / 3) * 45)))) {
+				bg->SetLineSize(i);
+				pen.linesize_ = i;
+				break;
+			}
+		}
+
+		//消しゴム
+		if ((PixelPos.x > 1050 && PixelPos.x < 1090) && (PixelPos.y > 620 && PixelPos.y < 700)) {
+			if (!RFlag_) {
+				pen.Erase_ = !pen.Erase_;
+			}
+		}
+		RFlag_ = true;
+	}
+	else
+		RFlag_ = false;
 
 	bg->SetErase(pen.Erase_);
 
