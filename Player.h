@@ -56,7 +56,15 @@ public:
 
 	void SetTheme(std::string _theme) { theme_ = _theme; };
 
-	Pencil GetPencil() { return pen; }
+	Pencil GetPencil()
+	{
+		Pencil temppen = pen;
+		if (!isDrawer)
+			temppen = { {-10,-10},{-10,-10},0,-1,false };
+
+		return temppen;
+	}
+
 	void RecvPencil(Pencil _pen) { youPen = _pen; }
 	void SetDraw(bool _set) { isDrawer = _set; };
 };
