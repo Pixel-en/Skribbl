@@ -195,8 +195,10 @@ void UDPServer::UpdateConnect()
 void UDPServer::UpdatePlay()
 {
 	Player* player = GetRootJob()->FindGameObject<Player>();
+	player->SetDraw(true);
 	//チャット
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
+
 
 	struct NetData
 	{
@@ -223,44 +225,17 @@ void UDPServer::UpdatePlay()
 		}
 	}
 	//サーバーの情報を入れる
+	std::string ctext = c->GetText();
 	data[connectnum_].port = 8888;
 	strcpy_s(data[connectnum_].name, sizeof(data[connectnum_].name), name_.c_str());
-	strcpy_s(data[connectnum_].text, sizeof(data[connectnum_].text), (c->GetText()).c_str());
+	strcpy_s(data[connectnum_].text, sizeof(data[connectnum_].text), ctext.c_str());
 	data[connectnum_].name[std::strlen(data[connectnum_].name)] = '\0';
 	data[connectnum_].text[std::strlen(data[connectnum_].text)] = '\0';
 	data[connectnum_].pen = player->GetPencil();
 
-	for (int i = 0; i < connectnum_ + 1; i++) {
+	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));
 	}
-
-	//for (int i = 0; i < connectnum_; i++) {
-	//	if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
-	//		char text[64] = "";
-	//		NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, text, sizeof(text), FALSE);
-	//		text[std::strlen(text)] = '\0';
-	//		std::string str(text);
-	//		if (str != "") {
-	//			c->AddAns(str);
-	//			for (int j = 0; j < connectnum_; j++) {
-	//				if (i != j) {
-	//					NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, text, sizeof(text));
-	//				}
-	//			}
-	//		}
-
-	//	}
-	//}
-
-	////送信
-	//std::string str = c->GetText();
-	//if (str != "") {
-	//	char text_[64];
-	//	strcpy_s(text_, sizeof(text_), (name_ + "：" + str).c_str());
-	//	for (int i = 0; i < connectnum_; i++) {
-	//		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
-	//	}
-	//}
 
 }
 

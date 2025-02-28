@@ -208,29 +208,12 @@ void UDPClient::UpdatePlay()
 				std::string Rname(data[i].name), Rtext(data[i].text);
 				c->AddAns(Rname + ":" + Rtext);
 			}
+			if (data[i].pen.linesize_ != -1) {
+				player->RecvPencil(data[i].pen);
+			}
 		}
 	}
 
-
-
-	//Chat* c = GetRootJob()->FindGameObject<Chat>();
-	//if (c == nullptr)
-	//	return;
-
-	//std::string str = c->GetText();
-	//if (str != "") {
-	//	char text_[64];
-	//	strcpy_s(text_, sizeof(text_), (name_ + "F" + str).c_str());
-	//	NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, text_, sizeof(text_));
-	//}
-
-	//if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
-	//	char text[64] = "";
-	//	NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
-	//	text[std::strlen(text)] = '\0';
-	//	std::string str(text);
-	//	c->AddAns(str);
-	//}
 
 }
 

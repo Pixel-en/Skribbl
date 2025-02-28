@@ -5,6 +5,7 @@
 class Player :public GameObject
 {
 public:
+
 	struct Pencil
 	{
 
@@ -15,6 +16,7 @@ public:
 		int linesize_;			//ƒ‰ƒCƒ“‚Ì‘å‚«‚³
 		bool Erase_;			//Á‚µƒSƒ€‚ğg‚Á‚Ä‚¢‚é‚©
 	};
+
 private:
 
 	Pencil pen;

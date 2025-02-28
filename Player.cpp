@@ -99,7 +99,7 @@ void Player::Draw()
 			DrawLine(pen.PreMousePos_.x, pen.PreMousePos_.y, pen.NowMousePos_.x, pen.NowMousePos_.y, pen.Cr_, LineSizes[pen.linesize_]);
 	}
 	else {
-		if (youPen.linesize_ == -1) {
+		if (youPen.linesize_ != -1) {
 			//è¡ÇµÉSÉÄ
 			if (youPen.Erase_)
 				DrawCircle(youPen.NowMousePos_.x, youPen.NowMousePos_.y, LineSizes[youPen.linesize_], GetColor(255, 255, 255), true);
