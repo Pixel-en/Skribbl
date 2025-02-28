@@ -173,25 +173,64 @@ void UDPClient::UpdateConnect()
 
 void UDPClient::UpdatePlay()
 {
-
+	Player* player = GetRootJob()->FindGameObject<Player>();
+	//チャット
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
-	if (c == nullptr)
-		return;
 
-	std::string str = c->GetText();
-	if (str != "") {
-		char text_[64];
-		strcpy_s(text_, sizeof(text_), (name_ + "：" + str).c_str());
-		NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, text_, sizeof(text_));
-	}
+	struct NetData
+	{
+		int port;
+		char name[16] = "";
+		char text[64] = "";
+		Player::Pencil pen;
+	};
+
+	NetData data[CONNECTMAX + 1];
+
+	NetData mydata;
+	mydata.port = ServerPort_;
+	strcpy_s(mydata.name, sizeof(mydata.name), name_.c_str());
+	strcpy_s(mydata.text, sizeof(mydata.text), (c->GetText()).c_str());
+	mydata.name[std::strlen(mydata.name)] = '\0';
+	mydata.text[std::strlen(mydata.text)] = '\0';
+	mydata.pen = player->GetPencil();
+
+	NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, &mydata, sizeof(mydata));
 
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
-		char text[64] = "";
-		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
-		text[std::strlen(text)] = '\0';
-		std::string str(text);
-		c->AddAns(str);
+		NetWorkRecvUDP(UDPHandle, NULL, NULL, data, sizeof(data), FALSE);
+
+		for (int i = 0; i < playernum_; i++) {
+			if (data[i].name == name_)
+				continue;
+
+			if (data[i].text != "") {
+				std::string Rname(data[i].name), Rtext(data[i].text);
+				c->AddAns(Rname + ":" + Rtext);
+			}
+		}
 	}
+
+
+
+	//Chat* c = GetRootJob()->FindGameObject<Chat>();
+	//if (c == nullptr)
+	//	return;
+
+	//std::string str = c->GetText();
+	//if (str != "") {
+	//	char text_[64];
+	//	strcpy_s(text_, sizeof(text_), (name_ + "：" + str).c_str());
+	//	NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, text_, sizeof(text_));
+	//}
+
+	//if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
+	//	char text[64] = "";
+	//	NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
+	//	text[std::strlen(text)] = '\0';
+	//	std::string str(text);
+	//	c->AddAns(str);
+	//}
 
 }
 

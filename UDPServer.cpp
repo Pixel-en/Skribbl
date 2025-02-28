@@ -194,38 +194,73 @@ void UDPServer::UpdateConnect()
 
 void UDPServer::UpdatePlay()
 {
+	Player* player = GetRootJob()->FindGameObject<Player>();
 	//チャット
-	Chat* c = GetParent()->FindGameObject<Chat>();
-	if (c == nullptr)
-		return;
+	Chat* c = GetRootJob()->FindGameObject<Chat>();
 
+	struct NetData
+	{
+		int port;
+		char name[16] = "";
+		char text[64] = "";
+		Player::Pencil pen;
+	};
+
+	NetData data[CONNECTMAX + 1];
+
+	//クライアントから受信
 	for (int i = 0; i < connectnum_; i++) {
 		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
-			char text[64] = "";
-			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, text, sizeof(text), FALSE);
-			text[std::strlen(text)] = '\0';
-			std::string str(text);
-			if (str != "") {
-				c->AddAns(str);
-				for (int j = 0; j < connectnum_; j++) {
-					if (i != j) {
-						NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, text, sizeof(text));
-					}
-				}
+			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, &data[i], sizeof(data[i]), FALSE);
+			if (data[i].text != "") {
+				std::string Rname(data[i].name), Rtext(data[i].text);
+				c->AddAns(Rname + ":" + Rtext);
 			}
 
+			if (data[i].pen.linesize_ != -1) {
+				player->RecvPencil(data[i].pen);
+			}
 		}
+	}
+	//サーバーの情報を入れる
+	data[connectnum_].port = 8888;
+	strcpy_s(data[connectnum_].name, sizeof(data[connectnum_].name), name_.c_str());
+	strcpy_s(data[connectnum_].text, sizeof(data[connectnum_].text), (c->GetText()).c_str());
+	data[connectnum_].name[std::strlen(data[connectnum_].name)] = '\0';
+	data[connectnum_].text[std::strlen(data[connectnum_].text)] = '\0';
+	data[connectnum_].pen = player->GetPencil();
+
+	for (int i = 0; i < connectnum_ + 1; i++) {
+		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));
 	}
 
-	//送信
-	std::string str = c->GetText();
-	if (str != "") {
-		char text_[64];
-		strcpy_s(text_, sizeof(text_), (name_ + "：" + str).c_str());
-		for (int i = 0; i < connectnum_; i++) {
-			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
-		}
-	}
+	//for (int i = 0; i < connectnum_; i++) {
+	//	if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
+	//		char text[64] = "";
+	//		NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, text, sizeof(text), FALSE);
+	//		text[std::strlen(text)] = '\0';
+	//		std::string str(text);
+	//		if (str != "") {
+	//			c->AddAns(str);
+	//			for (int j = 0; j < connectnum_; j++) {
+	//				if (i != j) {
+	//					NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, text, sizeof(text));
+	//				}
+	//			}
+	//		}
+
+	//	}
+	//}
+
+	////送信
+	//std::string str = c->GetText();
+	//if (str != "") {
+	//	char text_[64];
+	//	strcpy_s(text_, sizeof(text_), (name_ + "：" + str).c_str());
+	//	for (int i = 0; i < connectnum_; i++) {
+	//		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+	//	}
+	//}
 
 }
 
