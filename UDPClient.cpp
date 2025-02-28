@@ -2,9 +2,12 @@
 #include <cstring>
 #include "Engine/SceneManager.h"
 #include "Chat.h"
+#include "Player.h"
 
 namespace {
 	const XMINT4 IPFRAME{ 400, 100, 750, 200 };
+	const int CONNECTMAX{ 3 };
+
 }
 
 UDPClient::UDPClient(GameObject* parent)
@@ -59,8 +62,6 @@ void UDPClient::Update()
 
 void UDPClient::Draw()
 {
-	DrawCircle(me.x, me.y, me.size, me.color, true);
-	DrawCircle(you.x, you.y, you.size, you.color, true);
 
 	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
 	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
@@ -156,10 +157,12 @@ void UDPClient::UpdateConnect()
 					int port;
 					int num;
 				};
-				Data data;
-				NetWorkRecvUDP(UDPHandle, NULL, NULL, &data, sizeof(data), FALSE);
-				ServerPort_ = data.port;
-				playernum_ = data.num;
+				Data recvdata;
+				NetWorkRecvUDP(UDPHandle, NULL, NULL, &recvdata, sizeof(recvdata), FALSE);
+				ServerPort_ = recvdata.port;
+				playernum_ = recvdata.num;
+
+				data = new UserData[playernum_];
 				SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
 				sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 			}
@@ -171,24 +174,65 @@ void UDPClient::UpdateConnect()
 void UDPClient::UpdatePlay()
 {
 
+	if (CheckNetWorkRecvUDP(hConnectCheck_) == TRUE) {
+		NetWorkRecvUDP(hConnectCheck_, NULL, NULL, &nstate, sizeof(nstate), FALSE);
+	}
+
+	Player* player = GetRootJob()->FindGameObject<Player>();
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
-	if (c == nullptr)
-		return;
 
-	std::string str = c->GetText();
-	if (str != "") {
-		char text_[64];
-		strcpy_s(text_, sizeof(text_), (name_+"：" + str).c_str());
-		NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, text_, sizeof(text_));
-	}
-
-	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
+	struct Data
+	{
+		int port;
 		char text[64] = "";
-		NetWorkRecvUDP(UDPHandle, NULL, NULL, &text, sizeof(text), FALSE);
-		text[std::strlen(text)] = '\0';
-		std::string str(text);
-		c->AddAns(str);
+		Player::Pencil pen;
+	};
+
+	Data data;
+	data.port = ServerPort_;
+	strcpy_s(data.text, sizeof(data.text), (name_ + ":" + c->GetText()).c_str());
+	data.pen = player->GetPencil();
+	//チャットとペンデータを送る
+	NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, &data, sizeof(data));
+
+	switch (nstate)
+	{
+	case UDPClient::NONE:
+		break;
+	case UDPClient::INFO:
+		break;
+	case UDPClient::PLAY:
+	{
+		Data data[CONNECTMAX];
+		//初期化
+		for (int i = 0; i < playernum_; i++) {
+			data[i].pen = { {-10,-10},{-10,-10},0,-1,false };
+		}
+
+		if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
+			NetWorkRecvUDP(UDPHandle, NULL, NULL, data, sizeof(data), FALSE);
+		}
+
+		for (int i = 0; i < playernum_; i++) {
+			if (data[i].port == ServerPort_)
+				continue;
+
+			data[i].text[std::strlen(data[i].text)] = '\0';
+			std::string str(data[i].text);
+			
+			if (str != "")
+				c->AddAns(str);
+			if (data[i].pen.NowMousePos_.x != -10) {
+				player->RecvPencil(data[i].pen);
+			}
+		}
 	}
+	break;
+	default:
+		break;
+	}
+
+
 }
 
 void UDPClient::UpdateClose()
