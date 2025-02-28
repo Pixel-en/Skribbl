@@ -3,6 +3,7 @@
 #include "Engine/SceneManager.h"
 #include "Chat.h"
 #include "Player.h"
+#include "Theme.h"
 
 inline bool operator == (const IPDATA& a, const IPDATA& b) {
 	if (a.d1 == b.d1 && a.d2 == b.d2 && a.d3 == b.d3 && a.d4 == b.d4)return  true;
@@ -43,6 +44,8 @@ UDPServer::UDPServer(GameObject* parent)
 	myPoint_ = 0;
 
 	part = NONE;
+
+	timer_ = 1.0f;
 }
 
 UDPServer::~UDPServer()
@@ -185,7 +188,7 @@ void UDPServer::UpdateConnect()
 			portdata.num = connectnum_;
 			NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &portdata, sizeof(portdata));
 		}
-		part = PLAY;
+		isCorrect_ = true;
 		SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
 		sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 	}
@@ -199,6 +202,8 @@ void UDPServer::UpdatePlay()
 	//チャット
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
 
+	Theme* theme = GetRootJob()->FindGameObject<Theme>();
+
 
 	struct NetData
 	{
@@ -206,6 +211,13 @@ void UDPServer::UpdatePlay()
 		char name[16] = "";
 		char text[64] = "";
 		Player::Pencil pen;
+
+		//書き込む
+		int point;
+		bool drawer = false;	//絵描き
+		bool correct = false;	//正解
+		bool reset = false;	//キャンバスリセット
+		int themenum;
 	};
 
 	NetData data[CONNECTMAX + 1];
@@ -217,21 +229,77 @@ void UDPServer::UpdatePlay()
 			if (data[i].text[0] != '\0') {
 				std::string Rname(data[i].name), Rtext(data[i].text);
 				c->AddAns(Rname + ":" + Rtext);
+				if (!isCorrect_) {
+					if (theme->CheckTheme(Rtext) == true) {
+						user[i].point_ += 10;
+						isCorrect_ = true;
+					}
+				}
 			}
 
 			if (data[i].pen.linesize_ != -1) {
 				player->RecvPencil(data[i].pen);
 			}
+			data[i].point = user[i].point_;
+
 		}
 	}
 	//サーバーの情報を入れる
 	std::string ctext = c->GetText();
+	if (!isCorrect_) {
+		if (theme->CheckTheme(ctext) == true) {
+			myPoint_++;
+			isCorrect_ = true;
+		}
+	}
+
+
 	data[connectnum_].port = 8888;
 	strcpy_s(data[connectnum_].name, sizeof(data[connectnum_].name), name_.c_str());
 	strcpy_s(data[connectnum_].text, sizeof(data[connectnum_].text), ctext.c_str());
 	data[connectnum_].name[std::strlen(data[connectnum_].name)] = '\0';
 	data[connectnum_].text[std::strlen(data[connectnum_].text)] = '\0';
 	data[connectnum_].pen = player->GetPencil();
+	data[connectnum_].point = myPoint_;
+
+	int drawer = -1;
+
+	if (isCorrect_) {
+
+		if (timer_ < 0.0) {
+			drawer = GetRand(connectnum_);
+			theme->ThemeRoll();
+			for (int i = 0; i <= connectnum_; i++) {
+				if (data[i].drawer)	//絵描きのポイント
+					user[i].point_ += 10;
+
+				if (drawer == i) {
+					data[i].drawer = true;
+				}
+				else
+					data[i].drawer = false;
+
+				if (i == connectnum_) {
+					if (drawer == i)
+						player->SetDraw(true);
+					else
+						player->SetDraw(false);
+				}
+
+				data[i].reset = true;
+				player->CanvasReset(true);
+			}
+			isCorrect_ = false;
+		}
+		else
+			timer_ -= Time::DeltaTime();
+
+		for (int i = 0; i < connectnum_; i++) {
+			data[i].correct = true;
+			data[i].themenum = theme->GetThemeNum();
+		}
+
+	}
 
 	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));

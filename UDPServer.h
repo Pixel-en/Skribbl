@@ -39,6 +39,9 @@ class UDPServer :public GameObject
 	int connectnum_;
 	bool isConnect_;
 
+	bool isCorrect_;
+	float timer_;
+
 	void UpdateConnect();
 	void UpdatePlay();
 	void UpdateClose();
