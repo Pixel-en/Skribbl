@@ -46,13 +46,13 @@ void Player::Update()
 		}
 		else {
 			pen.PreMousePos_ = { -10,-10 };
-			pen.NowMousePos_ = { -10,-10 };
+			//pen.NowMousePos_ = { -10,-10 };
 		}
 	}
 	else
 	{
 		pen.PreMousePos_ = { -10,-10 };
-		pen.NowMousePos_ = { -10,-10 };
+		//pen.NowMousePos_ = { -10,-10 };
 	}
 
 
