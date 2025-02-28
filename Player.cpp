@@ -28,7 +28,7 @@ void Player::Initialize()
 
 void Player::Update()
 {
-	drawOK_ = false;
+	pen.drawOK_ = false;
 
 	BackGround* bg = GetParent()->FindGameObject<BackGround>();
 	if (isDrawer) {
@@ -40,7 +40,7 @@ void Player::Update()
 			GetMousePoint(&pen.NowMousePos_.x, &pen.NowMousePos_.y);
 			if ((pen.NowMousePos_.x >= 0 && pen.NowMousePos_.x < 900) && (pen.NowMousePos_.y >= 50 && pen.NowMousePos_.y < 500)) {
 				if (pen.PreMousePos_.x >= 0) {
-					drawOK_ = true;
+					pen.drawOK_ = true;
 				}
 			}
 		}
@@ -97,7 +97,7 @@ void Player::Draw()
 	int LineSizes[6] = { 2,5,10,20,25,50 };
 
 	if (isDrawer) {
-		if (drawOK_) {
+		if (pen.drawOK_) {
 			//è¡ÇµÉSÉÄ
 			if (pen.Erase_)
 				DrawCircle(pen.NowMousePos_.x, pen.NowMousePos_.y, LineSizes[pen.linesize_], GetColor(255, 255, 255), true);
@@ -106,11 +106,13 @@ void Player::Draw()
 		}
 	}
 	else {
-		//è¡ÇµÉSÉÄ
-		if (youPen.Erase_)
-			DrawCircle(youPen.NowMousePos_.x, youPen.NowMousePos_.y, LineSizes[youPen.linesize_], GetColor(255, 255, 255), true);
-		else
-			DrawLine(youPen.PreMousePos_.x, youPen.PreMousePos_.y, youPen.NowMousePos_.x, youPen.NowMousePos_.y, youPen.Cr_, LineSizes[youPen.linesize_]);
+		if (youPen.drawOK_) {
+			//è¡ÇµÉSÉÄ
+			if (youPen.Erase_)
+				DrawCircle(youPen.NowMousePos_.x, youPen.NowMousePos_.y, LineSizes[youPen.linesize_], GetColor(255, 255, 255), true);
+			else
+				DrawLine(youPen.PreMousePos_.x, youPen.PreMousePos_.y, youPen.NowMousePos_.x, youPen.NowMousePos_.y, youPen.Cr_, LineSizes[youPen.linesize_]);
+		}
 	}
 	//ÉyÉìÇÃêF
 	DrawBox(1125, 646, 1218, 674, pen.Cr_, true);

@@ -15,6 +15,7 @@ public:
 
 		int linesize_;			//ラインの大きさ
 		bool Erase_;			//消しゴムを使っているか
+		bool drawOK_;
 	};
 
 private:
@@ -23,7 +24,6 @@ private:
 	Pencil youPen;
 
 
-	bool drawOK_;
 
 	
 	//消しゴムモードかどうか
@@ -60,7 +60,7 @@ public:
 	{
 		Pencil temppen = pen;
 		if (!isDrawer)
-			temppen = { {-10,-10},{-10,-10},0,-1,false };
+			temppen = { {-10,-10},{-10,-10},0,-1,false,false };
 
 		return temppen;
 	}
