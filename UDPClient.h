@@ -8,15 +8,24 @@ class UDPClient :public GameObject
 	int hConnectCheck_;
 	int ServerPort_;
 	bool isConnect_;
-	struct Circle {
-		int x;
-		int y;
-		int size;
-		unsigned int color;
+
+	struct UserData
+	{
+		char name[10];
+		bool draw;
+		int point;
 	};
-	
-	Circle me;
-	Circle you;
+	UserData* data;
+
+	int playernum_;
+
+	enum NetData
+	{
+		NONE,
+		INFO,
+		PLAY,
+	};
+	NetData nstate;
 
 	std::string name_;
 

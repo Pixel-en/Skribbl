@@ -10,12 +10,14 @@ class UDPServer :public GameObject
 	int h64Font_;
 	int h32Font_;
 	int hNameFrame_;
+	int myPoint_;
 
 	struct User
 	{
 		std::string name_;
 		IPDATA IpAddr_;
 		int RecvUDPHandle_;
+		int point_;
 	};
 
 	IPDATA MyIpAddr_;
