@@ -10,8 +10,10 @@ namespace {
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player")
 {
-	PreMousePos_ = { -1,-1 };
-	NowMousePos_ = { -1,-1 };
+	pen.PreMousePos_ = { -1,-1 };
+	pen.NowMousePos_ = { -1,-1 };
+	isDrawer = false;
+	youPen.linesize_ = -1;
 }
 
 Player::~Player()
@@ -20,8 +22,8 @@ Player::~Player()
 
 void Player::Initialize()
 {
-	Cr_ = 0;
-	Erase_ = false;
+	pen.Cr_ = 0;
+	pen.Erase_ = false;
 
 }
 
@@ -31,56 +33,63 @@ void Player::Update()
 
 	BackGround* bg = GetParent()->FindGameObject<BackGround>();
 
-	if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
+	if (isDrawer) {
+		if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
 
-		if (NowMousePos_.x >= 0)
-			PreMousePos_ = NowMousePos_;
+			if (pen.NowMousePos_.x >= 0)
+				pen.PreMousePos_ = pen.NowMousePos_;
 
-		GetMousePoint(&NowMousePos_.x, &NowMousePos_.y);
-		if ((NowMousePos_.x >= 0 && NowMousePos_.x < 900) && (NowMousePos_.y >= 50 && NowMousePos_.y < 500)) {
-			if (PreMousePos_.x >= 0) {
-				drawOK_ = true;
+			GetMousePoint(&pen.NowMousePos_.x, &pen.NowMousePos_.y);
+			if ((pen.NowMousePos_.x >= 0 && pen.NowMousePos_.x < 900) && (pen.NowMousePos_.y >= 50 && pen.NowMousePos_.y < 500)) {
+				if (pen.PreMousePos_.x >= 0) {
+					drawOK_ = true;
+				}
 			}
 		}
+		else {
+			pen.PreMousePos_ = { -10,-10 };
+			pen.NowMousePos_ = { -10,-10 };
+		}
+
+
+		if ((GetMouseInput() & MOUSE_INPUT_RIGHT) != 0)
+		{
+			XMINT2 PixelPos;
+			GetMousePoint(&PixelPos.x, &PixelPos.y);
+
+			//パレットから色を取得
+			if ((PixelPos.x > 916 && PixelPos.x < 1260) && (PixelPos.y > 516 && PixelPos.y < 610)) {
+				pen.Cr_ = GetPixel(PixelPos.x, PixelPos.y);
+				pen.Erase_ = false;
+			}
+			//太さ選択
+			for (int i = 0; i < 6; i++) {
+				if ((PixelPos.x > LINESIZEPOS.x + ((i % 3) * 44) && PixelPos.x < (LINESIZEPOS.x + 44) + ((i % 3) * 44) &&
+					(PixelPos.y > LINESIZEPOS.y + ((i / 3) * 45) && PixelPos.y < (LINESIZEPOS.y + 45) + ((i / 3) * 45)))) {
+					bg->SetLineSize(i);
+					pen.linesize_ = i;
+					break;
+				}
+			}
+
+			//消しゴム
+			if ((PixelPos.x > 1050 && PixelPos.x < 1090) && (PixelPos.y > 620 && PixelPos.y < 700)) {
+				if (!RFlag_) {
+					pen.Erase_ = !pen.Erase_;
+				}
+			}
+			RFlag_ = true;
+		}
+		else
+			RFlag_ = false;
 	}
 	else {
-		PreMousePos_ = { -1,-1 };
-		NowMousePos_ = { -1,-1 };
+
+		pen.PreMousePos_ = { -10,-10 };
+		pen.NowMousePos_ = { -10,-10 };
 	}
 
-
-	if ((GetMouseInput() & MOUSE_INPUT_RIGHT) != 0)
-	{
-		XMINT2 PixelPos;
-		GetMousePoint(&PixelPos.x, &PixelPos.y);
-
-		//パレットから色を取得
-		if ((PixelPos.x > 916 && PixelPos.x < 1260) && (PixelPos.y > 516 && PixelPos.y < 610)) {
-			Cr_ = GetPixel(PixelPos.x, PixelPos.y);
-			Erase_ = false;
-		}
-		//太さ選択
-		for (int i = 0; i < 6; i++) {
-			if ((PixelPos.x > LINESIZEPOS.x + ((i % 3) * 44) && PixelPos.x < (LINESIZEPOS.x + 44) + ((i % 3) * 44) &&
-				(PixelPos.y > LINESIZEPOS.y + ((i / 3) * 45) && PixelPos.y < (LINESIZEPOS.y + 45) + ((i / 3) * 45)))) {
-				bg->SetLineSize(i);
-				linesize_ = i;
-				break;
-			}
-		}
-
-		//消しゴム
-		if ((PixelPos.x > 1050 && PixelPos.x < 1090) && (PixelPos.y > 620 && PixelPos.y < 700)) {
-			if (!RFlag_) {
-				Erase_ = !Erase_;
-			}
-		}
-		RFlag_ = true;
-	}
-	else
-		RFlag_ = false;
-
-	bg->SetErase(Erase_);
+	bg->SetErase(pen.Erase_);
 
 
 }
@@ -91,13 +100,22 @@ void Player::Draw()
 
 	if (drawOK_) {
 		//消しゴム
-		if (Erase_)
-			DrawCircle(NowMousePos_.x, NowMousePos_.y, LineSizes[linesize_], GetColor(255, 255, 255), true);
+		if (pen.Erase_)
+			DrawCircle(pen.NowMousePos_.x, pen.NowMousePos_.y, LineSizes[pen.linesize_], GetColor(255, 255, 255), true);
 		else
-			DrawLine(PreMousePos_.x, PreMousePos_.y, NowMousePos_.x, NowMousePos_.y, Cr_, LineSizes[linesize_]);
+			DrawLine(pen.PreMousePos_.x, pen.PreMousePos_.y, pen.NowMousePos_.x, pen.NowMousePos_.y, pen.Cr_, LineSizes[pen.linesize_]);
+	}
+	else {
+		if (youPen.linesize_ == -1) {
+			//消しゴム
+			if (youPen.Erase_)
+				DrawCircle(youPen.NowMousePos_.x, youPen.NowMousePos_.y, LineSizes[youPen.linesize_], GetColor(255, 255, 255), true);
+			else
+				DrawLine(youPen.PreMousePos_.x, youPen.PreMousePos_.y, youPen.NowMousePos_.x, youPen.NowMousePos_.y, youPen.Cr_, LineSizes[youPen.linesize_]);
+		}
 	}
 	//ペンの色
-	DrawBox(1125, 646, 1218, 674, Cr_, true);
+	DrawBox(1125, 646, 1218, 674, pen.Cr_, true);
 
 	DrawString(450 - (GetDrawStringWidth(theme_.c_str(), theme_.length()) / 2), 15, theme_.c_str(), GetColor(255, 255, 255));
 }

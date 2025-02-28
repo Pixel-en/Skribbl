@@ -2,6 +2,7 @@
 #include <cstring>
 #include "Engine/SceneManager.h"
 #include "Chat.h"
+#include "Player.h"
 
 inline bool operator == (const IPDATA& a, const IPDATA& b) {
 	if (a.d1 == b.d1 && a.d2 == b.d2 && a.d3 == b.d3 && a.d4 == b.d4)return  true;
@@ -26,6 +27,7 @@ UDPServer::UDPServer(GameObject* parent)
 		HandleCheck(user[i].RecvUDPHandle_, "ソケットが作れてない");
 
 		user[i].IpAddr_ = { 0,0,0,0 };
+		user[i].point_ = 0;
 	}
 
 	UDPConnectHandle_ = MakeUDPSocket(8888);
@@ -36,11 +38,9 @@ UDPServer::UDPServer(GameObject* parent)
 	GetMyIPAddress(ip, 2, NULL);
 	MyIpAddr_ = ip[1];
 
-	me = { -1,-1,5,GetColor(155,155,0) };
-	you = { -1,-1,5,GetColor(0,0,0) };
-
 	h64Font_ = CreateFontToHandle("64", 64, -1, -1);
 	h32Font_ = CreateFontToHandle("32", 32, -1, -1);
+	myPoint_ = 0;
 }
 
 UDPServer::~UDPServer()
@@ -171,10 +171,19 @@ void UDPServer::UpdateConnect()
 
 	//接続人数が確定した時ポート番号を送る
 	if (isConnect_ == true) {
+		struct PortData
+		{
+			int port;
+			int num;
+		};
+		PortData portdata;
+
 		for (int i = 0; i < connectnum_; i++) {
-			int data = SERVERPORT + i;
-			NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &data, sizeof(data));
+			 portdata.port = SERVERPORT + i;
+			 portdata.num = connectnum_;
+			 NetWorkSendUDP(UDPConnectHandle_, user[i].IpAddr_, CLIENTPORT, &portdata, sizeof(portdata));
 		}
+		nstate = PLAY;
 		SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
 		sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 	}
@@ -183,9 +192,85 @@ void UDPServer::UpdateConnect()
 
 void UDPServer::UpdatePlay()
 {
-	Chat* c = GetParent()->FindGameObject<Chat>();
-	if (c == nullptr)
-		return;
+
+	//Player* player = GetRootJob()->FindGameObject<Player>();
+	//player->SetDraw(true);
+
+	//for (int i = 0; i < connectnum_; i++) {
+	//	NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, 9876, &nstate, sizeof(nstate));
+	//}
+
+	//struct Data
+	//{
+	//	int port;
+	//	char text[64] = "";
+	//	Player::Pencil pen;
+	//};
+	//Data data[CONNECTMAX];
+	//for (int i = 0; i < connectnum_; i++) {
+	//	Data temp;
+	//	NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, &temp, sizeof(temp), FALSE);
+	//	data[i] = temp;
+	//}
+
+	//switch (nstate)
+	//{
+	//case UDPServer::NONE:
+	//	break;
+	//case UDPServer::INFO:
+	//	break;
+	//case UDPServer::PLAY:
+	//{
+	//	for (int i = 0; i < connectnum_; i++) {
+	//		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &data, sizeof(data));
+	//	}
+	//}
+	//	break;
+	//default:
+	//	break;
+	//}
+
+
+	//{//プレイヤーデータ
+
+	//	struct UserData
+	//	{
+	//		char name[10];
+	//		bool draw;
+	//		int point;
+	//	};
+
+	//	UserData* userdata = new UserData[connectnum_ + 1];
+	//	int num = GetRand(connectnum_);
+	//	for (int i = 0; i < connectnum_; i++) {
+	//		strcpy_s(userdata[i].name, sizeof(userdata), user[i].name_.c_str());
+	//		if (i == num) {
+	//			userdata[i].draw = true;
+	//		}
+	//		else
+	//			userdata[i].draw = false;
+	//		userdata[i].point = user[i].point_;
+	//	}
+
+	//	strcpy_s(userdata[connectnum_].name, sizeof(userdata), name_.c_str());
+	//	if (num == connectnum_) {
+	//		userdata[connectnum_].draw = true;
+	//	}
+	//	userdata[connectnum_].draw = false;
+	//	userdata[connectnum_].point = myPoint_;
+
+	//	for (int i = 0; i < connectnum_; i++) {
+	//		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, userdata, sizeof(userdata));
+	//	}
+
+	//	delete[] userdata;
+	//	userdata = nullptr;
+	//}
+
+	{	//チャット
+		Chat* c = GetParent()->FindGameObject<Chat>();
+		if (c == nullptr)
+			return;
 
 	for (int i = 0; i < connectnum_; i++) {
 		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
@@ -201,7 +286,7 @@ void UDPServer::UpdatePlay()
 					}
 				}
 			}
-			
+
 		}
 	}
 
@@ -214,7 +299,39 @@ void UDPServer::UpdatePlay()
 			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
 		}
 	}
+	//	//自分の送信
+	//	std::string str = c->GetText();
+	//	if (str != "") {
+	//		char text_[64];
+	//		strcpy_s(text_, sizeof(text_), (name_ + "：" + str).c_str());
+	//		for (int i = 0; i < connectnum_; i++) {
+	//			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, text_, sizeof(text_));
+	//		}
+	//	}
+	//}
 
+	//{
+	//	Player* player = GetRootJob()->FindGameObject<Player>();
+	//	//受信
+	//	Player::Pencil pen;
+	//	for (int i = 0; i < connectnum_; i++) {
+	//		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
+	//			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, &pen, sizeof(pen), FALSE);
+	//			//共有
+	//			for (int j = 0; j < connectnum_; j++) {
+	//				if (i != j) {
+	//					NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, &pen, sizeof(pen));
+	//				}
+	//			}
+	//			player->RecvPencil(pen);
+	//		}
+	//	}
+	//	//自分の送信
+	//	pen = player->GetPencil();
+	//	for (int i = 0; i < connectnum_; i++) {
+	//		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &pen, sizeof(pen));
+	//	}
+	//}
 }
 
 void UDPServer::UpdateClose()

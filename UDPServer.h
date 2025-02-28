@@ -10,23 +10,15 @@ class UDPServer :public GameObject
 	int h64Font_;
 	int h32Font_;
 	int hNameFrame_;
-
-	struct Circle {
-		int x;
-		int y;
-		int size;
-		unsigned int color;
-	};   // Structure to store the received circle data
+	int myPoint_;
 
 	struct User
 	{
 		std::string name_;
 		IPDATA IpAddr_;
 		int RecvUDPHandle_;
+		int point_;
 	};
-
-	Circle me;
-	Circle you;
 
 	IPDATA MyIpAddr_;
 	//ソケット
