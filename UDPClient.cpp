@@ -208,7 +208,7 @@ void UDPClient::UpdatePlay()
 				std::string Rname(data[i].name), Rtext(data[i].text);
 				c->AddAns(Rname + ":" + Rtext);
 			}
-			if (data[i].pen.linesize_ != -1) {
+			if (data[i].pen.linesize_ <= -1) {
 				player->RecvPencil(data[i].pen);
 			}
 		}
