@@ -58,14 +58,20 @@ void Score::Draw() {
 void Score::Release() {
 }
 
-void Score::AddPointsToPlayer(const std::string& playerName, int points) {
+void Score::AddPointsToPlayer(const std::string& playerName, bool isDrawer) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
         if (playerNames_[i] == playerName) {
-            playerScores_[i] += points;
+            if (isDrawer) {
+                playerScores_[i] += DRAWER_POINTS;
+            }
+            else {
+                playerScores_[i] += GUESSER_POINTS;
+            }
             return;
         }
     }
 }
+
 
 int Score::GetPlayerScore(const std::string& playerName) {
     for (int i = 0; i < MAX_PLAYERS; i++) {

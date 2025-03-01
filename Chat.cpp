@@ -1,6 +1,7 @@
 #include "Chat.h"
 #include <DxLib.h>
 #include <cstring>
+#include"Theme.h"
 #include "ImGui/imgui.h"
 
 namespace {
@@ -38,8 +39,7 @@ void Chat::Update() {
 		if (buffer != "") {
 			ans = str;
 			StrHistory_.push_front("‚ ‚È‚½F" + ans);
-			// Call CheckTheme to verify the theme
-			CheckTheme(ans);
+	
 		}
 	}
 	case 2:
@@ -74,6 +74,8 @@ void Chat::Draw() {
 void Chat::Release() {
 }
 
-void Chat::CheckTheme(const std::string& answer)
+bool Chat::CheckTheme()
 {
+	Theme* theme = GetParent()->FindGameObject<Theme>();
+	return ans == theme->GetCurrentTheme();
 }

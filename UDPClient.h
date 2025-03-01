@@ -23,6 +23,8 @@ class UDPClient :public GameObject
 		std::string name_;
 		IPDATA IpAddr_;
 		int RecvUDPHandle_;
+		int score;
+		bool isDrawer_;
 	};
 	Circle me;
 	Circle you;
@@ -37,7 +39,7 @@ class UDPClient :public GameObject
 	int connectnum_;
 	std::array<User, CONNECTMAX> users_;
 	std::string drawingOrder_[CONNECTMAX];
-	std::array<int, MAX_PLAYERS> scores_;
+	//std::array<int, MAX_PLAYERS> scores_;
 	bool isDrawer_;
 	int currentDrawerIndex_;
 	std::string themeToDisplay_;

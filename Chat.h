@@ -29,7 +29,7 @@ public:
     /// <param name="str">–¼‘O+“š‚¦</param>
     void AddAns(std::string str) { StrHistory_.push_front(str); }
 
-    void CheckTheme(const std::string& answer);
+    bool CheckTheme();
 
     std::string GetText() { return ans; }
 };

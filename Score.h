@@ -9,7 +9,8 @@ class Score : public GameObject {
     std::array<std::string, MAX_PLAYERS> playerNames_;
     std::array<int, MAX_PLAYERS> playerScores_;
     int playerCount_;
-
+    const int GUESSER_POINTS = 10;
+    const int DRAWER_POINTS = 5;
 public:
     Score(GameObject* parent);
     ~Score();
@@ -19,7 +20,7 @@ public:
     void Draw() override;
     void Release() override;
 
-    void AddPointsToPlayer(const std::string& playerName, int points);
+    void AddPointsToPlayer(const std::string& playerName, bool isDrawer);
     int GetPlayerScore(const std::string& playerName);
     std::string DetermineWinner();
     void AddPlayer(const std::string& playerName);

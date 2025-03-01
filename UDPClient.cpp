@@ -26,8 +26,8 @@ UDPClient::UDPClient(GameObject* parent)
 	currentDrawerIndex_ = 0;
 	h64Font_ = CreateFontToHandle("64size", 64, -1, -1);
 	for (int i = 0; i < CONNECTMAX; i++) {
-		users_[i] = { "", {}, -1 }; // Initialize users
-		scores_[i] = 0; // Initialize scores
+		users_[i] = { "", {}, -1,0 ,false}; // Initialize users
+		
 	}
 }
 
@@ -200,6 +200,8 @@ void UDPClient::UpdatePlay() {
 			User userData;
 			NetWorkRecvUDP(UDPHandle, NULL, NULL, &userData, sizeof(userData), FALSE);
 			UpdateUserData(userData);
+			// Update score on the client side
+			score_->AddPointsToPlayer(userData.name_, userData.isDrawer_);
 		}
 		break;
 		case 5: // Connect number update
@@ -275,7 +277,7 @@ void UDPClient::DrawPlay() {
 	// Draw the player scores
 	for (int i = 0; i < CONNECTMAX; i++) {
 		int y = 50 + i * 20;  // Adjust positioning as needed
-		DrawString(50, y, (users_[i].name_ + " : " + std::to_string(scores_[i])).c_str(), GetColor(255, 255, 255));
+		DrawString(50, y, (users_[i].name_ + " : " + std::to_string(users_[i].score)).c_str(), GetColor(255, 255, 255));
 	}
 
 	// Draw the theme at the top center if the client is the drawer
@@ -294,8 +296,9 @@ void UDPClient::HandleDrawingOrder(int drawerIndex, const std::string* order) {
 	// Update drawingOrder_ array
 	for (int i = 0; i < connectnum_; i++) {
 		users_[i].name_ = order[i];
+		users_[i].isDrawer_ = (i == drawerIndex);
 	}
-	isDrawer_ = (users_[drawerIndex].name_ == name_);
+	isDrawer_ = users_[drawerIndex].name_ == name_;
 	if (score_) {
 		for (int i = 0; i < connectnum_; i++) {
 			score_->AddPlayer(users_[i].name_);

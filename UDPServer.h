@@ -23,6 +23,8 @@ class UDPServer :public GameObject
 		std::string name_;
 		IPDATA IpAddr_;
 		int RecvUDPHandle_;
+		int score;
+		bool isDrawer_;
 	};
 	Theme* theme_;
 	Score* score_;
@@ -53,7 +55,7 @@ class UDPServer :public GameObject
 	std::string drawingOrder_[CONNECTMAX];
 	int currentDrawerIndex_;
 	std::string themeToDisplay_;
-	int playerScores_[CONNECTMAX];
+//	int playerScores_[CONNECTMAX];
 public:
 
 	//コンストラクタ
