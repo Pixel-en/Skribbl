@@ -1,4 +1,4 @@
-#include "UDPServer.h"
+ï»¿#include "UDPServer.h"
 #include <cstring>
 #include<ctime>
 #include "Engine/SceneManager.h"
@@ -31,16 +31,16 @@ UDPServer::UDPServer(GameObject* parent)
 	currentDrawerIndex_ = 0;
 	for (int i = 0; i < CONNECTMAX; i++) {
 		user[i].RecvUDPHandle_ = MakeUDPSocket(SERVERPORT + i);
-		HandleCheck(user[i].RecvUDPHandle_, "ƒ\ƒPƒbƒg‚ªì‚ê‚Ä‚È‚¢");
+		HandleCheck(user[i].RecvUDPHandle_, "Æ’\Æ’PÆ’bÆ’gâ€šÂªÂÃ¬â€šÃªâ€šÃ„â€šÃˆâ€šÂ¢");
 
 		user[i].IpAddr_ = { 0,0,0,0 };
 		user[i].score = 0; // Initialize scores
 	}
 
 	UDPConnectHandle_ = MakeUDPSocket(8888);
-	HandleCheck(UDPConnectHandle_, "ƒ\ƒPƒbƒg‚ªì‚ê‚Ä‚È‚¢");
+	HandleCheck(UDPConnectHandle_, "Æ’\Æ’PÆ’bÆ’gâ€šÂªÂÃ¬â€šÃªâ€šÃ„â€šÃˆâ€šÂ¢");
 
-	//Ž©•ª‚ÌIPƒAƒhƒŒƒX‚ðŽæ“¾
+	//Å½Â©â€¢Âªâ€šÃŒIPÆ’AÆ’hÆ’Å’Æ’Xâ€šÃ°Å½Ã¦â€œÂ¾
 	IPDATA ip[2];
 	GetMyIPAddress(ip, 2, NULL);
 	MyIpAddr_ = ip[1];
@@ -74,7 +74,7 @@ void UDPServer::Initialize()
 		break;
 	case SceneManager::SCENE_ID_CONNECT:
 		hNameFrame_ = LoadGraph("Assets\\Image\\NameFrame.png");
-		HandleCheck(hNameFrame_, "ƒl[ƒ€ƒtƒŒ[ƒ€‰æ‘œ‚ª‚È‚¢");
+		HandleCheck(hNameFrame_, "Æ’lÂ[Æ’â‚¬Æ’tÆ’Å’Â[Æ’â‚¬â€°Ã¦â€˜Å“â€šÂªâ€šÃˆâ€šÂ¢");
 		break;
 	case SceneManager::SCENE_ID_PLAY:
 		SetDrawingOrder();  // Set the initial drawing order when starting the game
@@ -152,11 +152,11 @@ void UDPServer::UpdateConnect()
 	bool check = false;
 
 	if (connectnum_ < CONNECTMAX) {
-		//ƒ|[ƒg8888iÚ‘±‘ŠŽèƒeƒXƒgj‚É’ÊM‚ª—ˆ‚½Žž
+		//Æ’|Â[Æ’g8888ÂiÂÃšâ€˜Â±â€˜Å Å½Ã¨Æ’eÆ’XÆ’gÂjâ€šÃ‰â€™ÃŠÂMâ€šÂªâ€”Ë†â€šÂ½Å½Å¾
 		if (CheckNetWorkRecvUDP(UDPConnectHandle_) == TRUE) {
 			IPDATA ip = { 0,0,0,0 };
 			char Recvname[256];
-			//‰ß‹Ž‚ÉÚ‘±‚µ‚½l‚Å‚È‚¯‚ê‚Î
+			//â€°ÃŸâ€¹Å½â€šÃ‰ÂÃšâ€˜Â±â€šÂµâ€šÂ½Âlâ€šÃ…â€šÃˆâ€šÂ¯â€šÃªâ€šÃŽ
 			NetWorkRecvUDP(UDPConnectHandle_, &ip, NULL, Recvname, sizeof(Recvname), FALSE);
 			for (int i = 0; i < CONNECTMAX; i++) {
 				if (ip == user[i].IpAddr_) {
@@ -164,7 +164,7 @@ void UDPServer::UpdateConnect()
 					break;
 				}
 			}
-			//IP‚ð•Û‘¶‚µ‚Ä‚¨‚­
+			//IPâ€šÃ°â€¢Ã›â€˜Â¶â€šÂµâ€šÃ„â€šÂ¨â€šÂ­
 			if (!check) {
 				user[connectnum_].IpAddr_ = ip;
 				Recvname[std::strlen(Recvname)] = '\0';
@@ -172,7 +172,7 @@ void UDPServer::UpdateConnect()
 				user[connectnum_].name_ = _name;
 				connectnum_++;
 
-				//Ú‘±‚Å‚«‚½‚±‚Æ‚ð‘—M
+				//ÂÃšâ€˜Â±â€šÃ…â€šÂ«â€šÂ½â€šÂ±â€šÃ†â€šÃ°â€˜â€”ÂM
 				NetWorkSendUDP(UDPConnectHandle_, ip, 9876, NULL, 0);
 			}
 
@@ -189,7 +189,7 @@ void UDPServer::UpdateConnect()
 		}
 	}
 
-	//Ú‘±l”‚ªŠm’è‚µ‚½Žžƒ|[ƒg”Ô†‚ð‘—‚é
+	//ÂÃšâ€˜Â±ÂlÂâ€â€šÂªÅ mâ€™Ã¨â€šÂµâ€šÂ½Å½Å¾Æ’|Â[Æ’gâ€Ã”Ââ€ â€šÃ°â€˜â€”â€šÃ©
 	if (isConnect_ == true) {
 		for (int i = 0; i < connectnum_; i++) {
 			int data = SERVERPORT + i;
@@ -200,29 +200,32 @@ void UDPServer::UpdateConnect()
 	}
 
 }
-
 void UDPServer::UpdatePlay() {
 	Chat* c = GetParent()->FindGameObject<Chat>();
 	if (c == nullptr)
 		return;
 
 	for (int i = 0; i < connectnum_; i++) {
-		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == FALSE) {//dont forget
+		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
 			char text[64] = "";
 			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, text, sizeof(text), FALSE);
 			text[std::strlen(text)] = '\0';
 			std::string str(text);
-		if (str != "") {
+			if (str != "") {
 				DataPacket packet;
 				packet.packetType = 0; // Chat message
 				strcpy_s(packet.data, str.c_str());
 				c->AddAns(str);
-				(str);
 
 				if (c->CheckTheme()) {
 					// Correct answer
 					score_->AddPointsToPlayer(user[i].name_, false); // Guesser
-					score_->AddPointsToPlayer(drawingOrder_[currentDrawerIndex_], true); // Drawer
+					for (auto& user : user) {
+						if (user.isDrawer_) {
+							score_->AddPointsToPlayer(user.name_, true); // Drawer
+							break;
+						}
+					}
 
 					// Update all clients with new scores
 					for (int j = 0; j < connectnum_; j++) {
@@ -256,7 +259,7 @@ void UDPServer::UpdatePlay() {
 	if (str != "") {
 		DataPacket packet;
 		packet.packetType = 0; // Chat message
-		strcpy_s(packet.data, (name_ + "F" + str).c_str());
+		strcpy_s(packet.data, (name_ + "ï¼š" + str).c_str());
 
 		for (int i = 0; i < connectnum_; i++) {
 			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
@@ -274,16 +277,16 @@ void UDPServer::UpdateClose()
 
 void UDPServer::DrawConnect()
 {
-	std::string pass = "ƒ‹[ƒ€”Ô†F";
+	std::string pass = "Æ’â€¹Â[Æ’â‚¬â€Ã”Ââ€ ÂF";
 	std::string d3 = std::to_string(MyIpAddr_.d3);
 	std::string d4 = std::to_string(MyIpAddr_.d4);
 	d3.insert(0, 3 - d3.length(), '0');
 	d4.insert(0, 3 - d4.length(), '0');
 	pass += d3 + d4;
-	//‚¶‚Ô‚ñ‚ÌIP•\Ž¦
+	//â€šÂ¶â€šÃ”â€šÃ±â€šÃŒIPâ€¢\Å½Â¦
 	DrawStringToHandle(320, 60,pass.c_str(), GetColor(0, 0, 0),h64Font_);
 
-	//ŽQ‰ÁŽÒ‚Ì–¼‘O•\Ž¦
+	//Å½Qâ€°ÃÅ½Ã’â€šÃŒâ€“Â¼â€˜Oâ€¢\Å½Â¦
 	for (int i = 0; i < connectnum_ + 1; i++) {
 		DrawGraph(350, 200+i*90, hNameFrame_, true);
 		if (i == 0) {
@@ -294,7 +297,7 @@ void UDPServer::DrawConnect()
 		}
 	}
 
-	//ƒXƒ^[ƒgƒ{ƒ^ƒ“•\Ž¦
+	//Æ’XÆ’^Â[Æ’gÆ’{Æ’^Æ’â€œâ€¢\Å½Â¦
 	DrawBox(CONNECTFRAME.x, CONNECTFRAME.y, CONNECTFRAME.z, CONNECTFRAME.w, GetColor(200, 200, 200), true);
 	DrawBox(CONNECTFRAME.x, CONNECTFRAME.w - 3, CONNECTFRAME.z, CONNECTFRAME.w, GetColor(150, 150, 150), true);
 	DrawBox(CONNECTFRAME.z - 3, CONNECTFRAME.y, CONNECTFRAME.z, CONNECTFRAME.w, GetColor(150, 150, 150), true);
@@ -321,6 +324,7 @@ void UDPServer::DrawClose()
 void UDPServer::SetDrawingOrder() {
 	for (int i = 0; i < connectnum_; i++) {
 		drawingOrder_[i] = user[i].name_;
+		user[i].isDrawer_ = false;  // Initially, no one is the drawer
 	}
 
 	// Add the server's own name to the drawing order
@@ -341,7 +345,12 @@ void UDPServer::SetDrawingOrder() {
 			score->AddPlayer(drawingOrder_[i]);
 		}
 	}
+
+	// Set the initial drawer
+	currentDrawerIndex_ = 0;
+	user[currentDrawerIndex_].isDrawer_ = true;
 }
+
 void UDPServer::StartNextTurn() {
 	if (currentDrawerIndex_ >= connectnum_) {
 		// Send Game Over packet
@@ -354,30 +363,44 @@ void UDPServer::StartNextTurn() {
 		}
 	}
 	else {
-		SendConnectNumToClients();
-		// Send Drawer Index packet
-		DataPacket packet;
-		packet.packetType = 1; // Drawer index update
-		int drawerIndex = currentDrawerIndex_;
-		memcpy(packet.data, &drawerIndex, sizeof(drawerIndex));
+		// Reset the current drawer flag
+		user[currentDrawerIndex_].isDrawer_ = false;
 
-		// Copy drawingOrder_ into packet.data
-		memcpy(packet.data + sizeof(drawerIndex), drawingOrder_, sizeof(drawingOrder_));
+		// Move to the next drawer
+		currentDrawerIndex_++;
+		if (currentDrawerIndex_ >= connectnum_) {  // Adjust the condition to be >=
+			// End the game if all players have had their turn
+			DataPacket packet;
+			packet.packetType = 3; // Game over
+			strcpy_s(packet.data, ""); // No additional data needed
 
-		for (int i = 0; i < connectnum_; i++) {
-			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
+			for (int i = 0; i < connectnum_; i++) {
+				NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
+			}
 		}
-		SendUserDataToClients(); // Send initial user data
-		// Roll the theme and send it to a random player
-		theme_->ThemeRoll();
-		SendThemeToRandomPlayer();
+		else {
+			// Set the new drawer flag
+			user[currentDrawerIndex_].isDrawer_ = true;
 
-		// Reset the timer for the next drawer
-		timeElapsed_ = 0.0f;
+			// Reset the timer for the next drawer
+			timeElapsed_ = 0.0f;
 
-	//	currentDrawerIndex_++;
+			// Notify clients of the drawer change
+			DataPacket packet;
+			packet.packetType = 1; // Drawer index update
+			int drawerIndex = currentDrawerIndex_;
+			memcpy(packet.data, &drawerIndex, sizeof(drawerIndex));
+
+			// Copy drawingOrder_ into packet.data
+			memcpy(packet.data + sizeof(drawerIndex), drawingOrder_, sizeof(drawingOrder_));
+
+			for (int i = 0; i < connectnum_; i++) {
+				NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
+			}
+		}
 	}
 }
+
 
 void UDPServer::SendThemeToRandomPlayer() {
 	// Select a random player index
