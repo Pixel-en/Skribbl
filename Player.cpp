@@ -124,11 +124,6 @@ void Player::Release()
 {
 }
 
-void Player::CanvasReset(bool _set)
-{
-	BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
-
-}
 
 
 

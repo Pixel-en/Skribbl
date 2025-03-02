@@ -33,5 +33,6 @@ public:
 
 	void SetLineSize(int size) { linesize_ = size; };
 	void SetErase(bool set) { Erase_ = set; }
+	void CanvasReset();
 };
 

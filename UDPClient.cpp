@@ -3,6 +3,7 @@
 #include "Engine/SceneManager.h"
 #include "Chat.h"
 #include "Player.h"
+#include "BackGround.h"
 
 namespace {
 	const XMINT4 IPFRAME{ 400, 100, 750, 200 };
@@ -183,6 +184,12 @@ void UDPClient::UpdatePlay()
 		char name[16] = "";
 		char text[64] = "";
 		Player::Pencil pen;
+
+		int point;
+		bool drawer = false;	//絵描き
+		bool correct = false;	//正解
+		bool reset = false;	//キャンバスリセット
+		int themenum;
 	};
 
 	NetData data[CONNECTMAX + 1];
@@ -201,8 +208,14 @@ void UDPClient::UpdatePlay()
 		NetWorkRecvUDP(UDPHandle, NULL, NULL, data, sizeof(data), FALSE);
 
 		for (int i = 0; i <= playernum_; i++) {
-			if (data[i].name == name_)
-				continue;
+			if (data[i].name == name_) {
+				//自分の操作を書く
+				player->SetDraw(data[i].drawer);
+				if (data[i].reset) {
+					BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
+					bg->CanvasReset();
+				}
+			}
 
 			if (data[i].text[0] != '\0') {
 				std::string Rname(data[i].name), Rtext(data[i].text);
@@ -211,8 +224,15 @@ void UDPClient::UpdatePlay()
 			if (data[i].pen.linesize_ > -1) {
 				player->RecvPencil(data[i].pen);
 			}
+
+			isCorrect_ = data[i].correct;
 		}
 	}
+
+	if (isConnect_) {
+
+	}
+
 
 
 }

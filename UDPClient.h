@@ -9,7 +9,7 @@ class UDPClient :public GameObject
 	int ServerPort_;
 	bool isConnect_;
 
-
+	bool isCorrect_;
 
 	int playernum_;
 

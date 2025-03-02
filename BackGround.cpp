@@ -58,3 +58,8 @@ void BackGround::Draw()
 void BackGround::Release()
 {
 }
+
+void BackGround::CanvasReset()
+{
+	DrawBox(0, 0, 1280, 720, GetColor(255, 255, 255), true);
+}

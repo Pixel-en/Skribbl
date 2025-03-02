@@ -15,6 +15,8 @@ namespace {
 	const int SERVERPORT{ 9850 };
 	const int CLIENTPORT{ 8888 };
 	const XMINT4 CONNECTFRAME{ 900,600,1200,700 };
+	const float CORRECTTIME{ 1.0f };
+	const int QUESTIONMAX{ 5 };
 }
 
 UDPServer::UDPServer(GameObject* parent)
@@ -45,7 +47,8 @@ UDPServer::UDPServer(GameObject* parent)
 
 	part = NONE;
 
-	timer_ = 1.0f;
+	timer_ = -1.0f;
+	questionNum_ = 0;
 }
 
 UDPServer::~UDPServer()
@@ -226,34 +229,56 @@ void UDPServer::UpdatePlay()
 	for (int i = 0; i < connectnum_; i++) {
 		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
 			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, &data[i], sizeof(data[i]), FALSE);
+			//チャットを取得
 			if (data[i].text[0] != '\0') {
+				
+				//チャットに残す
 				std::string Rname(data[i].name), Rtext(data[i].text);
 				c->AddAns(Rname + ":" + Rtext);
+
+				//正解していないとき
 				if (!isCorrect_) {
+					//お題とチェックする
 					if (theme->CheckTheme(Rtext) == true) {
-						user[i].point_ += 10;
-						isCorrect_ = true;
+						//正解していたら
+						if (drawerNum_ != i) {
+							//ポイントを入れて正解にする
+							user[i].point_ += 10;
+							//絵描き
+							if (drawerNum_ == connectnum_)
+								myPoint_ += 10;
+							else {
+								user[drawerNum_].point_ += 10;
+							}
+							questionNum_++;
+							isCorrect_ = true;
+						}
 					}
 				}
 			}
 
+			//ペンを取得
 			if (data[i].pen.linesize_ != -1) {
 				player->RecvPencil(data[i].pen);
 			}
-			data[i].point = user[i].point_;
 
 		}
 	}
+
 	//サーバーの情報を入れる
+	//チャット
 	std::string ctext = c->GetText();
 	if (!isCorrect_) {
 		if (theme->CheckTheme(ctext) == true) {
-			myPoint_++;
-			isCorrect_ = true;
+			if (drawerNum_ != connectnum_) {
+				myPoint_ += 10;
+				user[drawerNum_].point_ += 10;
+				isCorrect_ = true;
+			}
 		}
 	}
 
-
+	//その他情報
 	data[connectnum_].port = 8888;
 	strcpy_s(data[connectnum_].name, sizeof(data[connectnum_].name), name_.c_str());
 	strcpy_s(data[connectnum_].text, sizeof(data[connectnum_].text), ctext.c_str());
@@ -262,44 +287,35 @@ void UDPServer::UpdatePlay()
 	data[connectnum_].pen = player->GetPencil();
 	data[connectnum_].point = myPoint_;
 
-	int drawer = -1;
-
+	//もし正解したなら
 	if (isCorrect_) {
-
-		if (timer_ < 0.0) {
-			drawer = GetRand(connectnum_);
-			theme->ThemeRoll();
-			for (int i = 0; i <= connectnum_; i++) {
-				if (data[i].drawer)	//絵描きのポイント
-					user[i].point_ += 10;
-
-				if (drawer == i) {
-					data[i].drawer = true;
-				}
-				else
-					data[i].drawer = false;
-
-				if (i == connectnum_) {
-					if (drawer == i)
-						player->SetDraw(true);
-					else
-						player->SetDraw(false);
-				}
-
-				data[i].reset = true;
-				player->CanvasReset(true);
+		//タイマー（演出）
+		if (timer_<0.0f) {
+			//絵描き決め
+			drawerNum_ = GetRand(connectnum_);
+			if (drawerNum_ != connectnum_) {	//クライアント
+				data[drawerNum_].drawer = true;
 			}
+			else {	//サーバー
+				player->SetDraw(true);
+			}
+
+			for (int i = 0; i <= connectnum_; i++) {
+				data[i].reset = true;
+			}
+
+			timer_ = CORRECTTIME;
 			isCorrect_ = false;
 		}
-		else
+		else {
 			timer_ -= Time::DeltaTime();
-
-		for (int i = 0; i < connectnum_; i++) {
-			data[i].correct = true;
-			data[i].themenum = theme->GetThemeNum();
+			//正解演出
+			for (int i = 0; i <= connectnum_; i++) {
+				data[i].correct = true;
+			}
 		}
-
 	}
+
 
 	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));

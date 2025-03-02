@@ -67,6 +67,6 @@ public:
 
 	void RecvPencil(Pencil _pen) { youPen = _pen; }
 	void SetDraw(bool _set) { isDrawer = _set; };
-	void CanvasReset(bool _set);
+	bool GetDrawer() { return isDrawer; }
 };
 
