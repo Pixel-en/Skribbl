@@ -216,15 +216,16 @@ void UDPClient::UpdatePlay()
 					bg->CanvasReset();
 				}
 			}
+			else {
 
-			if (data[i].text[0] != '\0') {
-				std::string Rname(data[i].name), Rtext(data[i].text);
-				c->AddAns(Rname + ":" + Rtext);
+				if (data[i].text[0] != '\0') {
+					std::string Rname(data[i].name), Rtext(data[i].text);
+					c->AddAns(Rname + ":" + Rtext);
+				}
+				if (data[i].pen.linesize_ > -1) {
+					player->RecvPencil(data[i].pen);
+				}
 			}
-			if (data[i].pen.linesize_ > -1) {
-				player->RecvPencil(data[i].pen);
-			}
-
 			isCorrect_ = data[i].correct;
 		}
 	}

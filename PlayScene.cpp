@@ -12,9 +12,9 @@ PlayScene::PlayScene(GameObject* parent)
 void PlayScene::Initialize()
 {
 	Instantiate<BackGround>(this);
+	Instantiate<Theme>(this);
 	Instantiate<Chat>(this);
 	Instantiate<Player>(this);
-	Instantiate<Theme>(this);
 	
 }
 

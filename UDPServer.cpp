@@ -252,6 +252,7 @@ void UDPServer::UpdatePlay()
 							}
 							questionNum_++;
 							isCorrect_ = true;
+							c->Correct();
 						}
 					}
 				}
@@ -274,6 +275,7 @@ void UDPServer::UpdatePlay()
 				myPoint_ += 10;
 				user[drawerNum_].point_ += 10;
 				isCorrect_ = true;
+				c->Correct();
 			}
 		}
 	}
