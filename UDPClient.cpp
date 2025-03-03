@@ -39,7 +39,7 @@ UDPClient::~UDPClient()
 
 void UDPClient::Initialize()
 {
-	score_ = GetRootJob()->FindGameObject<Score>();
+	score_ = GetParent()->FindGameObject<Score>();
 }
 
 void UDPClient::Update()
@@ -182,10 +182,10 @@ void UDPClient::UpdatePlay() {
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
 		DataPacket packet = {}; // Initialize packet
 		NetWorkRecvUDP(UDPHandle, NULL, NULL, &packet, sizeof(packet), FALSE);
-
+		
 		// Handle the packet based on packetType
 		switch (packet.packetType) {
-		case 1: // Drawer index update
+		case 1: 
 			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
 			break;
 		case 2: // Theme update
@@ -195,15 +195,15 @@ void UDPClient::UpdatePlay() {
 		case 3: // Game over
 			c->AddAns("Game Over!");
 			break;
-		case 4: // User data update
-		{
+		case 4:
+		{// User data update
 			User userData;
 			NetWorkRecvUDP(UDPHandle, NULL, NULL, &userData, sizeof(userData), FALSE);
 			UpdateUserData(userData);
 			// Update score on the client side
 			score_->AddPointsToPlayer(userData.name_, userData.isDrawer_);
 		}
-		break;
+			break;
 		case 5: // Connect number update
 			std::memcpy(&connectnum_, packet.data, sizeof(connectnum_));
 			break;

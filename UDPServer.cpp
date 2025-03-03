@@ -3,7 +3,6 @@
 #include<ctime>
 #include "Engine/SceneManager.h"
 #include "Chat.h"
-
 inline bool operator == (const IPDATA& a, const IPDATA& b) {
 	if (a.d1 == b.d1 && a.d2 == b.d2 && a.d3 == b.d3 && a.d4 == b.d4)return  true;
 	return false;
@@ -35,6 +34,7 @@ UDPServer::UDPServer(GameObject* parent)
 
 		user[i].IpAddr_ = { 0,0,0,0 };
 		user[i].score = 0; // Initialize scores
+		user[i].isDrawer_ = false;
 	}
 
 	UDPConnectHandle_ = MakeUDPSocket(8888);
@@ -397,10 +397,13 @@ void UDPServer::StartNextTurn() {
 			for (int i = 0; i < connectnum_; i++) {
 				NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
 			}
+			SendConnectNumToClients();
+			SendUserDataToClients(); // Send initial user data
+			theme_->ThemeRoll();
+			SendThemeToRandomPlayer();
 		}
 	}
 }
-
 
 void UDPServer::SendThemeToRandomPlayer() {
 	// Select a random player index
