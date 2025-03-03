@@ -46,6 +46,7 @@ class UDPServer :public GameObject
 	float timer_;		//演出タイマー
 	int drawerNum_;		//絵を描いている人の番号
 	int questionNum_;	
+	float DrawTimer_;
 
 	void UpdateConnect();
 	void UpdatePlay();

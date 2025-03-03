@@ -210,6 +210,16 @@ void UDPServer::UpdatePlay()
 
 	Theme* theme = GetRootJob()->FindGameObject<Theme>();
 
+	bool reset = false;
+	//タイマー
+	if (DrawTimer_ < 0) {
+		reset = true;
+	}
+	else {
+		//リセットがfalse
+		if(!reset)
+			DrawTimer_ -= Time::DeltaTime();
+	}
 
 	struct NetData
 	{
