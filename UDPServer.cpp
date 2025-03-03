@@ -75,6 +75,8 @@ void UDPServer::Initialize()
 		HandleCheck(hNameFrame_, "ネームフレーム画像がない");
 		break;
 	case SceneManager::SCENE_ID_PLAY:
+		drawerhandle_ = LoadGraph("Assets\\Image\\Drawer.png");
+		HandleCheck(drawerhandle_, "鉛筆がない");
 		break;
 	case SceneManager::SCENE_ID_GAMEOVER:
 		break;
@@ -203,7 +205,6 @@ void UDPServer::UpdateConnect()
 void UDPServer::UpdatePlay()
 {
 	Player* player = GetRootJob()->FindGameObject<Player>();
-	player->SetDraw(true);
 	//チャット
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
 
@@ -248,9 +249,9 @@ void UDPServer::UpdatePlay()
 							user[i].point_ += 10;
 							//絵描き
 							if (drawerNum_ == connectnum_)
-								myPoint_ += 10;
+								myPoint_ += 5;
 							else {
-								user[drawerNum_].point_ += 10;
+								user[drawerNum_].point_ += 5;
 							}
 							questionNum_++;
 							isCorrect_ = true;
@@ -275,7 +276,7 @@ void UDPServer::UpdatePlay()
 		if (theme->CheckTheme(ctext) == true) {
 			if (drawerNum_ != connectnum_) {
 				myPoint_ += 10;
-				user[drawerNum_].point_ += 10;
+				user[drawerNum_].point_ += 5;
 				isCorrect_ = true;
 				c->Correct();
 			}
@@ -381,8 +382,20 @@ void UDPServer::DrawConnect()
 
 void UDPServer::DrawPlay()
 {
+	for (int i = 0; i <= connectnum_; i++) {
+		if (i != connectnum_) {
+			DrawString(4 + (i * 224) + 32, 545, ("なまえ：" + user[i].name_).c_str(), GetColor(0, 0, 0));
 
+			DrawString(4 + (i * 224) + 32, 597, ("スコア：" + std::to_string(user->point_)).c_str(), GetColor(0, 0, 0));
+		}
+		else {
+			DrawString(4 + (i * 224) + 32, 545, ("なまえ：" + name_).c_str(), GetColor(0, 0, 0));
 
+			DrawString(4 + (i * 224) + 32, 597, ("スコア：" + std::to_string(myPoint_)).c_str(), GetColor(0, 0, 0));
+		}
+		
+	}
+	DrawGraph(4 + (drawerNum_ * 224) + 32, 630, drawerhandle_, true);
 }
 
 void UDPServer::DrawClose()

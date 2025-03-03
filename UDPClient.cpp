@@ -36,6 +36,24 @@ UDPClient::~UDPClient()
 
 void UDPClient::Initialize()
 {
+	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
+	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
+
+	switch (ID)
+	{
+	case SceneManager::SCENE_ID_TITLE:
+		break;
+	case SceneManager::SCENE_ID_CONNECT:
+		break;
+	case SceneManager::SCENE_ID_PLAY:
+		drawerhandle_ = LoadGraph("Assets\\Image\\Drawer.png");
+		HandleCheck(drawerhandle_, "鉛筆がない");
+		break;
+	case SceneManager::SCENE_ID_GAMEOVER:
+		break;
+	default:
+		break;
+	}
 }
 
 void UDPClient::Update()
@@ -237,14 +255,14 @@ void UDPClient::UpdatePlay()
 			}
 
 			isCorrect_ = data[i].correct;
+
+			user[i].name_ = data[i].name;
+			user[i].point_ = data[i].point;
+			user[i].drawer_ = data[i].drawer;
 		}
-	}
 
-	if (isConnect_) {
 
 	}
-
-
 
 }
 
@@ -303,6 +321,14 @@ void UDPClient::DrawConnect()
 
 void UDPClient::DrawPlay()
 {
+	for (int i = 0; i <= playernum_; i++) {
+			DrawString(4 + (i * 224) + 32, 545, ("なまえ：" + user[i].name_).c_str(), GetColor(0, 0, 0));
+
+			DrawString(4 + (i * 224) + 32, 597, ("スコア：" + std::to_string(user[i].point_)).c_str(), GetColor(0, 0, 0));
+
+			if(user[i].drawer_)
+				DrawGraph(4 + (i * 224) + 32, 630, drawerhandle_, true);
+	}
 }
 
 void UDPClient::DrawClose()

@@ -7,7 +7,7 @@ namespace {
 
 
 BackGround::BackGround(GameObject* parent)
-	:GameObject(parent,"BackGround"),hPalletImage_(-1),hFrameImage_(-1),hCFrameImage_(-1)
+	:GameObject(parent,"BackGround"),hPalletImage_(-1),hFrameImage_(-1),hCFrameImage_(-1),hPFrameImage_(-1)
 {
 }
 
@@ -30,6 +30,9 @@ void BackGround::Initialize()
 	hCFrameImage_ = LoadGraph("Assets\\Image\\ChatFrame.png");
 	HandleCheck(hCFrameImage_, "チャットフレームがない");
 
+	hPFrameImage_ = LoadGraph("Assets\\Image\\PlayerFrame.png");
+	HandleCheck(hPFrameImage_, "プレイヤーフレームがない");
+
 	linesize_ = 0;
 	Erase_ = false;
 }
@@ -45,6 +48,11 @@ void BackGround::Draw()
 	DrawBox(0, 500, 1280, 720, GetColor(255, 0, 0), true);	//参加者
 	DrawBox(900, 500, 1280, 720, GetColor(100, 100, 100), true);	//パレット
 	DrawBox(0, 0, 900, 50, GetColor(150, 150, 0), true);	//お題枠
+
+	for (int i = 0; i < 4; i++) {
+		DrawGraph(4 + (i * 224), 504, hPFrameImage_, true);
+	}
+
 	DrawGraph(910, 510, hPalletImage_, true);
 	DrawGraph(FRAMEPOS.x + 44 * (linesize_ % 3), FRAMEPOS.y + 45 * (linesize_ / 3), hFrameImage_, true);
 	if (Erase_)

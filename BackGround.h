@@ -7,6 +7,7 @@ class BackGround :public GameObject
 	int hFrameImage_;
 	int hEFrameImage_;
 	int hCFrameImage_;
+	int hPFrameImage_;
 	int linesize_;
 
 	bool Erase_;

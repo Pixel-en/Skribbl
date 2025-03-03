@@ -11,6 +11,8 @@ class UDPClient :public GameObject
 
 	bool isCorrect_;
 
+	int drawerhandle_;
+
 	int playernum_;
 
 	std::string name_;
@@ -30,6 +32,13 @@ class UDPClient :public GameObject
 	void DrawPlay();
 	void DrawClose();
 
+	struct User
+	{
+		std::string name_;
+		int point_;
+		bool drawer_;
+	};
+	User user[4];
 public:
 
 	//コンストラクタ

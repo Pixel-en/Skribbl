@@ -107,6 +107,7 @@ void Player::Draw()
 	}
 	else {
 		if (youPen.drawOK_) {
+			youPen.linesize_ = Clamp<int>(youPen.linesize_, 0, 6);
 			//è¡ÇµÉSÉÄ
 			if (youPen.Erase_)
 				DrawCircle(youPen.NowMousePos_.x, youPen.NowMousePos_.y, LineSizes[youPen.linesize_], GetColor(255, 255, 255), true);
