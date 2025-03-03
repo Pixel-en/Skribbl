@@ -185,7 +185,7 @@ void UDPClient::UpdatePlay() {
 
 		// Handle the packet based on packetType
 		switch (packet.packetType) {
-		case 1: // Drawer index update
+		case 1: // User data update
 			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
 			break;
 		case 2: // Theme update

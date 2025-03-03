@@ -184,7 +184,7 @@ void UDPServer::UpdateConnect()
 		GetMousePoint(&pos.x, &pos.y);
 
 		if (pos.x >= CONNECTFRAME.x && pos.x <= CONNECTFRAME.z &&
-			pos.y >= CONNECTFRAME.y && pos.y <= CONNECTFRAME.w && connectnum_ >= 0) {//dont forget
+			pos.y >= CONNECTFRAME.y && pos.y <= CONNECTFRAME.w && connectnum_ > 0) {//dont forget
 			isConnect_ = true;
 		}
 	}
