@@ -2,6 +2,7 @@
 #include <cstring>
 #include "Engine/SceneManager.h"
 #include "Chat.h"
+#include "Theme.h"
 #include "Player.h"
 #include "BackGround.h"
 
@@ -178,6 +179,8 @@ void UDPClient::UpdatePlay()
 	//チャット
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
 
+	Theme* theme = GetRootJob()->FindGameObject<Theme>();
+
 	struct NetData
 	{
 		int port;
@@ -215,7 +218,10 @@ void UDPClient::UpdatePlay()
 					BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
 					bg->CanvasReset();
 				}
+				data[i].themenum;
+				theme->SetThemeNum(data[i].themenum);
 			}
+			//自分以外のデータ
 			else {
 
 				if (data[i].text[0] != '\0') {
@@ -226,6 +232,10 @@ void UDPClient::UpdatePlay()
 					player->RecvPencil(data[i].pen);
 				}
 			}
+			if (isCorrect_ == false && data[i].correct) {
+				c->Correct();
+			}
+
 			isCorrect_ = data[i].correct;
 		}
 	}

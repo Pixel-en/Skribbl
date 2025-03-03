@@ -35,5 +35,6 @@ public:
 	std::string GetCurrentTheme() const; 
 	bool CheckTheme(std::string text);
 	int GetThemeNum();
+	void SetThemeNum(int _ThemeNum) { themenum_ = _ThemeNum; }
 };
 

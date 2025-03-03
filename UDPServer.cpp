@@ -4,6 +4,8 @@
 #include "Chat.h"
 #include "Player.h"
 #include "Theme.h"
+#include "BackGround.h"
+#include "ImGui/imgui.h"
 
 inline bool operator == (const IPDATA& a, const IPDATA& b) {
 	if (a.d1 == b.d1 && a.d2 == b.d2 && a.d3 == b.d3 && a.d4 == b.d4)return  true;
@@ -297,17 +299,23 @@ void UDPServer::UpdatePlay()
 			drawerNum_ = GetRand(connectnum_);
 			if (drawerNum_ != connectnum_) {	//クライアント
 				data[drawerNum_].drawer = true;
+				player->SetDraw(false);
 			}
 			else {	//サーバー
 				player->SetDraw(true);
 			}
 
+			theme->ThemeRoll();
+
 			for (int i = 0; i <= connectnum_; i++) {
+				data[i].themenum = theme->GetThemeNum();
 				data[i].reset = true;
 			}
 
 			timer_ = CORRECTTIME;
 			isCorrect_ = false;
+			BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
+			bg->CanvasReset();
 		}
 		else {
 			timer_ -= Time::DeltaTime();
@@ -322,6 +330,10 @@ void UDPServer::UpdatePlay()
 	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));
 	}
+	int a = isCorrect_;
+	ImGui::Begin("ser");
+	ImGui::InputInt("correct", &a);
+	ImGui::End();
 
 }
 

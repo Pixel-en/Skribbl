@@ -4,6 +4,7 @@
 
 Theme::Theme(GameObject* parent)
 	: GameObject(parent, "Theme") {
+	themenum_ = 0;
 }
 
 Theme::~Theme() {}
