@@ -3,7 +3,7 @@
 #include <string>
 #include <array>
 
-const int MAX_PLAYERS = 4; // Define the maximum number of players
+const int MAX_PLAYERS = 3; // Define the maximum number of players
 
 class Score : public GameObject {
     std::array<std::string, MAX_PLAYERS> playerNames_;
