@@ -327,6 +327,7 @@ void UDPServer::UpdatePlay()
 	}
 	else {
 		data[drawerNum_].drawer = true;
+		data[drawerNum_].themenum = theme->GetThemeNum();
 	}
 
 
