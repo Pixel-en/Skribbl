@@ -325,6 +325,9 @@ void UDPServer::UpdatePlay()
 			}
 		}
 	}
+	else {
+		data[drawerNum_].drawer = true;
+	}
 
 
 	for (int i = 0; i < connectnum_; i++) {
@@ -333,6 +336,7 @@ void UDPServer::UpdatePlay()
 	int a = isCorrect_;
 	ImGui::Begin("ser");
 	ImGui::InputInt("correct", &a);
+	ImGui::InputInt("drawer", &drawerNum_);
 	ImGui::End();
 
 }
