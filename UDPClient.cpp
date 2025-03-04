@@ -198,7 +198,7 @@ void UDPClient::UpdatePlay() {
 		case 4:
 		{// User data update
 			User userData;
-			NetWorkRecvUDP(UDPHandle, NULL, NULL, &userData, sizeof(userData), FALSE);
+			std::memcpy(&userData, packet.data, sizeof(User));
 			UpdateUserData(userData);
 			// Update score on the client side
 			score_->AddPointsToPlayer(userData.name_, userData.isDrawer_);
