@@ -6,6 +6,8 @@
 #include "Theme.h"
 #include "BackGround.h"
 #include "ImGui/imgui.h"
+#include "PlayScene.h"
+
 
 inline bool operator == (const IPDATA& a, const IPDATA& b) {
 	if (a.d1 == b.d1 && a.d2 == b.d2 && a.d3 == b.d3 && a.d4 == b.d4)return  true;
@@ -211,6 +213,13 @@ void UDPServer::UpdatePlay()
 	Theme* theme = GetRootJob()->FindGameObject<Theme>();
 	BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
 
+	if (questionNum_ >= QUESTIONMAX) {
+		PlayScene* pc = GetRootJob()->FindGameObject<PlayScene>();
+		pc->SetEnd(true);
+		return;
+	}
+
+
 	bool reset = false;
 	//タイマー
 	if (DrawTimer_ < 0) {
@@ -236,8 +245,9 @@ void UDPServer::UpdatePlay()
 		bool drawer = false;	//絵描き
 		bool correct = false;	//正解
 		bool reset = false;	//キャンバスリセット
-		int themenum;
+		int themenum = 0;
 		float timer = 0.0f;
+		bool end = false;
 	};
 
 	NetData data[CONNECTMAX + 1];
@@ -333,6 +343,7 @@ void UDPServer::UpdatePlay()
 			
 			//プレイタイムのリセット
 			DrawTimer_ = PLAYTIME;
+			questionNum_++;
 		}
 		else {
 			timer_ -= Time::DeltaTime();
@@ -351,16 +362,16 @@ void UDPServer::UpdatePlay()
 
 	for (int i = 0; i <= connectnum_; i++) {
 		data[i].timer = DrawTimer_;
+		if (questionNum_ >= QUESTIONMAX) {
+			data[i].end = true;
+			data[i].drawer = false;
+			player->SetDraw(false);
+		}
 	}
 
 	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));
 	}
-	int a = isCorrect_;
-	ImGui::Begin("ser");
-	ImGui::InputInt("correct", &a);
-	ImGui::InputInt("drawer", &drawerNum_);
-	ImGui::End();
 
 }
 

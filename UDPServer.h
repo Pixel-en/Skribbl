@@ -45,7 +45,7 @@ class UDPServer :public GameObject
 	bool isCorrect_;	//正解しているか
 	float timer_;		//演出タイマー
 	int drawerNum_;		//絵を描いている人の番号
-	int questionNum_;	
+	int questionNum_;	//問題数
 	float DrawTimer_;
 
 	void UpdateConnect();

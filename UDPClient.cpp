@@ -5,6 +5,7 @@
 #include "Theme.h"
 #include "Player.h"
 #include "BackGround.h"
+#include "PlayScene.h"
 
 namespace {
 	const XMINT4 IPFRAME{ 400, 100, 750, 200 };
@@ -26,6 +27,12 @@ UDPClient::UDPClient(GameObject* parent)
 	name_ = "";
 
 	h64Font_ = CreateFontToHandle("64size", 64, -1, -1);
+
+	for (int i = 0; i < 4; i++) {
+		user[i].name_ = "";
+		user[i].point_ = 0;
+		user[i].drawer_ = false;
+	}
 }
 
 UDPClient::~UDPClient()
@@ -193,6 +200,12 @@ void UDPClient::UpdateConnect()
 
 void UDPClient::UpdatePlay()
 {
+	if (end_) {
+		PlayScene* pc = GetRootJob()->FindGameObject<PlayScene>();
+		pc->SetEnd(true);
+		return;
+	}
+
 	Player* player = GetRootJob()->FindGameObject<Player>();
 	//チャット
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
@@ -210,8 +223,9 @@ void UDPClient::UpdatePlay()
 		bool drawer = false;	//絵描き
 		bool correct = false;	//正解
 		bool reset = false;	//キャンバスリセット
-		int themenum;
-		float timer_ = 0.0f;;
+		int themenum = 0;
+		float timer_ = 0.0f;
+		bool end = false;
 	};
 
 	NetData data[CONNECTMAX + 1];
@@ -232,13 +246,16 @@ void UDPClient::UpdatePlay()
 		for (int i = 0; i <= playernum_; i++) {
 			if (data[i].name == name_) {
 				//自分の操作を書く
+				BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
 				player->SetDraw(data[i].drawer);
 				if (data[i].reset) {
-					BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
 					bg->CanvasReset();
 				}
-				data[i].themenum;
 				theme->SetThemeNum(data[i].themenum);
+				//タイマー
+				bg->SetTiemr(data[i].timer_);
+				end_ = data[i].end;
+				
 			}
 			//自分以外のデータ
 			else {

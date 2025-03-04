@@ -4,6 +4,10 @@
 //テストシーンを管理するクラス
 class PlayScene : public GameObject
 {
+	bool end_;
+	int movex_;
+	int hImage_;
+
 public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）
@@ -20,4 +24,6 @@ public:
 
 	//開放
 	void Release() override;
+
+	void SetEnd(bool _end) { end_ = _end; }
 };

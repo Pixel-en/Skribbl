@@ -17,6 +17,8 @@ class UDPClient :public GameObject
 
 	std::string name_;
 
+	bool end_;
+
 	int hKeyData_;
 	int h64Font_;
 	bool NowKeyInput_;

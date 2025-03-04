@@ -72,10 +72,6 @@ void BackGround::Draw()
 	DrawBox(960, 420, 1220, 460, GetColor(100, 100, 100), true); // TypeBox
 	DrawBox(960, 420, 1220, 460, GetColor(255, 255, 255), false);
 
-	ImGui::Begin("background");
-	ImGui::InputFloat("timer", &timer_);
-	ImGui::Text(std::to_string((PLAYTIME - timer_) / PLAYTIME * 100.0f).c_str());
-	ImGui::End();
 }
 
 void BackGround::Release()
