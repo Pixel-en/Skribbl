@@ -77,6 +77,7 @@ public:
 	void SetName(std::string _name) { name_ = _name; }
 	void HandleDrawingOrder(int drawerIndex,const std::string* order);
 	void UpdateUserData(const User& userData);
+	void CheckTheme(const std::string& text);
 
 };
 
