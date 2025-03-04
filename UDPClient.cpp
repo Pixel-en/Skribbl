@@ -206,7 +206,7 @@ void UDPClient::UpdatePlay()
 		char text[64] = "";
 		Player::Pencil pen;
 
-		int point;
+		int point = 0;
 		bool drawer = false;	//絵描き
 		bool correct = false;	//正解
 		bool reset = false;	//キャンバスリセット
@@ -255,8 +255,8 @@ void UDPClient::UpdatePlay()
 			}
 
 			isCorrect_ = data[i].correct;
-
-			user[i].name_ = data[i].name;
+			std::string _name(data[i].name);
+			user[i].name_ = _name;
 			user[i].point_ = data[i].point;
 			user[i].drawer_ = data[i].drawer;
 		}
