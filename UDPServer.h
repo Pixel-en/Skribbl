@@ -81,7 +81,7 @@ public:
 	std::string GetName(){ return name_; }
 	void SetDrawingOrder();
 	void StartNextTurn();
-	void SendThemeToRandomPlayer();
+	void SendThemeToClients();
 	void SendUserDataToClients();
 	void SendConnectNumToClients();
 };
