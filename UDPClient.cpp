@@ -185,17 +185,7 @@ void UDPClient::UpdatePlay() {
 		
 		// Handle the packet based on packetType
 		switch (packet.packetType) {
-		case 1: 
-			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
-			break;
-		case 2: // Theme update
-			std::memcpy(&isDrawer_, packet.data, sizeof(bool)); // Update the drawer status
-			themeToDisplay_ = packet.data + sizeof(bool); // Update the theme to display
-			break;
-		case 3: // Game over
-			c->AddAns("Game Over!");
-			break;
-		case 4:
+		case 1:
 		{// User data update
 			User userData;
 			NetWorkRecvUDP(UDPHandle, NULL, NULL, &userData, sizeof(userData), FALSE);
@@ -203,7 +193,19 @@ void UDPClient::UpdatePlay() {
 			// Update score on the client side
 			score_->AddPointsToPlayer(userData.name_, userData.isDrawer_);
 		}
+		break;
+		
+		case 2: // Theme update
+			std::memcpy(&isDrawer_, packet.data, sizeof(bool)); // Update the drawer status
+			themeToDisplay_ = packet.data + sizeof(bool); // Update the theme to display
 			break;
+		case 3: // Game over
+			c->AddAns("Game Over!");
+			break;
+case 4: 
+			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
+			break;
+
 		case 5: // Connect number update
 			std::memcpy(&connectnum_, packet.data, sizeof(connectnum_));
 			break;
