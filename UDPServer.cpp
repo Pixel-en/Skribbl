@@ -387,7 +387,7 @@ void UDPServer::StartNextTurn() {
 
 			// Notify clients of the drawer change
 			DataPacket packet;
-			packet.packetType = 1; // Drawer index update
+			packet.packetType = 4; // Drawer index update
 			int drawerIndex = currentDrawerIndex_;
 			memcpy(packet.data, &drawerIndex, sizeof(drawerIndex));
 
@@ -423,7 +423,7 @@ void UDPServer::SendThemeToClients() {
 
 void  UDPServer::SendUserDataToClients() {
 	DataPacket packet;
-	packet.packetType = 4; // User data update
+	packet.packetType = 1; // User data update
 
 	for (int i = 0; i <connectnum_; i++) {
 		std::memcpy(packet.data, &user[i], sizeof(User));
