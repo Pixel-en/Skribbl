@@ -1,6 +1,11 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+namespace {
+
+	const float PLAYTIME{ 120.0f };
+}
+
 class BackGround :public GameObject
 {
 	int hPalletImage_;
@@ -8,9 +13,15 @@ class BackGround :public GameObject
 	int hEFrameImage_;
 	int hCFrameImage_;
 	int hPFrameImage_;
+
+	int hTimerBackImage_;
+	int hTimerImage_;
+
 	int linesize_;
 
 	bool Erase_;
+
+	float timer_;
 public:
 
 	//コンストラクタ
@@ -35,5 +46,6 @@ public:
 	void SetLineSize(int size) { linesize_ = size; };
 	void SetErase(bool set) { Erase_ = set; }
 	void CanvasReset();
+	void SetTiemr(float time) { timer_ = time; }
 };
 

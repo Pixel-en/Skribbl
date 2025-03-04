@@ -209,6 +209,7 @@ void UDPServer::UpdatePlay()
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
 
 	Theme* theme = GetRootJob()->FindGameObject<Theme>();
+	BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
 
 	bool reset = false;
 	//タイマー
@@ -221,9 +222,11 @@ void UDPServer::UpdatePlay()
 			DrawTimer_ -= Time::DeltaTime();
 	}
 
+	bg->SetTiemr(DrawTimer_);
+
 	struct NetData
 	{
-		int port;
+		int port=0;
 		char name[16] = "";
 		char text[64] = "";
 		Player::Pencil pen;
@@ -234,6 +237,7 @@ void UDPServer::UpdatePlay()
 		bool correct = false;	//正解
 		bool reset = false;	//キャンバスリセット
 		int themenum;
+		float timer = 0.0f;
 	};
 
 	NetData data[CONNECTMAX + 1];
@@ -303,7 +307,7 @@ void UDPServer::UpdatePlay()
 	data[connectnum_].point = myPoint_;
 
 	//もし正解したなら
-	if (isCorrect_) {
+	if (isCorrect_||reset) {
 		//タイマー（演出）
 		if (timer_<0.0f) {
 			//絵描き決め
@@ -325,14 +329,18 @@ void UDPServer::UpdatePlay()
 
 			timer_ = CORRECTTIME;
 			isCorrect_ = false;
-			BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
 			bg->CanvasReset();
+			
+			//プレイタイムのリセット
+			DrawTimer_ = PLAYTIME;
 		}
 		else {
 			timer_ -= Time::DeltaTime();
-			//正解演出
-			for (int i = 0; i <= connectnum_; i++) {
-				data[i].correct = true;
+			if (isCorrect_) {
+				//正解演出
+				for (int i = 0; i <= connectnum_; i++) {
+					data[i].correct = true;
+				}
 			}
 		}
 	}
@@ -341,6 +349,9 @@ void UDPServer::UpdatePlay()
 		data[drawerNum_].themenum = theme->GetThemeNum();
 	}
 
+	for (int i = 0; i <= connectnum_; i++) {
+		data[i].timer = DrawTimer_;
+	}
 
 	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));
