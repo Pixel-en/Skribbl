@@ -210,6 +210,10 @@ void UDPServer::UpdateConnect()
 }
 
 void UDPServer::UpdatePlay() {
+	Chat* c = GetParent()->FindGameObject<Chat>();
+	if (c == nullptr)
+		return;
+
 	for (int i = 0; i < connectnum_; i++) {
 		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
 			char text[64] = "";
@@ -220,9 +224,9 @@ void UDPServer::UpdatePlay() {
 				DataPacket packet;
 				packet.packetType = 0; // Chat message
 				strcpy_s(packet.data, str.c_str());
+				c->AddAns(str);
 
-				// Direct theme checking
-				if (str == theme_->GetCurrentTheme()) {
+				if (str == theme_->GetCurrentTheme()) { // Direct theme checking
 					// Correct answer
 					score_->AddPointsToPlayer(user[i].name_, false); // Guesser
 					for (auto& u : user) {
@@ -252,7 +256,6 @@ void UDPServer::UpdatePlay() {
 					}
 				}
 
-				// Forward the chat message to all other clients
 				for (int j = 0; j < connectnum_; j++) {
 					if (i != j) {
 						NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
@@ -261,7 +264,19 @@ void UDPServer::UpdatePlay() {
 			}
 		}
 	}
+
+	std::string str = c->GetText();
+	if (str != "") {
+		DataPacket packet;
+		packet.packetType = 0; // Chat message
+		strcpy_s(packet.data, (name_ + "：" + str).c_str());
+
+		for (int i = 0; i < connectnum_; i++) {
+			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
+		}
+	}
 }
+
 
 
 void UDPServer::UpdateClose()

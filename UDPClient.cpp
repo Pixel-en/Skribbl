@@ -281,10 +281,11 @@ void UDPClient::DrawPlay() {
 
 	// Draw the theme at the top center if the client is the drawer
 	if (isDrawer_ && !themeToDisplay_.empty()) {
-		int screenWidth = 1280;
+
+		int screenWidth = 900;
 		int textWidth = GetDrawStringWidth(themeToDisplay_.c_str(), themeToDisplay_.length());
 		int x = (screenWidth - textWidth) / 2;
-		DrawString(x, 50, themeToDisplay_.c_str(), GetColor(255, 255, 255));
+		DrawString(x, 20, themeToDisplay_.c_str(), GetColor(255, 0, 0));
 	}
 }
 
