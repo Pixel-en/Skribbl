@@ -74,8 +74,8 @@ void Chat::Draw() {
 void Chat::Release() {
 }
 
-bool Chat::CheckTheme()
-{
-	Theme* theme = GetParent()->FindGameObject<Theme>();
-	return ans == theme->GetCurrentTheme();
-}
+//bool Chat::CheckTheme()
+//{
+//	Theme* theme = GetParent()->FindGameObject<Theme>();
+//	return ans == theme->GetCurrentTheme();
+//}
