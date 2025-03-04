@@ -271,12 +271,13 @@ void UDPClient::UpdatePlay()
 			if (isCorrect_ == false && data[i].correct) {
 				c->Correct();
 			}
-
-			isCorrect_ = data[i].correct;
-			std::string _name(data[i].name);
-			user[i].name_ = _name;
-			user[i].point_ = data[i].point;
-			user[i].drawer_ = data[i].drawer;
+			if (data[i].point >= 0) {
+				isCorrect_ = data[i].correct;
+				std::string _name(data[i].name);
+				user[i].name_ = _name;
+				user[i].point_ = data[i].point;
+				user[i].drawer_ = data[i].drawer;
+			}
 		}
 
 

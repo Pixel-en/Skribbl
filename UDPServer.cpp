@@ -52,7 +52,7 @@ UDPServer::UDPServer(GameObject* parent)
 	part = NONE;
 
 	timer_ = -1.0f;
-	questionNum_ = 0;
+	questionNum_ = -1;
 }
 
 UDPServer::~UDPServer()
@@ -227,7 +227,7 @@ void UDPServer::UpdatePlay()
 	}
 	else {
 		//リセットがfalse
-		if(!reset)
+		if (!reset)
 			DrawTimer_ -= Time::DeltaTime();
 	}
 
@@ -235,13 +235,13 @@ void UDPServer::UpdatePlay()
 
 	struct NetData
 	{
-		int port=0;
+		int port = 0;
 		char name[16] = "";
 		char text[64] = "";
 		Player::Pencil pen;
 
 		//書き込む
-		int point;
+		int point = 0;
 		bool drawer = false;	//絵描き
 		bool correct = false;	//正解
 		bool reset = false;	//キャンバスリセット
@@ -258,7 +258,7 @@ void UDPServer::UpdatePlay()
 			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, &data[i], sizeof(data[i]), FALSE);
 			//チャットを取得
 			if (data[i].text[0] != '\0') {
-				
+
 				//チャットに残す
 				std::string Rname(data[i].name), Rtext(data[i].text);
 				c->AddAns(Rname + ":" + Rtext);
@@ -277,7 +277,6 @@ void UDPServer::UpdatePlay()
 							else {
 								user[drawerNum_].point_ += 5;
 							}
-							questionNum_++;
 							isCorrect_ = true;
 							c->Correct();
 						}
@@ -317,9 +316,9 @@ void UDPServer::UpdatePlay()
 	data[connectnum_].point = myPoint_;
 
 	//もし正解したなら
-	if (isCorrect_||reset) {
+	if (isCorrect_ || reset) {
 		//タイマー（演出）
-		if (timer_<0.0f) {
+		if (timer_ < 0.0f) {
 			//絵描き決め
 			drawerNum_ = GetRand(connectnum_);
 			if (drawerNum_ != connectnum_) {	//クライアント
@@ -340,7 +339,7 @@ void UDPServer::UpdatePlay()
 			timer_ = CORRECTTIME;
 			isCorrect_ = false;
 			bg->CanvasReset();
-			
+
 			//プレイタイムのリセット
 			DrawTimer_ = PLAYTIME;
 			questionNum_++;
@@ -361,6 +360,7 @@ void UDPServer::UpdatePlay()
 	}
 
 	for (int i = 0; i <= connectnum_; i++) {
+		data[i].point = user[i].point_;
 		data[i].timer = DrawTimer_;
 		if (questionNum_ >= QUESTIONMAX) {
 			data[i].end = true;
@@ -372,6 +372,10 @@ void UDPServer::UpdatePlay()
 	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));
 	}
+
+	ImGui::Begin("ser");
+	ImGui::InputInt("q", &questionNum_);
+	ImGui::End();
 
 }
 
@@ -418,14 +422,14 @@ void UDPServer::DrawPlay()
 		if (i != connectnum_) {
 			DrawString(4 + (i * 224) + 32, 545, ("なまえ：" + user[i].name_).c_str(), GetColor(0, 0, 0));
 
-			DrawString(4 + (i * 224) + 32, 597, ("スコア：" + std::to_string(user->point_)).c_str(), GetColor(0, 0, 0));
+			DrawString(4 + (i * 224) + 32, 597, ("スコア：" + std::to_string(user[i].point_)).c_str(), GetColor(0, 0, 0));
 		}
 		else {
 			DrawString(4 + (i * 224) + 32, 545, ("なまえ：" + name_).c_str(), GetColor(0, 0, 0));
 
 			DrawString(4 + (i * 224) + 32, 597, ("スコア：" + std::to_string(myPoint_)).c_str(), GetColor(0, 0, 0));
 		}
-		
+
 	}
 	DrawGraph(4 + (drawerNum_ * 224) + 32, 630, drawerhandle_, true);
 }
