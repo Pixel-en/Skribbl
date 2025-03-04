@@ -208,11 +208,8 @@ void UDPServer::UpdateConnect()
 		connectnum_++;
 	}
 }
-void UDPServer::UpdatePlay() {
-	Chat* c = GetParent()->FindGameObject<Chat>();
-	if (c == nullptr)
-		return;
 
+void UDPServer::UpdatePlay() {
 	for (int i = 0; i < connectnum_; i++) {
 		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
 			char text[64] = "";
@@ -223,14 +220,14 @@ void UDPServer::UpdatePlay() {
 				DataPacket packet;
 				packet.packetType = 0; // Chat message
 				strcpy_s(packet.data, str.c_str());
-				c->AddAns(str);
 
-				if (c->CheckTheme()) {
+				// Direct theme checking
+				if (str == theme_->GetCurrentTheme()) {
 					// Correct answer
 					score_->AddPointsToPlayer(user[i].name_, false); // Guesser
-					for (auto& user : user) {
-						if (user.isDrawer_) {
-							score_->AddPointsToPlayer(user.name_, true); // Drawer
+					for (auto& u : user) {
+						if (u.isDrawer_) {
+							score_->AddPointsToPlayer(u.name_, true); // Drawer
 							break;
 						}
 					}
@@ -254,6 +251,8 @@ void UDPServer::UpdatePlay() {
 						NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, &correctPacket, sizeof(correctPacket));
 					}
 				}
+
+				// Forward the chat message to all other clients
 				for (int j = 0; j < connectnum_; j++) {
 					if (i != j) {
 						NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
@@ -262,18 +261,8 @@ void UDPServer::UpdatePlay() {
 			}
 		}
 	}
-
-	std::string str = c->GetText();
-	if (str != "") {
-		DataPacket packet;
-		packet.packetType = 0; // Chat message
-		strcpy_s(packet.data, (name_ + "：" + str).c_str());
-
-		for (int i = 0; i < connectnum_; i++) {
-			NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
-		}
-	}
 }
+
 
 void UDPServer::UpdateClose()
 {

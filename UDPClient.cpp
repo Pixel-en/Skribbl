@@ -177,6 +177,7 @@ void UDPClient::UpdatePlay() {
 		char text_[64];
 		strcpy_s(text_, sizeof(text_), (name_ + "F" + str).c_str());
 		NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, text_, sizeof(text_));
+		CheckTheme(str);
 	}
 
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
@@ -312,5 +313,21 @@ void UDPClient::UpdateUserData(const User& userData) {
 			users_[i] = userData;
 			
 		
+	}
+}
+
+void UDPClient::CheckTheme(const std::string& text)
+{
+
+	if (text == themeToDisplay_) {
+		// Notify the server of the correct answer
+		DataPacket correctPacket;
+		correctPacket.packetType = 0; // Chat message
+		std::string correctMsg = name_ + " answered correctly!";
+		strcpy_s(correctPacket.data, correctMsg.c_str());
+		NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, &correctPacket, sizeof(correctPacket));
+
+		// Update the score locally
+		score_->AddPointsToPlayer(name_, false); // Guesser
 	}
 }
