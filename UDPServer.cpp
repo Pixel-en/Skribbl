@@ -350,7 +350,6 @@ void UDPServer::SetDrawingOrder() {
 	currentDrawerIndex_ = 0;
 	user[currentDrawerIndex_].isDrawer_ = true;
 }
-
 void UDPServer::StartNextTurn() {
 	if (currentDrawerIndex_ >= connectnum_) {
 		// Send Game Over packet
@@ -385,9 +384,19 @@ void UDPServer::StartNextTurn() {
 			// Reset the timer for the next drawer
 			timeElapsed_ = 0.0f;
 
-			// Notify clients of the drawer change
+			// First, send the updated connection number
+			SendConnectNumToClients();
+
+			// Then, send the updated user data
+			SendUserDataToClients();
+
+			// Roll the theme and send it to all clients
+			theme_->ThemeRoll();
+			SendThemeToClients();
+
+			// Finally, notify clients of the drawer change
 			DataPacket packet;
-			packet.packetType = 4; // Drawer index update
+			packet.packetType = 1; // Drawer index update
 			int drawerIndex = currentDrawerIndex_;
 			memcpy(packet.data, &drawerIndex, sizeof(drawerIndex));
 
@@ -397,13 +406,10 @@ void UDPServer::StartNextTurn() {
 			for (int i = 0; i < connectnum_; i++) {
 				NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
 			}
-			SendConnectNumToClients();
-			SendUserDataToClients(); // Send initial user data
-			theme_->ThemeRoll();
-			SendThemeToClients();
 		}
 	}
 }
+
 
 void UDPServer::SendThemeToClients() {
 	DataPacket packet;
@@ -423,7 +429,7 @@ void UDPServer::SendThemeToClients() {
 
 void  UDPServer::SendUserDataToClients() {
 	DataPacket packet;
-	packet.packetType = 1; // User data update
+	packet.packetType = 4; // User data update
 
 	for (int i = 0; i <connectnum_; i++) {
 		std::memcpy(packet.data, &user[i], sizeof(User));
