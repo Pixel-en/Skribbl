@@ -277,11 +277,7 @@ void UDPClient::DrawClose()
 
 
 void UDPClient::DrawPlay() {
-	// Draw the player scores
-	for (int i = 0; i < CONNECTMAX; i++) {
-		int y = 50 + i * 20;  // Adjust positioning as needed
-		DrawString(50, y, (users_[i].name_ + " : " + std::to_string(users_[i].score)).c_str(), GetColor(255, 255, 255));
-	}
+
 
 	// Draw the theme at the top center if the client is the drawer
 	if (isDrawer_ && !themeToDisplay_.empty()) {
