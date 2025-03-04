@@ -400,28 +400,27 @@ void UDPServer::StartNextTurn() {
 			SendConnectNumToClients();
 			SendUserDataToClients(); // Send initial user data
 			theme_->ThemeRoll();
-			SendThemeToRandomPlayer();
+			SendThemeToClients();
 		}
 	}
 }
 
-void UDPServer::SendThemeToRandomPlayer() {
-	// Select a random player index
-	int randomIndex = std::rand() % connectnum_;
-
+void UDPServer::SendThemeToClients() {
 	DataPacket packet;
 	packet.packetType = 2; // Theme update
 	strcpy_s(packet.data, theme_->GetCurrentTheme().c_str());
 
-	if (randomIndex == connectnum_ - 1) {
-		// The server is the drawer, store the theme directly
+	// Send the theme to all clients, ensuring the drawer receives it directly
+	for (int i = 0; i < connectnum_; i++) {
+		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
+	}
+
+	// If the server is the drawer, store the theme directly
+	if (currentDrawerIndex_ == connectnum_ - 1) {
 		themeToDisplay_ = theme_->GetCurrentTheme();
 	}
-	else {
-		// Send to one of the connected clients
-		NetWorkSendUDP(user[randomIndex].RecvUDPHandle_, user[randomIndex].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
-	}
 }
+
 void  UDPServer::SendUserDataToClients() {
 	DataPacket packet;
 	packet.packetType = 4; // User data update
