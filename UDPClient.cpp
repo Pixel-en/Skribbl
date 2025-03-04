@@ -196,14 +196,17 @@ void UDPClient::UpdatePlay() {
 			c->AddAns("Game Over!");
 			break;
 		case 4:
-		{// User data update
-			User userData;
-			std::memcpy(&userData, packet.data, sizeof(User));
-			UpdateUserData(userData);
-			// Update score on the client side
-			score_->AddPointsToPlayer(userData.name_, userData.isDrawer_);
+		{
+			// User data update: update all user data at once
+			User users[CONNECTMAX];
+			std::memcpy(users, packet.data, sizeof(users));
+			for (int i = 0; i < connectnum_; i++) {
+				UpdateUserData(users[i]);
+				// Update score on the client side
+				score_->AddPointsToPlayer(users[i].name_, users[i].isDrawer_);
+			}
 		}
-			break;
+		break;
 		case 5: // Connect number update
 			std::memcpy(&connectnum_, packet.data, sizeof(connectnum_));
 			break;
@@ -309,9 +312,9 @@ void UDPClient::HandleDrawingOrder(int drawerIndex, const std::string* order) {
 
 void UDPClient::UpdateUserData(const User& userData) {
 	for (int i = 0; i < connectnum_; i++) {
-		if (users_[i].name_ == userData.name_) {
+		
 			users_[i] = userData;
-			return;
-		}
+			
+		
 	}
 }

@@ -429,19 +429,20 @@ void UDPServer::SendThemeToClients() {
 	}
 }
 
-void  UDPServer::SendUserDataToClients() {
+void UDPServer::SendUserDataToClients() {
 	DataPacket packet;
 	packet.packetType = 4; // User data update
 
-	for (int i = 0; i < connectnum_; i++) {
-		std::memcpy(packet.data, &user[i], sizeof(User));
-		for (int j = 0; j < connectnum_; j++) {
-			
-				NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
-			
-		}
+	// Prepare a buffer to hold the entire array of users
+	char buffer[sizeof(User) * CONNECTMAX];
+	std::memcpy(buffer, user, sizeof(user));
+
+	// Send the packet to all clients
+	for (int j = 0; j < connectnum_; j++) {
+		NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, buffer, sizeof(buffer));
 	}
 }
+
 
 void UDPServer::SendConnectNumToClients() {
 	DataPacket packet;
