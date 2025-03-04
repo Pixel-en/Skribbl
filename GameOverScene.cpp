@@ -17,6 +17,8 @@ void GameOverScene::Initialize()
 {
 	hBackTitle_ = LoadGraph("Assets\\Image\\BackTitle.png");
 	HandleCheck(hBackTitle_,"ƒ^ƒCƒgƒ‹ƒ{ƒ^ƒ“‚ª‚È‚¢");
+	hBack_ = LoadGraph("Assets\\Image\\Back.jpg");
+	HandleCheck(hBack_, "”wŒi‚ª‚È‚¢");
 }
 
 void GameOverScene::Update()
@@ -60,6 +62,8 @@ void GameOverScene::Draw()
 	XMINT2 Screen;
 	GetScreenState(&Screen.x, &Screen.y, NULL);
 	DrawBox(0, 0, Screen.x, Screen.y, GetColor(160, 216, 239), true);	//”wŒi
+
+	DrawGraph(0, 0, hBack_, true);
 
 	DrawGraph(TITLEBUTTON.x, TITLEBUTTON.y, hBackTitle_, true);
 }

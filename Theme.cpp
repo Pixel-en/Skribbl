@@ -10,7 +10,10 @@ Theme::Theme(GameObject* parent)
 Theme::~Theme() {}
 
 void Theme::Initialize() {
-	CsvReader csv("Assets/Theme.csv");
+	CsvReader file("Assets\\ThemeFile.csv");
+	std::string name = file.GetString(0, 0);
+
+	CsvReader csv("Assets\\Theme\\" + name + ".csv");
 	for (int i = 0; i < csv.GetLines(); i++) {
 		ThemeList_.push_back(csv.GetString(i, 0));
 	}

@@ -7,6 +7,8 @@ class GameOverScene : public GameObject
 	int movex;
 	bool click_;
 
+	int hBack_;
+
 public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）
