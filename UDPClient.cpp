@@ -279,6 +279,7 @@ void UDPClient::DrawClose()
 
 void UDPClient::DrawPlay() {
 
+
 	// Draw the theme at the top center if the client is the drawer
 	if (isDrawer_ && !themeToDisplay_.empty()) {
 
