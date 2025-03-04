@@ -8,6 +8,8 @@ namespace {
 class UDPServer :public GameObject
 {
 	int drawerhandle_;
+	int hStart_;
+	int hFrame_;
 
 	int h64Font_;
 	int h32Font_;

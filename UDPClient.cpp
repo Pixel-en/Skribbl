@@ -57,6 +57,8 @@ void UDPClient::Initialize()
 		HandleCheck(drawerhandle_, "鉛筆がない");
 		break;
 	case SceneManager::SCENE_ID_GAMEOVER:
+		hFrame_ = LoadGraph("Assets\\Image\\GameOverFrame.png");
+		HandleCheck(hFrame_, "フレームがない");
 		break;
 	default:
 		break;
@@ -255,7 +257,7 @@ void UDPClient::UpdatePlay()
 				//タイマー
 				bg->SetTiemr(data[i].timer_);
 				end_ = data[i].end;
-				
+
 			}
 			//自分以外のデータ
 			else {
@@ -341,16 +343,26 @@ void UDPClient::DrawConnect()
 void UDPClient::DrawPlay()
 {
 	for (int i = 0; i <= playernum_; i++) {
-			DrawString(4 + (i * 224) + 32, 545, ("なまえ：" + user[i].name_).c_str(), GetColor(0, 0, 0));
+		DrawString(4 + (i * 224) + 32, 545, ("なまえ：" + user[i].name_).c_str(), GetColor(0, 0, 0));
 
-			DrawString(4 + (i * 224) + 32, 597, ("スコア：" + std::to_string(user[i].point_)).c_str(), GetColor(0, 0, 0));
+		DrawString(4 + (i * 224) + 32, 597, ("スコア：" + std::to_string(user[i].point_)).c_str(), GetColor(0, 0, 0));
 
-			if(user[i].drawer_)
-				DrawGraph(4 + (i * 224) + 32, 630, drawerhandle_, true);
+		if (user[i].drawer_)
+			DrawGraph(4 + (i * 224) + 32, 630, drawerhandle_, true);
 	}
 }
 
 void UDPClient::DrawClose()
 {
+	DrawStringToHandle(500, 50, "最終結果", GetColor(0, 0, 0), h64Font_);
+
+	for (int i = 0; i < 4; i++)
+		DrawGraph(10 + i * 310, 180, hFrame_, true);
+
+	for (int i = 0; i <= playernum_; i++) {
+
+		DrawStringToHandle(50 + i * 310, 190, name_.c_str(), GetColor(0, 0, 0), h64Font_);
+		DrawStringToHandle(50 + i * 310, 260, (std::to_string(user[i].point_) + "pt").c_str(), GetColor(0, 0, 0), h64Font_);
+	}
 }
 

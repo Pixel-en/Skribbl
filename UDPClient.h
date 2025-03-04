@@ -3,6 +3,8 @@
 
 class UDPClient :public GameObject
 {
+	int hFrame_;
+
 	IPDATA IpAddr;
 	int UDPHandle;
 	int hConnectCheck_;

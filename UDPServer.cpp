@@ -75,12 +75,16 @@ void UDPServer::Initialize()
 	case SceneManager::SCENE_ID_CONNECT:
 		hNameFrame_ = LoadGraph("Assets\\Image\\NameFrame.png");
 		HandleCheck(hNameFrame_, "ネームフレーム画像がない");
+		hStart_ = LoadGraph("Assets\\Image\\Connect.png");
+		HandleCheck(hStart_, "スタートボタンがない");
 		break;
 	case SceneManager::SCENE_ID_PLAY:
 		drawerhandle_ = LoadGraph("Assets\\Image\\Drawer.png");
 		HandleCheck(drawerhandle_, "鉛筆がない");
 		break;
 	case SceneManager::SCENE_ID_GAMEOVER:
+		hFrame_ = LoadGraph("Assets\\Image\\GameOverFrame.png");
+		HandleCheck(hFrame_, "ゲームオーバーのネームフレームがない");
 		break;
 	default:
 		break;
@@ -360,7 +364,9 @@ void UDPServer::UpdatePlay()
 	}
 
 	for (int i = 0; i <= connectnum_; i++) {
-		data[i].point = user[i].point_;
+		if (i != connectnum_)
+			data[i].point = user[i].point_;
+
 		data[i].timer = DrawTimer_;
 		if (questionNum_ >= QUESTIONMAX) {
 			data[i].end = true;
@@ -372,10 +378,6 @@ void UDPServer::UpdatePlay()
 	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));
 	}
-
-	ImGui::Begin("ser");
-	ImGui::InputInt("q", &questionNum_);
-	ImGui::End();
 
 }
 
@@ -410,10 +412,7 @@ void UDPServer::DrawConnect()
 	}
 
 	//スタートボタン表示
-	DrawBox(CONNECTFRAME.x, CONNECTFRAME.y, CONNECTFRAME.z, CONNECTFRAME.w, GetColor(200, 200, 200), true);
-	DrawBox(CONNECTFRAME.x, CONNECTFRAME.w - 3, CONNECTFRAME.z, CONNECTFRAME.w, GetColor(150, 150, 150), true);
-	DrawBox(CONNECTFRAME.z - 3, CONNECTFRAME.y, CONNECTFRAME.z, CONNECTFRAME.w, GetColor(150, 150, 150), true);
-
+	DrawGraph(CONNECTFRAME.x, CONNECTFRAME.y, hStart_, true);
 }
 
 void UDPServer::DrawPlay()
@@ -436,4 +435,20 @@ void UDPServer::DrawPlay()
 
 void UDPServer::DrawClose()
 {
+	DrawStringToHandle(500,50, "最終結果", GetColor(0, 0, 0), h64Font_);
+
+	for (int i = 0; i < 4; i++)
+		DrawGraph(10 + i * 310, 180, hFrame_, true);
+
+	for (int i = 0; i <= connectnum_; i++) {
+		if (i != connectnum_) {
+			DrawStringToHandle(50 + i * 310, 190, user[i].name_.c_str(), GetColor(0, 0, 0), h64Font_);
+			DrawStringToHandle(50 + i * 310, 260, (std::to_string(myPoint_)+"pt").c_str(), GetColor(0, 0, 0), h64Font_);
+		}
+		else {
+			DrawStringToHandle(50 + i * 310, 190, name_.c_str(), GetColor(0, 0, 0), h64Font_);
+			DrawStringToHandle(50 + i * 310, 260, (std::to_string(user[i].point_)+"pt").c_str(), GetColor(0, 0, 0), h64Font_);
+		}
+	}
+
 }
