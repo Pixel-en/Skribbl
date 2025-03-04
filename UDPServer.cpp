@@ -443,11 +443,11 @@ void UDPServer::DrawClose()
 	for (int i = 0; i <= connectnum_; i++) {
 		if (i != connectnum_) {
 			DrawStringToHandle(50 + i * 310, 190, user[i].name_.c_str(), GetColor(0, 0, 0), h64Font_);
-			DrawStringToHandle(50 + i * 310, 260, (std::to_string(myPoint_)+"pt").c_str(), GetColor(0, 0, 0), h64Font_);
+			DrawStringToHandle(50 + i * 310, 260, (std::to_string(user[i].point_) + "pt").c_str(), GetColor(0, 0, 0), h64Font_);
 		}
 		else {
 			DrawStringToHandle(50 + i * 310, 190, name_.c_str(), GetColor(0, 0, 0), h64Font_);
-			DrawStringToHandle(50 + i * 310, 260, (std::to_string(user[i].point_)+"pt").c_str(), GetColor(0, 0, 0), h64Font_);
+			DrawStringToHandle(50 + i * 310, 260, (std::to_string(myPoint_) + "pt").c_str(), GetColor(0, 0, 0), h64Font_);
 		}
 	}
 

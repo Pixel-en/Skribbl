@@ -8,6 +8,7 @@ class TitleScene : public GameObject
 	int hSButtonImage_;
 	int hCButtonImage_;
 	int hMoveImage_;
+	int hTitleImage_;
 
 	int hKeyData_;      //•¶š“ü—Íƒf[ƒ^
 	bool NowNameInput_; //•¶š“ü—Í‚µ‚Ä‚¢‚é‚©
