@@ -211,6 +211,7 @@ void UDPClient::UpdatePlay()
 		bool correct = false;	//正解
 		bool reset = false;	//キャンバスリセット
 		int themenum;
+		float timer_ = 0.0f;;
 	};
 
 	NetData data[CONNECTMAX + 1];
