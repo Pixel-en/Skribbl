@@ -14,7 +14,7 @@ namespace {
 	const int CLIENTPORT{ 8888 };
 	const XMINT4 CONNECTFRAME{ 900,600,1200,700 };
 	const float DRAWER_CHANGE_INTERVAL = 90.0f; // 90 seconds time limit for each drawer turn}
-	
+
 
 }
 struct DataPacket {
@@ -23,7 +23,7 @@ struct DataPacket {
 };
 
 UDPServer::UDPServer(GameObject* parent)
-	:GameObject(parent, "UDPServer"), hNameFrame_(-1),currentDrawerIndex_(0), timeElapsed_(0.0f)
+	:GameObject(parent, "UDPServer"), hNameFrame_(-1), currentDrawerIndex_(0), timeElapsed_(0.0f)
 {
 	connectnum_ = 0;
 	isConnect_ = false;
@@ -79,7 +79,7 @@ void UDPServer::Initialize()
 	case SceneManager::SCENE_ID_PLAY:
 		SetDrawingOrder();  // Set the initial drawing order when starting the game
 		StartNextTurn();    // Start the first turn
-		
+
 		break;
 	case SceneManager::SCENE_ID_GAMEOVER:
 		break;
@@ -170,8 +170,9 @@ void UDPServer::UpdateConnect()
 				Recvname[std::strlen(Recvname)] = '\0';
 				std::string _name(Recvname);
 				user[connectnum_].name_ = _name;
+				user[connectnum_].score = 0;  // Initialize score
+				user[connectnum_].isDrawer_ = false;  // Initialize isDrawer flag
 				connectnum_++;
-
 				//Ú‘±‚Å‚«‚½‚±‚Æ‚ð‘—M
 				NetWorkSendUDP(UDPConnectHandle_, ip, 9876, NULL, 0);
 			}
@@ -198,7 +199,14 @@ void UDPServer::UpdateConnect()
 		SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
 		sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 	}
-
+	// Ensure the server itself is added to the user list
+	if (connectnum_ == 0) {
+		user[connectnum_].IpAddr_ = MyIpAddr_;
+		user[connectnum_].name_ = name_;
+		user[connectnum_].score = 0;
+		user[connectnum_].isDrawer_ = false;
+		connectnum_++;
+	}
 }
 void UDPServer::UpdatePlay() {
 	Chat* c = GetParent()->FindGameObject<Chat>();
@@ -282,19 +290,17 @@ void UDPServer::DrawConnect()
 	std::string d4 = std::to_string(MyIpAddr_.d4);
 	d3.insert(0, 3 - d3.length(), '0');
 	d4.insert(0, 3 - d4.length(), '0');
-	pass += d3 + d4;
-	//‚¶‚Ô‚ñ‚ÌIP•\Ž¦
-	DrawStringToHandle(320, 60,pass.c_str(), GetColor(0, 0, 0),h64Font_);
+pass += d3 + d4; 
+		//‚¶‚Ô‚ñ‚ÌIP•\Ž¦
+		DrawStringToHandle(320, 60, pass.c_str(), GetColor(0, 0, 0), h64Font_);
 
 	//ŽQ‰ÁŽÒ‚Ì–¼‘O•\Ž¦
-	for (int i = 0; i < connectnum_ + 1; i++) {
-		DrawGraph(350, 200+i*90, hNameFrame_, true);
-		if (i == 0) {
-			DrawStringToHandle(520, 200 + i * 90+10, name_.c_str(), GetColor(0, 0, 0),h64Font_);
-		}
-		else {
-			DrawStringToHandle(520, 200 + i * 90+10, user[i - 1].name_.c_str(), GetColor(0, 0, 0),h64Font_);
-		}
+	for (int i = 0; i < connectnum_; i++) {
+		DrawGraph(350, 200 + i * 90, hNameFrame_, true);
+
+
+		DrawStringToHandle(520, 200 + i * 90 + 10, user[i].name_.c_str(), GetColor(0, 0, 0), h64Font_);
+
 	}
 
 	//ƒXƒ^[ƒgƒ{ƒ^ƒ“•\Ž¦
@@ -314,7 +320,7 @@ void UDPServer::DrawPlay()
 		DrawString(x, 20, themeToDisplay_.c_str(), GetColor(255, 0, 0));
 	}
 
-	
+
 
 }
 
@@ -326,10 +332,6 @@ void UDPServer::SetDrawingOrder() {
 		drawingOrder_[i] = user[i].name_;
 		user[i].isDrawer_ = false;  // Initially, no one is the drawer
 	}
-
-	// Add the server's own name to the drawing order
-	drawingOrder_[connectnum_] = name_;
-	connectnum_++;
 
 	// Shuffle the drawing order
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -431,12 +433,12 @@ void  UDPServer::SendUserDataToClients() {
 	DataPacket packet;
 	packet.packetType = 4; // User data update
 
-	for (int i = 0; i <connectnum_; i++) {
+	for (int i = 0; i < connectnum_; i++) {
 		std::memcpy(packet.data, &user[i], sizeof(User));
 		for (int j = 0; j < connectnum_; j++) {
-			if (i != j) {
+			
 				NetWorkSendUDP(user[j].RecvUDPHandle_, user[j].IpAddr_, CLIENTPORT, &packet, sizeof(packet));
-			}
+			
 		}
 	}
 }
