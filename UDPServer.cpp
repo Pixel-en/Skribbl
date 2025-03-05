@@ -228,10 +228,10 @@ void UDPServer::UpdatePlay() {
 
 				if (str == theme_->GetCurrentTheme()) { // Direct theme checking
 					// Correct answer
-					score_->AddPointsToPlayer(user[i].name_, false); // Guesser
+					score_->AddPointsToPlayer(name_, false); // Guesser
 					for (auto& u : user) {
 						if (u.isDrawer_) {
-							score_->AddPointsToPlayer(u.name_, true); // Drawer
+							score_->AddPointsToPlayer(name_, true); // Drawer
 							break;
 						}
 					}
