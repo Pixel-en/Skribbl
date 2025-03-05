@@ -7,8 +7,10 @@ CsvReader::CsvReader(std::string filename)
 	all.clear();
 
 	std::ifstream ifs(filename);
-	if (!ifs) return;
-
+	if (!ifs) {
+		assert(false);
+		return;
+	}
 	// BOM Skip‚·‚é
 	unsigned char BOMS[] = { 0xEF, 0xBB, 0xBF };
 	bool found = true;

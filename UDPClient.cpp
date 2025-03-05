@@ -2,17 +2,19 @@
 #include <cstring>
 #include "Engine/SceneManager.h"
 #include "Chat.h"
+#include "Theme.h"
+#include "Player.h"
+#include "BackGround.h"
+#include "PlayScene.h"
 
 namespace {
-	const XMINT4 IPFRAME{ 465, 100, 815, 200 };
+	const XMINT4 IPFRAME{ 400, 100, 750, 200 };
+	const int CONNECTMAX{ 3 };
+
 }
-struct DataPacket {
-	int packetType;
-	char data[256];
-};
 
 UDPClient::UDPClient(GameObject* parent)
-	:GameObject(parent, "UDPClient"), UDPHandle(-1),isDrawer_(false),connectnum_(0)
+	:GameObject(parent, "UDPClient"), UDPHandle(-1)
 {
 	IpAddr = { 192,168,0,0 };
 	UDPHandle = MakeUDPSocket(8888);
@@ -23,11 +25,13 @@ UDPClient::UDPClient(GameObject* parent)
 	NowKeyInput_ = false;
 	IPSet_ = false;
 	name_ = "";
-	currentDrawerIndex_ = 0;
+
 	h64Font_ = CreateFontToHandle("64size", 64, -1, -1);
-	for (int i = 0; i < CONNECTMAX; i++) {
-		users_[i] = { "", {}, -1 }; // Initialize users
-		scores_[i] = 0; // Initialize scores
+
+	for (int i = 0; i < 4; i++) {
+		user[i].name_ = "";
+		user[i].point_ = 0;
+		user[i].drawer_ = false;
 	}
 }
 
@@ -39,7 +43,26 @@ UDPClient::~UDPClient()
 
 void UDPClient::Initialize()
 {
-	score_ = GetRootJob()->FindGameObject<Score>();
+	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
+	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
+
+	switch (ID)
+	{
+	case SceneManager::SCENE_ID_TITLE:
+		break;
+	case SceneManager::SCENE_ID_CONNECT:
+		break;
+	case SceneManager::SCENE_ID_PLAY:
+		drawerhandle_ = LoadGraph("Assets\\Image\\Drawer.png");
+		HandleCheck(drawerhandle_, "鉛筆がない");
+		break;
+	case SceneManager::SCENE_ID_GAMEOVER:
+		hFrame_ = LoadGraph("Assets\\Image\\GameOverFrame.png");
+		HandleCheck(hFrame_, "フレームがない");
+		break;
+	default:
+		break;
+	}
 }
 
 void UDPClient::Update()
@@ -68,8 +91,6 @@ void UDPClient::Update()
 
 void UDPClient::Draw()
 {
-	DrawCircle(me.x, me.y, me.size, me.color, true);
-	DrawCircle(you.x, you.y, you.size, you.color, true);
 
 	SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();
 	SceneManager::SCENE_ID ID = sc->GetCurrentSceneID();
@@ -157,8 +178,19 @@ void UDPClient::UpdateConnect()
 			}
 		}
 		else {
+			//ポートを受信
 			if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
-				NetWorkRecvUDP(UDPHandle, NULL, NULL, &ServerPort_, sizeof(ServerPort_), FALSE);
+				struct PortData
+				{
+					int port;
+					int num;
+				};
+				PortData portdata;
+
+				NetWorkRecvUDP(UDPHandle, NULL, NULL, &portdata, sizeof(portdata), FALSE);
+
+				ServerPort_ = portdata.port;
+				playernum_ = portdata.num;
 				SceneManager* sc = GetParent()->FindGameObject<SceneManager>();
 				sc->ChangeScene(SceneManager::SCENE_ID_PLAY);
 			}
@@ -167,50 +199,93 @@ void UDPClient::UpdateConnect()
 
 }
 
-void UDPClient::UpdatePlay() {
-	Chat* c = GetRootJob()->FindGameObject<Chat>();
-	if (c == nullptr)
+void UDPClient::UpdatePlay()
+{
+	if (end_) {
+		PlayScene* pc = GetRootJob()->FindGameObject<PlayScene>();
+		pc->SetEnd(true);
 		return;
-
-	std::string str = c->GetText();
-	if (str != "") {
-		char text_[64];
-		strcpy_s(text_, sizeof(text_), (name_ + "：" + str).c_str());
-		NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, text_, sizeof(text_));
 	}
+
+	Player* player = GetRootJob()->FindGameObject<Player>();
+	//チャット
+	Chat* c = GetRootJob()->FindGameObject<Chat>();
+
+	Theme* theme = GetRootJob()->FindGameObject<Theme>();
+
+	struct NetData
+	{
+		int port;
+		char name[16] = "";
+		char text[64] = "";
+		Player::Pencil pen;
+
+		int point = 0;
+		bool drawer = false;	//絵描き
+		bool correct = false;	//正解
+		bool reset = false;	//キャンバスリセット
+		int themenum = 0;
+		float timer_ = 0.0f;
+		bool end = false;
+	};
+
+	NetData data[CONNECTMAX + 1];
+
+	NetData mydata;
+	mydata.port = ServerPort_;
+	strcpy_s(mydata.name, sizeof(mydata.name), name_.c_str());
+	strcpy_s(mydata.text, sizeof(mydata.text), (c->GetText()).c_str());
+	mydata.name[std::strlen(mydata.name)] = '\0';
+	mydata.text[std::strlen(mydata.text)] = '\0';
+	mydata.pen = player->GetPencil();
+
+	NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, &mydata, sizeof(mydata));
 
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
-		DataPacket packet = {}; // Initialize packet
-		NetWorkRecvUDP(UDPHandle, NULL, NULL, &packet, sizeof(packet), FALSE);
+		NetWorkRecvUDP(UDPHandle, NULL, NULL, data, sizeof(data), FALSE);
 
-		// Handle the packet based on packetType
-		switch (packet.packetType) {
-		case 1: // Drawer index update
-			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
-			break;
-		case 2: // Theme update
-			std::memcpy(&isDrawer_, packet.data, sizeof(bool)); // Update the drawer status
-			themeToDisplay_ = packet.data + sizeof(bool); // Update the theme to display
-			break;
-		case 3: // Game over
-			c->AddAns("Game Over!");
-			break;
-		case 4: // User data update
-		{
-			User userData;
-			NetWorkRecvUDP(UDPHandle, NULL, NULL, &userData, sizeof(userData), FALSE);
-			UpdateUserData(userData);
+		for (int i = 0; i <= playernum_; i++) {
+			if (data[i].name == name_) {
+				//自分の操作を書く
+				BackGround* bg = GetRootJob()->FindGameObject<BackGround>();
+				player->SetDraw(data[i].drawer);
+				if (data[i].reset) {
+					bg->CanvasReset();
+				}
+				theme->SetThemeNum(data[i].themenum);
+				//タイマー
+				bg->SetTiemr(data[i].timer_);
+				end_ = data[i].end;
+
+			}
+			//自分以外のデータ
+			else {
+
+				if (data[i].text[0] != '\0') {
+					std::string Rname(data[i].name), Rtext(data[i].text);
+					c->AddAns(Rname + ":" + Rtext);
+				}
+				if (data[i].pen.linesize_ > -1) {
+					player->RecvPencil(data[i].pen);
+				}
+			}
+			if (isCorrect_ == false && data[i].correct) {
+				c->Correct();
+			}
+			if (data[i].point >= 0) {
+				isCorrect_ = data[i].correct;
+				std::string _name(data[i].name);
+				user[i].name_ = _name;
+				user[i].point_ = data[i].point;
+				user[i].drawer_ = data[i].drawer;
+			}
 		}
-		break;
-		case 5: // Connect number update
-			std::memcpy(&connectnum_, packet.data, sizeof(connectnum_));
-			break;
-		default: // Chat message
-			c->AddAns(packet.data);
-			break;
-		}
+
+
 	}
+
 }
+
 void UDPClient::UpdateClose()
 {
 }
@@ -237,12 +312,11 @@ void UDPClient::DrawConnect()
 			d3.insert(0, 3 - d3.length(), '0');
 			d4.insert(0, 3 - d4.length(), '0');
 			std::string ip = d3 + d4;
-			DrawStringToHandle(IPFRAME.x+10, IPFRAME.y+18, ip.c_str(), GetColor(200, 200, 200), h64Font_);
+			DrawStringToHandle(IPFRAME.x, IPFRAME.y, ip.c_str(), GetColor(200, 200, 200), h64Font_);
 
 			static int count = 0;
 			if (count >= 240)
 				count = 0;
-
 
 			std::string bDot = "";
 			for (int i = 0; i < count / 60; i++) {
@@ -250,65 +324,44 @@ void UDPClient::DrawConnect()
 			}
 
 			if (isConnect_) {
-				DrawStringToHandle(IPFRAME.x+35, 300, ("待機中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
+				DrawStringToHandle(IPFRAME.x, 300, ("待機中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
 			}
 			else {
-				DrawStringToHandle(IPFRAME.x+35, 300, ("接続中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
+				DrawStringToHandle(IPFRAME.x, 300, ("接続中" + bDot).c_str(), GetColor(0, 0, 0), h64Font_);
 			}
 			count++;
 		}
 		else {
-			DrawStringToHandle(IPFRAME.x+10, IPFRAME.y+18, "ルーム番号", GetColor(180, 180, 180), h64Font_);
+			DrawStringToHandle(IPFRAME.x, IPFRAME.y, "ルーム番号", GetColor(180, 180, 180), h64Font_);
 		}
 	}
 
 
 }
 
+void UDPClient::DrawPlay()
+{
+	for (int i = 0; i <= playernum_; i++) {
+		DrawString(4 + (i * 224) + 32, 545, ("なまえ：" + user[i].name_).c_str(), GetColor(0, 0, 0));
+
+		DrawString(4 + (i * 224) + 32, 597, ("スコア：" + std::to_string(user[i].point_)).c_str(), GetColor(0, 0, 0));
+
+		if (user[i].drawer_)
+			DrawGraph(4 + (i * 224) + 32, 630, drawerhandle_, true);
+	}
+}
 
 void UDPClient::DrawClose()
 {
-}
+	DrawStringToHandle(500, 50, "最終結果", GetColor(0, 0, 0), h64Font_);
 
+	for (int i = 0; i < 4; i++)
+		DrawGraph(10 + i * 310, 180, hFrame_, true);
 
-void UDPClient::DrawPlay() {
-	// Draw the player scores
-	for (int i = 0; i < CONNECTMAX; i++) {
-		int y = 50 + i * 20;  // Adjust positioning as needed
-		DrawString(50, y, (users_[i].name_ + " : " + std::to_string(scores_[i])).c_str(), GetColor(255, 255, 255));
-	}
+	for (int i = 0; i <= playernum_; i++) {
 
-	// Draw the theme at the top center if the client is the drawer
-	if (isDrawer_ && !themeToDisplay_.empty()) {
-		int screenWidth = 1280;
-		int textWidth = GetDrawStringWidth(themeToDisplay_.c_str(), themeToDisplay_.length());
-		int x = (screenWidth - textWidth) / 2;
-		DrawString(x, 50, themeToDisplay_.c_str(), GetColor(255, 255, 255));
+		DrawStringToHandle(50 + i * 310, 190, name_.c_str(), GetColor(0, 0, 0), h64Font_);
+		DrawStringToHandle(50 + i * 310, 260, (std::to_string(user[i].point_) + "pt").c_str(), GetColor(0, 0, 0), h64Font_);
 	}
 }
 
-
-void UDPClient::HandleDrawingOrder(int drawerIndex, const std::string* order) {
-	currentDrawerIndex_ = drawerIndex;
-
-	// Update drawingOrder_ array
-	for (int i = 0; i < connectnum_; i++) {
-		users_[i].name_ = order[i];
-	}
-	isDrawer_ = (users_[drawerIndex].name_ == name_);
-	if (score_) {
-		for (int i = 0; i < connectnum_; i++) {
-			score_->AddPlayer(users_[i].name_);
-		}
-	}
-
-}
-
-void UDPClient::UpdateUserData(const User& userData) {
-	for (int i = 0; i < connectnum_; i++) {
-		if (users_[i].name_ == userData.name_) {
-			users_[i] = userData;
-			return;
-		}
-	}
-}

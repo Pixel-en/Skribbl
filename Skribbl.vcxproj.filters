@@ -11,14 +11,20 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{90c595e7-439a-4b11-ae82-50da8015ab3c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PlayScene">
-      <UniqueIdentifier>{cd953ef8-1687-45bf-9596-e1f06625350e}</UniqueIdentifier>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{5c210026-1631-481a-b29f-96273c1e284a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ConnectScene">
+    <Filter Include="Scene\ConnectScene">
       <UniqueIdentifier>{0db3b5e4-53ab-4385-97d8-81b4c535cf86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TitleScene">
+    <Filter Include="Scene\PlayScene">
+      <UniqueIdentifier>{cd953ef8-1687-45bf-9596-e1f06625350e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\TitleScene">
       <UniqueIdentifier>{f369c2a8-e582-4916-a10a-a9e4223668be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\GameOverScene">
+      <UniqueIdentifier>{79b2eb84-f448-4106-b8ec-12056511424b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,27 +75,30 @@
     </ClCompile>
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="BackGround.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="PlayScene.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Chat.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Theme.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="UDPServer.cpp" />
     <ClCompile Include="UDPClient.cpp" />
     <ClCompile Include="ConnectScene.cpp">
-      <Filter>ConnectScene</Filter>
+      <Filter>Scene\ConnectScene</Filter>
     </ClCompile>
     <ClCompile Include="TitleScene.cpp">
-      <Filter>TitleScene</Filter>
+      <Filter>Scene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOverScene.cpp">
+      <Filter>Scene\GameOverScene</Filter>
     </ClCompile>
     <ClCompile Include="Score.cpp" />
   </ItemGroup>
@@ -148,28 +157,34 @@
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="TestObject.h" />
     <ClInclude Include="PlayScene.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="BackGround.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Chat.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Theme.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>PlayScene</Filter>
+      <Filter>Scene\PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="UDPServer.h" />
     <ClInclude Include="UDPClient.h" />
     <ClInclude Include="ConnectScene.h">
-      <Filter>ConnectScene</Filter>
+      <Filter>Scene\ConnectScene</Filter>
     </ClInclude>
     <ClInclude Include="TitleScene.h">
-      <Filter>TitleScene</Filter>
+      <Filter>Scene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOverScene.h">
+      <Filter>Scene\GameOverScene</Filter>
     </ClInclude>
     <ClInclude Include="Score.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Theme\Theme2.csv" />
   </ItemGroup>
 </Project>

@@ -1,33 +1,35 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include"Theme.h"
-#include"Score.h"
+
 namespace {
 	const int CONNECTMAX{ 3 };
 }
 class UDPServer :public GameObject
 {
+	int drawerhandle_;
+	int hStart_;
+	int hFrame_;
+
 	int h64Font_;
 	int h32Font_;
 	int hNameFrame_;
-
-	struct Circle {
-		int x;
-		int y;
-		int size;
-		unsigned int color;
-	};   // Structure to store the received circle data
+	int myPoint_;
 
 	struct User
 	{
 		std::string name_;
 		IPDATA IpAddr_;
 		int RecvUDPHandle_;
+		int point_;
 	};
-	Theme* theme_;
-	Score* score_;
-	Circle me;
-	Circle you;
+
+	enum NETWORKPART
+	{
+		NONE,
+		INFO,
+		PLAY,
+	};
+	NETWORKPART part;
 
 	IPDATA MyIpAddr_;
 	//ソケット
@@ -40,7 +42,12 @@ class UDPServer :public GameObject
 	int connectnum_;
 	bool isConnect_;
 
-	float timeElapsed_; // Timer for drawer turn
+
+	bool isCorrect_;	//正解しているか
+	float timer_;		//演出タイマー
+	int drawerNum_;		//絵を描いている人の番号
+	int questionNum_;	//問題数
+	float DrawTimer_;
 
 	void UpdateConnect();
 	void UpdatePlay();
@@ -50,10 +57,6 @@ class UDPServer :public GameObject
 	void DrawPlay();
 	void DrawClose();
 
-	std::string drawingOrder_[CONNECTMAX];
-	int currentDrawerIndex_;
-	std::string themeToDisplay_;
-	int playerScores_[CONNECTMAX];
 public:
 
 	//コンストラクタ
@@ -75,12 +78,6 @@ public:
 	//開放
 	void Release() override;
 
-	void SetName(std::string _name) { name_ = _name; }
-	std::string GetName(){ return name_; }
-	void SetDrawingOrder();
-	void StartNextTurn();
-	void SendThemeToRandomPlayer();
-	void SendUserDataToClients();
-	void SendConnectNumToClients();
+	void SetName(std::string _name) { name_ = _name; };
 };
 

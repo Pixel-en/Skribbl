@@ -9,7 +9,7 @@ namespace {
 }
 
 ConnectScene::ConnectScene(GameObject* parent)
-	:GameObject(parent, "ConnectScene"), hImage_(-1)
+	:GameObject(parent, "ConnectScene"), hImage_(-1),hBack_(-1)
 {
 }
 
@@ -17,6 +17,9 @@ void ConnectScene::Initialize()
 {
 	hImage_ = LoadGraph("Assets\\Image\\BackTitle.png");
 	HandleCheck(hImage_, "ƒ^ƒCƒgƒ‹ƒ{ƒ^ƒ“‚ª‚È‚¢");
+
+	hBack_ = LoadGraph("Assets\\Image\\Back.jpg");
+	HandleCheck(hBack_, "”wŒi‚ª‚È‚¢");
 }
 
 void ConnectScene::Update()
@@ -50,7 +53,7 @@ void ConnectScene::Draw()
 	XMINT2 Screen;
 	GetScreenState(&Screen.x, &Screen.y, NULL);
 	DrawBox(0, 0, Screen.x, Screen.y, GetColor(160, 216, 239), true);	//”wŒi
-
+	DrawGraph(0, 0, hBack_, true);
 	DrawGraph(TITLEFRAME.x, TITLEFRAME.y, hImage_, true);
 }
 

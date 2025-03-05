@@ -4,6 +4,7 @@
 class ConnectScene : public GameObject
 {
 	int hImage_;
+	int hBack_;
 public:
 	// コンストラクタ
 	// 引数：parent 親オブジェクト（SceneManager）

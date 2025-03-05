@@ -77,3 +77,9 @@ void Chat::Release() {
 void Chat::CheckTheme(const std::string& answer)
 {
 }
+
+void Chat::Correct()
+{
+	AddAns("ƒQ[ƒ€F³‰ğI");
+}
+

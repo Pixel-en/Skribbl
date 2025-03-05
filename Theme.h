@@ -8,6 +8,8 @@ class Theme :public GameObject
 
 	std::vector<std::string> ThemeList_;
 	std::string currentTheme_;
+
+	int themenum_;
 public:
 
 	//コンストラクタ
@@ -29,9 +31,10 @@ public:
 	//開放
 	void Release() override;
 
-	std::string ThemeRoll();
+	void ThemeRoll();
 	std::string GetCurrentTheme() const; 
-//	void NotifyThemeUpdate();
-
+	bool CheckTheme(std::string text);
+	int GetThemeNum();
+	void SetThemeNum(int _ThemeNum) { themenum_ = _ThemeNum; }
 };
 

@@ -4,21 +4,34 @@
 
 class Player :public GameObject
 {
+public:
 
-	XMINT2 PreMousePos_;
-	XMINT2 NowMousePos_;
+	struct Pencil
+	{
 
-	unsigned int Cr_;
+		XMINT2 PreMousePos_;	//1フレーム前のマウスのポジション
+		XMINT2 NowMousePos_;	//現在のマウスのポジション
+		unsigned int Cr_;		//色
 
-	bool drawOK_;
+		int linesize_;			//ラインの大きさ
+		bool Erase_;			//消しゴムを使っているか
+		bool drawOK_;
+	};
 
-	int linesize_;
-	bool Erase_;
+private:
+
+	Pencil pen;
+	Pencil youPen;
+
+
+
 	
 	//消しゴムモードかどうか
 	bool RFlag_;
 
 	std::string theme_;
+
+	bool isDrawer;
 
 public:
 
@@ -42,5 +55,18 @@ public:
 	void Release() override;
 
 	void SetTheme(std::string _theme) { theme_ = _theme; };
+
+	Pencil GetPencil()
+	{
+		Pencil temppen = pen;
+		if (!isDrawer)
+			temppen = { {-10,-10},{-10,-10},0,-1,false,false };
+
+		return temppen;
+	}
+
+	void RecvPencil(Pencil _pen) { youPen = _pen; }
+	void SetDraw(bool _set) { isDrawer = _set; };
+	bool GetDrawer() { return isDrawer; }
 };
 

@@ -1,17 +1,18 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-//テストシーンを管理するクラス
-class PlayScene : public GameObject
+class GameOverScene : public GameObject
 {
-	bool end_;
-	int movex_;
-	int hImage_;
+	int hBackTitle_;
+	int movex;
+	bool click_;
+
+	int hBack_;
 
 public:
 	//コンストラクタ
 	//引数：parent  親オブジェクト（SceneManager）
-	PlayScene(GameObject* parent);
+	GameOverScene(GameObject* parent);
 
 	//初期化
 	void Initialize() override;
@@ -24,6 +25,4 @@ public:
 
 	//開放
 	void Release() override;
-
-	void SetEnd(bool _end) { end_ = _end; }
 };
