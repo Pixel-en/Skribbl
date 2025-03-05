@@ -46,12 +46,15 @@ void Chat::Update() {
 		DeleteKeyInput(hKeyData_);
 		hKeyData_ = MakeKeyInput(MAXLENGTH, true, false, false);
 		SetActiveKeyInput(hKeyData_);
-		if (StrHistory_.size() > HISTORYMAX)
-			StrHistory_.pop_back();
+
 		break;
 	default:
 		break;
 	}
+
+
+	if (StrHistory_.size() > HISTORYMAX)
+		StrHistory_.pop_back();
 
 }
 
