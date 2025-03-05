@@ -38,8 +38,7 @@ void Chat::Update() {
 		if (buffer != "") {
 			ans = str;
 			StrHistory_.push_front("Ç†Ç»ÇΩÅF" + ans);
-			// Call CheckTheme to verify the theme
-			CheckTheme(ans);
+	
 		}
 	}
 	case 2:

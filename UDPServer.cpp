@@ -1,4 +1,4 @@
-#include "UDPServer.h"
+ï»¿#include "UDPServer.h"
 #include <cstring>
 #include "Engine/SceneManager.h"
 #include "Chat.h"
@@ -31,16 +31,16 @@ UDPServer::UDPServer(GameObject* parent)
 
 	for (int i = 0; i < CONNECTMAX; i++) {
 		user[i].RecvUDPHandle_ = MakeUDPSocket(SERVERPORT + i);
-		HandleCheck(user[i].RecvUDPHandle_, "ƒ\ƒPƒbƒg‚ªì‚ê‚Ä‚È‚¢");
+		HandleCheck(user[i].RecvUDPHandle_, "ã‚½ã‚±ãƒƒãƒˆãŒä½œã‚Œã¦ãªã„");
 
 		user[i].IpAddr_ = { 0,0,0,0 };
 		user[i].point_ = 0;
 	}
 
 	UDPConnectHandle_ = MakeUDPSocket(8888);
-	HandleCheck(UDPConnectHandle_, "ƒ\ƒPƒbƒg‚ªì‚ê‚Ä‚È‚¢");
+	HandleCheck(UDPConnectHandle_, "ã‚½ã‚±ãƒƒãƒˆãŒä½œã‚Œã¦ãªã„");
 
-	//©•ª‚ÌIPƒAƒhƒŒƒX‚ğæ“¾
+	//è‡ªåˆ†ã®IPã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 	IPDATA ip[2];
 	GetMyIPAddress(ip, 2, NULL);
 	MyIpAddr_ = ip[1];
@@ -74,17 +74,17 @@ void UDPServer::Initialize()
 		break;
 	case SceneManager::SCENE_ID_CONNECT:
 		hNameFrame_ = LoadGraph("Assets\\Image\\NameFrame.png");
-		HandleCheck(hNameFrame_, "ƒl[ƒ€ƒtƒŒ[ƒ€‰æ‘œ‚ª‚È‚¢");
+		HandleCheck(hNameFrame_, "ãƒãƒ¼ãƒ ãƒ•ãƒ¬ãƒ¼ãƒ ç”»åƒãŒãªã„");
 		hStart_ = LoadGraph("Assets\\Image\\Connect.png");
-		HandleCheck(hStart_, "ƒXƒ^[ƒgƒ{ƒ^ƒ“‚ª‚È‚¢");
+		HandleCheck(hStart_, "ã‚¹ã‚¿ãƒ¼ãƒˆãƒœã‚¿ãƒ³ãŒãªã„");
 		break;
 	case SceneManager::SCENE_ID_PLAY:
 		drawerhandle_ = LoadGraph("Assets\\Image\\Drawer.png");
-		HandleCheck(drawerhandle_, "‰”•M‚ª‚È‚¢");
+		HandleCheck(drawerhandle_, "é‰›ç­†ãŒãªã„");
 		break;
 	case SceneManager::SCENE_ID_GAMEOVER:
 		hFrame_ = LoadGraph("Assets\\Image\\GameOverFrame.png");
-		HandleCheck(hFrame_, "ƒQ[ƒ€ƒI[ƒo[‚Ìƒl[ƒ€ƒtƒŒ[ƒ€‚ª‚È‚¢");
+		HandleCheck(hFrame_, "ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã®ãƒãƒ¼ãƒ ãƒ•ãƒ¬ãƒ¼ãƒ ãŒãªã„");
 		break;
 	default:
 		break;
@@ -150,11 +150,11 @@ void UDPServer::UpdateConnect()
 	bool check = false;
 
 	if (connectnum_ < CONNECTMAX) {
-		//ƒ|[ƒg8888iÚ‘±‘ŠèƒeƒXƒgj‚É’ÊM‚ª—ˆ‚½
+		//ãƒãƒ¼ãƒˆ8888ï¼ˆæ¥ç¶šç›¸æ‰‹ãƒ†ã‚¹ãƒˆï¼‰ã«é€šä¿¡ãŒæ¥ãŸæ™‚
 		if (CheckNetWorkRecvUDP(UDPConnectHandle_) == TRUE) {
 			IPDATA ip = { 0,0,0,0 };
 			char Recvname[256];
-			//‰ß‹‚ÉÚ‘±‚µ‚½l‚Å‚È‚¯‚ê‚Î
+			//éå»ã«æ¥ç¶šã—ãŸäººã§ãªã‘ã‚Œã°
 			NetWorkRecvUDP(UDPConnectHandle_, &ip, NULL, Recvname, sizeof(Recvname), FALSE);
 			for (int i = 0; i < CONNECTMAX; i++) {
 				if (ip == user[i].IpAddr_) {
@@ -162,7 +162,7 @@ void UDPServer::UpdateConnect()
 					break;
 				}
 			}
-			//IP‚ğ•Û‘¶‚µ‚Ä‚¨‚­
+			//IPã‚’ä¿å­˜ã—ã¦ãŠã
 			if (!check) {
 				user[connectnum_].IpAddr_ = ip;
 				Recvname[std::strlen(Recvname)] = '\0';
@@ -170,7 +170,7 @@ void UDPServer::UpdateConnect()
 				user[connectnum_].name_ = _name;
 				connectnum_++;
 
-				//Ú‘±‚Å‚«‚½‚±‚Æ‚ğ‘—M
+				//æ¥ç¶šã§ããŸã“ã¨ã‚’é€ä¿¡
 				NetWorkSendUDP(UDPConnectHandle_, ip, 9876, NULL, 0);
 			}
 
@@ -187,7 +187,7 @@ void UDPServer::UpdateConnect()
 		}
 	}
 
-	//Ú‘±l”‚ªŠm’è‚µ‚½ƒ|[ƒg”Ô†‚ğ‘—‚é
+	//æ¥ç¶šäººæ•°ãŒç¢ºå®šã—ãŸæ™‚ãƒãƒ¼ãƒˆç•ªå·ã‚’é€ã‚‹
 	if (isConnect_ == true) {
 		struct PortData
 		{
@@ -211,7 +211,7 @@ void UDPServer::UpdateConnect()
 void UDPServer::UpdatePlay()
 {
 	Player* player = GetRootJob()->FindGameObject<Player>();
-	//ƒ`ƒƒƒbƒg
+	//ãƒãƒ£ãƒƒãƒˆ
 	Chat* c = GetRootJob()->FindGameObject<Chat>();
 
 	Theme* theme = GetRootJob()->FindGameObject<Theme>();
@@ -225,12 +225,12 @@ void UDPServer::UpdatePlay()
 
 
 	bool reset = false;
-	//ƒ^ƒCƒ}[
+	//ã‚¿ã‚¤ãƒãƒ¼
 	if (DrawTimer_ < 0) {
 		reset = true;
 	}
 	else {
-		//ƒŠƒZƒbƒg‚ªfalse
+		//ãƒªã‚»ãƒƒãƒˆãŒfalse
 		if (!reset)
 			DrawTimer_ -= Time::DeltaTime();
 	}
@@ -244,11 +244,11 @@ void UDPServer::UpdatePlay()
 		char text[64] = "";
 		Player::Pencil pen;
 
-		//‘‚«‚Ş
+		//æ›¸ãè¾¼ã‚€
 		int point = 0;
-		bool drawer = false;	//ŠG•`‚«
-		bool correct = false;	//³‰ğ
-		bool reset = false;	//ƒLƒƒƒ“ƒoƒXƒŠƒZƒbƒg
+		bool drawer = false;	//çµµæã
+		bool correct = false;	//æ­£è§£
+		bool reset = false;	//ã‚­ãƒ£ãƒ³ãƒã‚¹ãƒªã‚»ãƒƒãƒˆ
 		int themenum = 0;
 		float timer = 0.0f;
 		bool end = false;
@@ -256,26 +256,26 @@ void UDPServer::UpdatePlay()
 
 	NetData data[CONNECTMAX + 1];
 
-	//ƒNƒ‰ƒCƒAƒ“ƒg‚©‚çóM
+	//ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰å—ä¿¡
 	for (int i = 0; i < connectnum_; i++) {
 		if (CheckNetWorkRecvUDP(user[i].RecvUDPHandle_) == TRUE) {
 			NetWorkRecvUDP(user[i].RecvUDPHandle_, NULL, NULL, &data[i], sizeof(data[i]), FALSE);
-			//ƒ`ƒƒƒbƒg‚ğæ“¾
+			//ãƒãƒ£ãƒƒãƒˆã‚’å–å¾—
 			if (data[i].text[0] != '\0') {
 
-				//ƒ`ƒƒƒbƒg‚Éc‚·
+				//ãƒãƒ£ãƒƒãƒˆã«æ®‹ã™
 				std::string Rname(data[i].name), Rtext(data[i].text);
 				c->AddAns(Rname + ":" + Rtext);
 
-				//³‰ğ‚µ‚Ä‚¢‚È‚¢‚Æ‚«
+				//æ­£è§£ã—ã¦ã„ãªã„ã¨ã
 				if (!isCorrect_) {
-					//‚¨‘è‚Æƒ`ƒFƒbƒN‚·‚é
+					//ãŠé¡Œã¨ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 					if (theme->CheckTheme(Rtext) == true) {
-						//³‰ğ‚µ‚Ä‚¢‚½‚ç
+						//æ­£è§£ã—ã¦ã„ãŸã‚‰
 						if (drawerNum_ != i) {
-							//ƒ|ƒCƒ“ƒg‚ğ“ü‚ê‚Ä³‰ğ‚É‚·‚é
+							//ãƒã‚¤ãƒ³ãƒˆã‚’å…¥ã‚Œã¦æ­£è§£ã«ã™ã‚‹
 							user[i].point_ += 10;
-							//ŠG•`‚«
+							//çµµæã
 							if (drawerNum_ == connectnum_)
 								myPoint_ += 5;
 							else {
@@ -288,7 +288,7 @@ void UDPServer::UpdatePlay()
 				}
 			}
 
-			//ƒyƒ“‚ğæ“¾
+			//ãƒšãƒ³ã‚’å–å¾—
 			if (data[i].pen.linesize_ != -1) {
 				player->RecvPencil(data[i].pen);
 			}
@@ -296,8 +296,8 @@ void UDPServer::UpdatePlay()
 		}
 	}
 
-	//ƒT[ƒo[‚Ìî•ñ‚ğ“ü‚ê‚é
-	//ƒ`ƒƒƒbƒg
+	//ã‚µãƒ¼ãƒãƒ¼ã®æƒ…å ±ã‚’å…¥ã‚Œã‚‹
+	//ãƒãƒ£ãƒƒãƒˆ
 	std::string ctext = c->GetText();
 	if (!isCorrect_) {
 		if (theme->CheckTheme(ctext) == true) {
@@ -310,7 +310,7 @@ void UDPServer::UpdatePlay()
 		}
 	}
 
-	//‚»‚Ì‘¼î•ñ
+	//ãã®ä»–æƒ…å ±
 	data[connectnum_].port = 8888;
 	strcpy_s(data[connectnum_].name, sizeof(data[connectnum_].name), name_.c_str());
 	strcpy_s(data[connectnum_].text, sizeof(data[connectnum_].text), ctext.c_str());
@@ -319,17 +319,17 @@ void UDPServer::UpdatePlay()
 	data[connectnum_].pen = player->GetPencil();
 	data[connectnum_].point = myPoint_;
 
-	//‚à‚µ³‰ğ‚µ‚½‚È‚ç
+	//ã‚‚ã—æ­£è§£ã—ãŸãªã‚‰
 	if (isCorrect_ || reset) {
-		//ƒ^ƒCƒ}[i‰‰oj
+		//ã‚¿ã‚¤ãƒãƒ¼ï¼ˆæ¼”å‡ºï¼‰
 		if (timer_ < 0.0f) {
-			//ŠG•`‚«Œˆ‚ß
+			//çµµæãæ±ºã‚
 			drawerNum_ = GetRand(connectnum_);
-			if (drawerNum_ != connectnum_) {	//ƒNƒ‰ƒCƒAƒ“ƒg
+			if (drawerNum_ != connectnum_) {	//ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆ
 				data[drawerNum_].drawer = true;
 				player->SetDraw(false);
 			}
-			else {	//ƒT[ƒo[
+			else {	//ã‚µãƒ¼ãƒãƒ¼
 				player->SetDraw(true);
 			}
 
@@ -344,14 +344,14 @@ void UDPServer::UpdatePlay()
 			isCorrect_ = false;
 			bg->CanvasReset();
 
-			//ƒvƒŒƒCƒ^ƒCƒ€‚ÌƒŠƒZƒbƒg
+			//ãƒ—ãƒ¬ã‚¤ã‚¿ã‚¤ãƒ ã®ãƒªã‚»ãƒƒãƒˆ
 			DrawTimer_ = PLAYTIME;
 			questionNum_++;
 		}
 		else {
 			timer_ -= Time::DeltaTime();
 			if (isCorrect_) {
-				//³‰ğ‰‰o
+				//æ­£è§£æ¼”å‡º
 				for (int i = 0; i <= connectnum_; i++) {
 					data[i].correct = true;
 				}
@@ -391,16 +391,16 @@ void UDPServer::UpdateClose()
 
 void UDPServer::DrawConnect()
 {
-	std::string pass = "ƒ‹[ƒ€”Ô†F";
+	std::string pass = "ãƒ«ãƒ¼ãƒ ç•ªå·ï¼š";
 	std::string d3 = std::to_string(MyIpAddr_.d3);
 	std::string d4 = std::to_string(MyIpAddr_.d4);
 	d3.insert(0, 3 - d3.length(), '0');
 	d4.insert(0, 3 - d4.length(), '0');
 	pass += d3 + d4;
-	//‚¶‚Ô‚ñ‚ÌIP•\¦
+	//ã˜ã¶ã‚“ã®IPè¡¨ç¤º
 	DrawStringToHandle(200, 100, pass.c_str(), GetColor(0, 0, 0), h64Font_);
 
-	//Q‰ÁÒ‚Ì–¼‘O•\¦
+	//å‚åŠ è€…ã®åå‰è¡¨ç¤º
 	for (int i = 0; i < connectnum_ + 1; i++) {
 		DrawGraph(300, 180 + i * 90, hNameFrame_, true);
 		if (i == 0) {
@@ -411,7 +411,7 @@ void UDPServer::DrawConnect()
 		}
 	}
 
-	//ƒXƒ^[ƒgƒ{ƒ^ƒ“•\¦
+	//ã‚¹ã‚¿ãƒ¼ãƒˆãƒœã‚¿ãƒ³è¡¨ç¤º
 	DrawGraph(CONNECTFRAME.x, CONNECTFRAME.y, hStart_, true);
 }
 
@@ -419,14 +419,14 @@ void UDPServer::DrawPlay()
 {
 	for (int i = 0; i <= connectnum_; i++) {
 		if (i != connectnum_) {
-			DrawString(4 + (i * 224) + 32, 545, ("‚È‚Ü‚¦F" + user[i].name_).c_str(), GetColor(0, 0, 0));
+			DrawString(4 + (i * 224) + 32, 545, ("ãªã¾ãˆï¼š" + user[i].name_).c_str(), GetColor(0, 0, 0));
 
-			DrawString(4 + (i * 224) + 32, 597, ("ƒXƒRƒAF" + std::to_string(user[i].point_)).c_str(), GetColor(0, 0, 0));
+			DrawString(4 + (i * 224) + 32, 597, ("ã‚¹ã‚³ã‚¢ï¼š" + std::to_string(user[i].point_)).c_str(), GetColor(0, 0, 0));
 		}
 		else {
-			DrawString(4 + (i * 224) + 32, 545, ("‚È‚Ü‚¦F" + name_).c_str(), GetColor(0, 0, 0));
+			DrawString(4 + (i * 224) + 32, 545, ("ãªã¾ãˆï¼š" + name_).c_str(), GetColor(0, 0, 0));
 
-			DrawString(4 + (i * 224) + 32, 597, ("ƒXƒRƒAF" + std::to_string(myPoint_)).c_str(), GetColor(0, 0, 0));
+			DrawString(4 + (i * 224) + 32, 597, ("ã‚¹ã‚³ã‚¢ï¼š" + std::to_string(myPoint_)).c_str(), GetColor(0, 0, 0));
 		}
 
 	}
@@ -435,7 +435,7 @@ void UDPServer::DrawPlay()
 
 void UDPServer::DrawClose()
 {
-	DrawStringToHandle(500,50, "ÅIŒ‹‰Ê", GetColor(0, 0, 0), h64Font_);
+	DrawStringToHandle(500,50, "æœ€çµ‚çµæœ", GetColor(0, 0, 0), h64Font_);
 
 	for (int i = 0; i < 4; i++)
 		DrawGraph(10 + i * 310, 180, hFrame_, true);
