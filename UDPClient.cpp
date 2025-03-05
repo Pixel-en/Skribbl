@@ -190,7 +190,7 @@ void UDPClient::UpdatePlay() {
 			HandleDrawingOrder(*reinterpret_cast<int*>(packet.data), reinterpret_cast<std::string*>(packet.data + sizeof(int)));
 			break;
 		case 2: // Theme update
-			std::memcpy(&themeToDisplay_, packet.data, sizeof(std::string)); // Update the drawer status
+			themeToDisplay_ = std::string(packet.data); // Correctly update themeToDisplay_			
 			break;
 		case 3: // Game over
 			c->AddAns("Game Over!");
