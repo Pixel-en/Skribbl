@@ -29,7 +29,6 @@ public:
     /// <param name="str">–¼‘O+“š‚¦</param>
     void AddAns(std::string str) { StrHistory_.push_front(str); }
 
- /*   bool CheckTheme();*/
 
     std::string GetText() {return ans; }
 

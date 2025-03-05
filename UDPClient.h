@@ -64,5 +64,6 @@ public:
 	//ŠJ•ú
 	void Release() override;
 
+	void SetName(std::string _name) { name_ = _name; }
 };
 
