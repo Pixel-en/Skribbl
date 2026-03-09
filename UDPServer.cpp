@@ -375,6 +375,7 @@ void UDPServer::UpdatePlay()
 		}
 	}
 
+	//‘—M
 	for (int i = 0; i < connectnum_; i++) {
 		NetWorkSendUDP(user[i].RecvUDPHandle_, user[i].IpAddr_, CLIENTPORT, data, sizeof(data));
 	}

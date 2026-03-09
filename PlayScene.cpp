@@ -25,6 +25,7 @@ void PlayScene::Initialize()
 
 void PlayScene::Update()
 {
+	//‰¡‚©‚çˆÃ“]
 	if (end_) {
 		if (movex_ < -200) {
 			SceneManager* sc = GetRootJob()->FindGameObject<SceneManager>();

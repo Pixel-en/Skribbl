@@ -240,8 +240,10 @@ void UDPClient::UpdatePlay()
 	mydata.text[std::strlen(mydata.text)] = '\0';
 	mydata.pen = player->GetPencil();
 
+	//データの送信
 	NetWorkSendUDP(UDPHandle, IpAddr, ServerPort_, &mydata, sizeof(mydata));
 
+	//データの受信
 	if (CheckNetWorkRecvUDP(UDPHandle) == TRUE) {
 		NetWorkRecvUDP(UDPHandle, NULL, NULL, data, sizeof(data), FALSE);
 
