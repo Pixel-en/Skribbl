@@ -182,4 +182,7 @@
       <Filter>Scene\GameOverScene</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Theme\Theme2.csv" />
+  </ItemGroup>
 </Project>
